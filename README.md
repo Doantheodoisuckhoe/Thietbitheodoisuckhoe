@@ -48,9 +48,13 @@ App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
 **Firmware (Arduino IDE)**
 1. File → Preferences → Additional boards manager URLs:
    `https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json`
-2. Boards Manager → cài **Seeed nRF52 Boards** → chọn board **Seeed XIAO nRF52840 Sense**.
+2. Boards Manager → cài **Seeed nRF52 Boards** (1.1.13) → chọn board **Seeed XIAO nRF52840 Sense**.
 3. Library Manager → cài: SparkFun MAX3010x Pulse and Proximity Sensor Library, OneWire,
-   DallasTemperature, Adafruit GC9A01A, Adafruit GFX Library, Seeed Arduino LSM6DS3.
+   DallasTemperature, Adafruit GC9A01A (chọn *Install all* để cài kèm Adafruit GFX, BusIO), Seeed Arduino LSM6DS3.
+4. Mở `firmware/kiem_tra_thu_vien` và bấm Verify để kiểm tra. Phiên bản đã kiểm chứng và các lỗi
+   thường gặp: [`firmware/README.md`](firmware/README.md).
+
+**Vỏ thiết bị:** Onshape (gói Education, đăng ký bằng email sinh viên), xuất STL vào `hardware/enclosure/`.
 
 **Thuật toán (Python 3.10+)**
 ```
@@ -65,6 +69,15 @@ pip install numpy scipy matplotlib wfdb pandas
 | M2 | 01/11/2026 | Breadboard đo đủ chỉ số qua BLE; đã đặt mạch JLCPCB |
 | M3 | 22/11/2026 | Thiết bị đeo tay chạy đầu-cuối ổn định 24 giờ |
 | M4 | 06/12/2026 | Bản thảo báo cáo đầy đủ gửi GVHD |
+
+## Tài liệu và công cụ của nhóm
+
+| Ở đâu | Có gì |
+|---|---|
+| [`docs/nhat-ky.md`](docs/nhat-ky.md) | Nhật ký thực hiện và các quyết định theo ngày |
+| [`docs/mua-sam/`](docs/mua-sam/) | Danh sách mua linh kiện, máy đo đối chứng, ngân sách |
+| Trello: bảng *Đồ án – Thiết bị đeo tay giám sát sức khỏe* | Việc từng tuần, mốc; báo cáo tiến độ tự động tối Chủ Nhật |
+| Google Drive: thư mục *Đồ án tốt nghiệp – Thiết bị đeo tay giám sát sức khỏe* | Datasheet, dữ liệu đo dài, báo cáo, ảnh/video, file phát hành mạch và vỏ, giấy tờ |
 
 ## Làm việc với Git trên máy
 
