@@ -1,0 +1,41 @@
+# Hệ điều hành, trình soạn thảo
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Arduino / firmware
+build/
+*.bin
+*.hex
+*.elf
+*.uf2
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.env
+
+# Dữ liệu tải về (MIT-BIH, BIDMC...) — tải lại bằng script, không đẩy lên
+algorithm/datasets/
+
+# Flutter / Dart
+app/**/.dart_tool/
+app/**/build/
+app/**/.flutter-plugins
+app/**/.flutter-plugins-dependencies
+app/**/android/local.properties
+app/**/android/app/google-services.json
+
+# KiCad
+hardware/pcb/*-backups/
+hardware/pcb/**/*.lck
+hardware/pcb/**/fp-info-cache
+hardware/pcb/**/_autosave-*
+
+# Khóa bí mật (API SMS, Firebase)
+*.key
+secrets.*
