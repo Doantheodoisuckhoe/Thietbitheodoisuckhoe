@@ -1,0 +1,16 @@
+# Chuẩn hóa xuống dòng: lưu LF trong repo, Windows tự đổi sang CRLF khi checkout
+* text=auto
+
+# File nhị phân — không đổi xuống dòng, không so sánh từng dòng
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.stl   binary
+*.step  binary
+*.f3d   binary
+*.zip   binary
+*.docx  binary
+*.xlsx  binary
+*.pptx  binary

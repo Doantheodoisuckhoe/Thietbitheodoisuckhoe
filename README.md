@@ -66,6 +66,19 @@ pip install numpy scipy matplotlib wfdb pandas
 | M3 | 22/11/2026 | Thiết bị đeo tay chạy đầu-cuối ổn định 24 giờ |
 | M4 | 06/12/2026 | Bản thảo báo cáo đầy đủ gửi GVHD |
 
+## Làm việc với Git trên máy
+
+Thư mục làm việc trên máy SV1: `C:\DoAnTotNghiep` (bản clone của repo này).
+
+1. Trước khi làm: mở Git Bash trong thư mục đó, chạy `git pull` để lấy thay đổi mới nhất.
+2. Sau khi làm xong một việc nhỏ:
+   ```
+   git add .
+   git commit -m "firmware: mô tả ngắn việc vừa làm"
+   git push
+   ```
+3. Lần đầu `git push`, Windows sẽ mở cửa sổ đăng nhập GitHub — đăng nhập một lần là xong.
+
 ## Quy ước làm việc
 
 - Mỗi người làm trên nhánh riêng (`sv1/...`, `sv2/...`), gộp vào `main` khi chạy được.
