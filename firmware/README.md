@@ -5,6 +5,9 @@ Code Arduino cho đồng hồ. Mỗi thư mục con là một sketch mở đư�
 | Sketch | Mục đích | Trạng thái |
 |---|---|---|
 | `kiem_tra_thu_vien/` | Kiểm tra đã cài đủ thư viện; khi cắm cảm biến thì báo MAX30102, DS18B20, IMU có được nhận không | Biên dịch được (05/10/2026), chưa chạy trên board |
+| `doc_max30102/` | Đọc MAX30102 ở 100 mẫu/giây, in CSV `t_ms,red,ir` ra Serial cho SV2 phân tích | Biên dịch được (11/10/2026), chưa chạy trên board |
+| `doc_ad8232/` | Lấy mẫu ECG từ AD8232 ở 250 mẫu/giây bằng timer phần cứng (TIMER4), in CSV `t_ms,ecg,tuot_dien_cuc` | Biên dịch được (11/10/2026), chưa chạy trên board |
+| `ble_nhip_tim/` | Tính nhịp tim từ MAX30102, gửi lên điện thoại qua BLE Heart Rate Service mỗi giây; thử bằng app nRF Connect | Biên dịch được (11/10/2026), chưa chạy trên board |
 
 ## Môi trường đã kiểm chứng (máy SV1, 05/10/2026)
 
@@ -38,7 +41,22 @@ Bluefruit cho BLE và chế độ ngủ tiết kiệm pin tốt hơn.
    Gia toc Z (g): 1.0xx      <- board nằm phẳng
    ```
 
-Chân dùng tạm trong sketch: DS18B20 → D2; màn hình GC9A01: CS → D7, DC → D6; MAX30102 và IMU qua I2C.
+Chân dùng tạm trên breadboard:
+
+| Linh kiện | Chân XIAO |
+|---|---|
+| MAX30102 | SDA → D4, SCL → D5 (I2C, dùng chung với IMU) |
+| AD8232 | OUTPUT → A0 (D0), LO+ → D1, LO- → D3 |
+| DS18B20 | DATA → D2 |
+| Màn hình GC9A01 | CS → D7, DC → D6, SCK → D8, MOSI → D10 |
+
+## Lưu dữ liệu CSV để phân tích
+
+Sketch `doc_max30102` và `doc_ad8232` in mỗi mẫu thành một dòng CSV. Để lưu thành file: đóng Serial Monitor
+của Arduino IDE (chỉ một chương trình được mở cổng COM), rồi dùng một chương trình đọc cổng nối tiếp ghi ra file,
+ví dụ script Python với thư viện `pyserial`. Dòng bắt đầu bằng `#` là thông báo, không phải dữ liệu.
+
+Đo ECG chỉ khi XIAO chạy pin hoặc cắm laptop đang **rút sạc**, không đo khi laptop cắm điện lưới.
 
 ## Lỗi đã gặp và cách xử lý
 
