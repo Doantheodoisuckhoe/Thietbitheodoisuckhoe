@@ -39,3 +39,4 @@ hardware/pcb/**/_autosave-*
 # Khóa bí mật (API SMS, Firebase)
 *.key
 secrets.*
+hardware/pcb/**/*.kicad_prl
