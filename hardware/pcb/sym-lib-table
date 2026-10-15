@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "DoAn")(type "KiCad")(uri "${KIPRJMOD}/lib/DoAn.kicad_sym")(options "")(descr "Ký hiệu riêng của đồ án: AD8232, MAX30101, XIAO nRF52840"))
+)
