@@ -8,6 +8,7 @@ Code Arduino cho đồng hồ. Mỗi thư mục con là một sketch mở đư�
 | `doc_max30102/` | Đọc MAX30102 ở 100 mẫu/giây, in CSV `t_ms,red,ir` ra Serial cho SV2 phân tích | Biên dịch được (11/10/2026), chưa chạy trên board |
 | `doc_ad8232/` | Lấy mẫu ECG từ AD8232 ở 250 mẫu/giây bằng timer phần cứng (TIMER4), in CSV `t_ms,ecg,tuot_dien_cuc` | Biên dịch được (11/10/2026), chưa chạy trên board |
 | `ble_nhip_tim/` | Tính nhịp tim từ MAX30102, gửi lên điện thoại qua BLE Heart Rate Service mỗi giây; thử bằng app nRF Connect | Biên dịch được (11/10/2026), chưa chạy trên board |
+| `ghi_imu/` | Ghi gia tốc và con quay của IMU trên board ở 100 mẫu/giây, in CSV `t_ms,ax,ay,az,gx,gy,gz` để thu dữ liệu té ngã (xem `algorithm/te_nga/README.md`) | Biên dịch được (17/10/2026), chưa chạy trên board |
 
 ## Môi trường đã kiểm chứng (máy SV1, 05/10/2026)
 
