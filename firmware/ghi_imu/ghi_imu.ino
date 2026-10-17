@@ -44,6 +44,9 @@ void loop() {
   static uint32_t dem = 0;
   if ((int32_t)(micros() - lanToi) < 0) return;
   lanToi += CHU_KY_US;
+  // Khi may tinh khong doc Serial, lenh in bi chan va chuong trinh tre lich. Khong chay bu
+  // (se lay mau doan nhanh hon 100 Hz), ma dat lai lich tu thoi diem hien tai.
+  if ((int32_t)(micros() - lanToi) > (int32_t)CHU_KY_US) lanToi = micros() + CHU_KY_US;
 
   // In bang Serial.print vi printf cua mot so loi Arduino khong ho tro so thuc.
   Serial.print(millis());
