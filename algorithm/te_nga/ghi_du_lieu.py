@@ -23,9 +23,14 @@ def ghi_mot_lan(cong, nhan, so_giay):
     for i in (3, 2, 1):
         print(f"  {i}...")
         time.sleep(1)
+    # Bo du lieu cu con nam trong bo dem cua board va may tinh truoc khi ghi.
     cong.reset_input_buffer()
+    bo_qua_den = time.time() + 0.5
+    while time.time() < bo_qua_den:
+        cong.readline()
     print(f"  DANG GHI {so_giay} giay: thuc hien dong tac '{nhan}' ngay")
     so_dong = 0
+    t_dau = t_cuoi = None
     het_gio = time.time() + so_giay
     with open(ten, "w", newline="") as f:
         f.write(TIEU_DE + "\n")
@@ -34,9 +39,13 @@ def ghi_mot_lan(cong, nhan, so_giay):
             if dong and dong[0].isdigit() and dong.count(",") == 6:
                 f.write(dong + "\n")
                 so_dong += 1
-    print(f"  Xong: {so_dong} mau -> {ten}")
-    if so_dong < so_giay * 80:
-        print("  CANH BAO: it mau hon du kien (100 mau/giay). Kiem tra cong COM va sketch ghi_imu.")
+                t = int(dong.split(",")[0])
+                t_dau = t if t_dau is None else t_dau
+                t_cuoi = t
+    tan_so = so_dong * 1000 / (t_cuoi - t_dau) if so_dong > 1 and t_cuoi > t_dau else 0
+    print(f"  Xong: {so_dong} mau, {tan_so:.0f} mau/giay -> {ten}")
+    if not 90 <= tan_so <= 110:
+        print("  CANH BAO: tan so khac 100 mau/giay. Nap lai sketch ghi_imu ban moi nhat.")
 
 
 def main():
