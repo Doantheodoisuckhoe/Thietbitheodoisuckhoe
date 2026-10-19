@@ -40,3 +40,8 @@ hardware/pcb/**/_autosave-*
 *.key
 secrets.*
 hardware/pcb/**/*.kicad_prl
+
+# Server, kiểm thử
+.pytest_cache/
+*.db
+server/secrets/
