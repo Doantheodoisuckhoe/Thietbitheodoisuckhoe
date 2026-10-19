@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HealthWatch</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- ===================== Đăng nhập ===================== -->
+  <section id="auth-view" class="auth hidden">
+    <div class="auth-card">
+      <h1>HealthWatch</h1>
+      <p class="muted">Giám sát sức khỏe người cao tuổi</p>
+      <form id="login-form">
+        <label>Email <input name="email" type="email" required autocomplete="username"></label>
+        <label>Mật khẩu <input name="password" type="password" required autocomplete="current-password"></label>
+        <div class="reg-only hidden">
+          <label>Họ tên <input name="full_name"></label>
+          <label>Số điện thoại (nhận SMS) <input name="phone" placeholder="+84..."></label>
+        </div>
+        <button type="submit" class="primary" id="auth-submit">Đăng nhập</button>
+        <p class="error" id="auth-error"></p>
+        <p class="muted small"><a href="#" id="toggle-register">Chưa có tài khoản? Đăng ký</a></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== Ứng dụng ===================== -->
+  <section id="app-view" class="hidden">
+    <header class="topbar">
+      <div class="brand">HealthWatch</div>
+      <div class="spacer"></div>
+      <span id="me-name" class="muted"></span>
+      <button id="logout" class="ghost">Đăng xuất</button>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h3>Người được theo dõi</h3>
+        <ul id="patient-list"></ul>
+        <details class="add-patient">
+          <summary>+ Thêm người</summary>
+          <form id="patient-form">
+            <input name="full_name" placeholder="Họ tên" required>
+            <input name="birth_year" type="number" placeholder="Năm sinh">
+            <input name="phone" placeholder="Số điện thoại">
+            <button class="primary" type="submit">Thêm</button>
+          </form>
+        </details>
+      </aside>
+
+      <main id="main">
+        <div id="empty-state" class="empty">Chọn hoặc thêm một người để bắt đầu theo dõi.</div>
+
+        <div id="patient-view" class="hidden">
+          <div class="patient-head">
+            <h2 id="p-name"></h2>
+            <span id="p-device" class="chip"></span>
+          </div>
+          <div id="open-alert-banner" class="banner hidden"></div>
+
+          <nav class="tabs">
+            <button data-tab="overview" class="active">Tổng quan</button>
+            <button data-tab="alerts">Cảnh báo</button>
+            <button data-tab="ecg">ECG &amp; Huyết áp</button>
+            <button data-tab="settings">Cài đặt</button>
+          </nav>
+
+          <!-- Tổng quan -->
+          <div class="tab" id="tab-overview">
+            <div class="cards">
+              <div class="card"><div class="label">Nhịp tim</div><div class="value" id="c-hr">–</div><div class="sub" id="c-hr-sub"></div></div>
+              <div class="card"><div class="label">SpO2</div><div class="value" id="c-spo2">–</div><div class="sub" id="c-spo2-sub"></div></div>
+              <div class="card"><div class="label">Nhiệt độ da</div><div class="value" id="c-temp">–</div><div class="sub" id="c-temp-sub"></div></div>
+              <div class="card"><div class="label">Huyết áp (ước lượng)</div><div class="value" id="c-bp">–</div><div class="sub" id="c-bp-sub"></div></div>
+              <div class="card"><div class="label">Đồng hồ</div><div class="value" id="c-bat">–</div><div class="sub" id="c-seen"></div></div>
+            </div>
+            <div class="range">
+              Khoảng thời gian:
+              <select id="range">
+                <option value="6">6 giờ</option>
+                <option value="24" selected>24 giờ</option>
+                <option value="168">7 ngày</option>
+              </select>
+            </div>
+            <div class="charts">
+              <div class="chart-box"><h4>Nhịp tim (lần/phút)</h4><canvas id="ch-hr"></canvas></div>
+              <div class="chart-box"><h4>SpO2 (%)</h4><canvas id="ch-spo2"></canvas></div>
+              <div class="chart-box"><h4>Nhiệt độ da (°C)</h4><canvas id="ch-temp"></canvas></div>
+              <div class="chart-box"><h4>Mức vận động</h4><canvas id="ch-act"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Cảnh báo -->
+          <div class="tab hidden" id="tab-alerts">
+            <div class="row">
+              <select id="alert-filter">
+                <option value="">Tất cả</option>
+                <option value="open">Chưa xác nhận</option>
+                <option value="acknowledged">Đã xác nhận</option>
+                <option value="resolved">Đã xử lý</option>
+              </select>
+            </div>
+            <table class="table">
+              <thead><tr><th>Thời điểm</th><th>Mức</th><th>Nội dung</th><th>Trạng thái</th><th>Độ trễ</th><th></th></tr></thead>
+              <tbody id="alert-rows"></tbody>
+            </table>
+          </div>
+
+          <!-- ECG & huyết áp -->
+          <div class="tab hidden" id="tab-ecg">
+            <div class="two-col">
+              <div>
+                <h4>Các lần đo ECG</h4>
+                <table class="table">
+                  <thead><tr><th>Thời điểm</th><th>HR</th><th>PAT</th><th>HA ước lượng</th><th></th></tr></thead>
+                  <tbody id="ecg-rows"></tbody>
+                </table>
+              </div>
+              <div>
+                <h4>Hiệu chuẩn huyết áp</h4>
+                <p class="muted small">Đo ECG trên đồng hồ và đo máy huyết áp vòng bít <b>cùng lúc</b>, rồi nhập kết quả máy vòng bít cho lần đo ECG đó. Nên có ≥ 3 điểm ở các mức huyết áp khác nhau và hiệu chuẩn lại mỗi 2–4 tuần.</p>
+                <form id="cal-form" class="inline-form">
+                  <select name="ecg_id" id="cal-ecg" required></select>
+                  <input name="sbp_ref" type="number" placeholder="Tâm thu" required min="60" max="250">
+                  <input name="dbp_ref" type="number" placeholder="Tâm trương" required min="35" max="150">
+                  <button class="primary" type="submit">Lưu</button>
+                </form>
+                <p id="bp-model" class="muted small"></p>
+                <table class="table">
+                  <thead><tr><th>Thời điểm</th><th>PAT</th><th>Vòng bít</th><th></th></tr></thead>
+                  <tbody id="cal-rows"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="chart-box wide hidden" id="ecg-view">
+              <h4 id="ecg-title">ECG</h4>
+              <canvas id="ecg-canvas" height="220"></canvas>
+            </div>
+          </div>
+
+          <!-- Cài đặt -->
+          <div class="tab hidden" id="tab-settings">
+            <div class="two-col">
+              <form id="th-form" class="settings">
+                <h4>Ngưỡng cảnh báo</h4>
+                <fieldset><legend>SpO2 (%)</legend>
+                  <label>Cảnh báo dưới <input name="spo2_warning" type="number" step="1"></label>
+                  <label>Nguy hiểm dưới <input name="spo2_danger" type="number" step="1"></label>
+                  <label>Số lần đo liên tiếp <input name="spo2_consecutive" type="number" min="1"></label>
+                </fieldset>
+                <fieldset><legend>Nhịp tim lúc nghỉ (lần/phút)</legend>
+                  <label>Thấp hơn <input name="hr_low" type="number"></label>
+                  <label>Cao hơn <input name="hr_high" type="number"></label>
+                  <label>Kéo dài (giây) <input name="hr_persist_s" type="number"></label>
+                </fieldset>
+                <fieldset><legend>Nhiệt độ da</legend>
+                  <label>Tăng so với mức nền (°C) <input name="temp_rise" type="number" step="0.1"></label>
+                  <label>Kéo dài (giây) <input name="temp_persist_s" type="number"></label>
+                </fieldset>
+                <fieldset><legend>Huyết áp tâm thu ước lượng (mmHg)</legend>
+                  <label>Xu hướng từ <input name="sbp_warning" type="number"></label>
+                  <label>trong số ngày <input name="bp_trend_days" type="number" min="1"></label>
+                  <label>Nguy hiểm từ <input name="sbp_danger" type="number"></label>
+                </fieldset>
+                <fieldset><legend>Vận động &amp; té ngã</legend>
+                  <label>Không cử động (giờ) <input name="inactivity_hours" type="number" step="0.5"></label>
+                  <label>Ban ngày từ (giờ) <input name="day_start_hour" type="number" min="0" max="23"></label>
+                  <label>đến (giờ) <input name="day_end_hour" type="number" min="1" max="24"></label>
+                  <label class="check"><input name="fall_enabled" type="checkbox"> Cảnh báo té ngã</label>
+                </fieldset>
+                <fieldset><legend>Leo thang push → SMS (giây)</legend>
+                  <label>Mức nguy hiểm <input name="escalation_danger_s" type="number"></label>
+                  <label>Mức cảnh báo <input name="escalation_warning_s" type="number"></label>
+                  <label>Không lặp cảnh báo trong (phút) <input name="cooldown_min" type="number"></label>
+                </fieldset>
+                <button class="primary" type="submit">Lưu ngưỡng</button>
+                <span id="th-msg" class="muted small"></span>
+              </form>
+
+              <div class="settings">
+                <h4>Người nhà nhận cảnh báo</h4>
+                <table class="table"><tbody id="cg-rows"></tbody></table>
+                <form id="cg-form" class="inline-form">
+                  <input name="email" type="email" placeholder="Email (đã đăng ký)" required>
+                  <input name="relation" placeholder="Quan hệ">
+                  <input name="priority" type="number" value="2" min="1" title="Thứ tự ưu tiên">
+                  <label class="check"><input name="receive_sms" type="checkbox" checked> SMS</label>
+                  <button class="primary" type="submit">Thêm</button>
+                </form>
+
+                <h4>Thiết bị</h4>
+                <table class="table"><tbody id="dev-rows"></tbody></table>
+                <form id="dev-form" class="inline-form">
+                  <input name="name" placeholder="Tên thiết bị" value="HealthWatch">
+                  <button class="primary" type="submit">Đăng ký thiết bị</button>
+                </form>
+                <div id="dev-key" class="keybox hidden"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <div id="toasts"></div>
+  <script src="app.js"></script>
+</body>
+</html>

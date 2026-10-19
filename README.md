@@ -25,12 +25,15 @@ App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
 |---|---|---|
 | `firmware/` | Code Arduino/C cho XIAO nRF52840: đọc cảm biến, xử lý tín hiệu, BLE | SV1 |
 | `algorithm/` | Thuật toán viết và kiểm thử bằng Python (nhịp tim, SpO2, Pan-Tompkins, PAT, té ngã) | SV2 |
-| `app/` | App Flutter cho người đeo và người nhà; web dashboard (Flutter Web) | SV2 |
-| `server/` | Backend FastAPI, cơ sở dữ liệu, bộ xử lý cảnh báo, gửi push/SMS | SV2 |
+| `app/` | App Flutter cho người đeo (kết nối đồng hồ qua BLE) và người nhà | SV2 |
+| `server/` | Backend FastAPI, cơ sở dữ liệu, bộ xử lý cảnh báo, gửi push/SMS; web dashboard trong `server/web_dashboard/` | SV2 |
 | `hardware/pcb/` | File KiCad: sơ đồ nguyên lý, layout, Gerber, BOM, CPL | SV1 |
 | `hardware/enclosure/` | File thiết kế vỏ (Fusion 360, STL) | SV1 |
 | `data/` | Dữ liệu đo thô (CSV) và kết quả kiểm chứng | Chung |
 | `docs/` | Tài liệu, hình ảnh cho báo cáo | Chung |
+
+Cách chạy từng phần của code hệ thống (firmware chính `firmware/health_watch`, thuật toán, server,
+dashboard, app) và kết quả đã kiểm tra: [`docs/huong-dan-code.md`](docs/huong-dan-code.md).
 
 ## Phần cứng
 
@@ -58,7 +61,9 @@ App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
 
 **Thuật toán (Python 3.10+)**
 ```
-pip install numpy scipy matplotlib wfdb pandas
+pip install -r algorithm/requirements.txt
+cd algorithm
+python -m pytest -q
 ```
 
 ## Mốc tiến độ
@@ -76,6 +81,8 @@ pip install numpy scipy matplotlib wfdb pandas
 |---|---|
 | [`docs/nhat-ky.md`](docs/nhat-ky.md) | Nhật ký thực hiện và các quyết định theo ngày |
 | [`docs/mua-sam/`](docs/mua-sam/) | Danh sách mua linh kiện, máy đo đối chứng, ngân sách |
+| [`docs/huong-dan-code.md`](docs/huong-dan-code.md) | Hướng dẫn chạy firmware, thuật toán, server, dashboard, app |
+| [`docs/ble_protocol.md`](docs/ble_protocol.md) | Giao thức BLE giữa đồng hồ và app |
 | Trello: bảng *Đồ án – Thiết bị đeo tay giám sát sức khỏe* | Việc từng tuần, mốc; báo cáo tiến độ tự động tối Chủ Nhật |
 | Google Drive: thư mục *Đồ án tốt nghiệp – Thiết bị đeo tay giám sát sức khỏe* | Datasheet, dữ liệu đo dài, báo cáo, ảnh/video, file phát hành mạch và vỏ, giấy tờ |
 

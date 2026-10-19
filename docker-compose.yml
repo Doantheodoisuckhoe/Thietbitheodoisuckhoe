@@ -1,0 +1,35 @@
+# Chạy toàn bộ phía server:  docker compose up -d --build
+# Dashboard: http://localhost:8000/dashboard   API docs: http://localhost:8000/docs
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: healthwatch
+      POSTGRES_PASSWORD: healthwatch
+      POSTGRES_DB: healthwatch
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthwatch"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - path: server/.env        # cp server/.env.example server/.env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg://healthwatch:healthwatch@db:5432/healthwatch
+      # FIREBASE_CREDENTIALS: /srv/server/secrets/firebase.json
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./server/secrets:/srv/server/secrets:ro   # đặt file Firebase JSON ở đây
+
+volumes:
+  pgdata:
