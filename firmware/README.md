@@ -4,6 +4,7 @@ Code Arduino cho đồng hồ. Mỗi thư mục con là một sketch mở đư�
 
 | Sketch | Mục đích | Trạng thái |
 |---|---|---|
+| `kiem_tra_chan/` | Sau khi hàn header vào XIAO: tìm chân D0-D10 bị chập GND, chập 3V3 hoặc dính nhau (rút hết dây trước khi chạy) | Biên dịch được (21/10/2026), chưa chạy trên board |
 | `test_breadboard/` | **Bắt đầu từ đây khi cắm breadboard.** Test cùng lúc MAX30102, MAX30205, AD8232, IMU, nút SOS theo đúng chân mạch in `hardware/pcb_module`; có sơ đồ cắm dây trong README của thư mục | Biên dịch được (21/10/2026), chưa chạy trên board |
 | `kiem_tra_thu_vien/` | Kiểm tra đã cài đủ thư viện; khi cắm cảm biến thì báo MAX30102, DS18B20, IMU có được nhận không | Biên dịch được (05/10/2026), chưa chạy trên board |
 | `doc_max30102/` | Đọc MAX30102 ở 100 mẫu/giây, in CSV `t_ms,red,ir` ra Serial cho SV2 phân tích | Biên dịch được (11/10/2026), chưa chạy trên board |
