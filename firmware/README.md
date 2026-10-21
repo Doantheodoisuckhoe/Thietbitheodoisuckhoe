@@ -4,6 +4,7 @@ Code Arduino cho đồng hồ. Mỗi thư mục con là một sketch mở đư�
 
 | Sketch | Mục đích | Trạng thái |
 |---|---|---|
+| `test_breadboard/` | **Bắt đầu từ đây khi cắm breadboard.** Test cùng lúc MAX30102, MAX30205, AD8232, IMU, nút SOS theo đúng chân mạch in `hardware/pcb_module`; có sơ đồ cắm dây trong README của thư mục | Biên dịch được (21/10/2026), chưa chạy trên board |
 | `kiem_tra_thu_vien/` | Kiểm tra đã cài đủ thư viện; khi cắm cảm biến thì báo MAX30102, DS18B20, IMU có được nhận không | Biên dịch được (05/10/2026), chưa chạy trên board |
 | `doc_max30102/` | Đọc MAX30102 ở 100 mẫu/giây, in CSV `t_ms,red,ir` ra Serial cho SV2 phân tích | Biên dịch được (11/10/2026), chưa chạy trên board |
 | `doc_ad8232/` | Lấy mẫu ECG từ AD8232 ở 250 mẫu/giây bằng timer phần cứng (TIMER4), in CSV `t_ms,ecg,tuot_dien_cuc` | Biên dịch được (11/10/2026), chưa chạy trên board |
@@ -42,14 +43,17 @@ Bluefruit cho BLE và chế độ ngủ tiết kiệm pin tốt hơn.
    Gia toc Z (g): 1.0xx      <- board nằm phẳng
    ```
 
-Chân dùng tạm trên breadboard:
+Chân trên breadboard và mạch in (xem sơ đồ trong `test_breadboard/README.md`):
 
 | Linh kiện | Chân XIAO |
 |---|---|
-| MAX30102 | SDA → D4, SCL → D5 (I2C, dùng chung với IMU) |
-| AD8232 | OUTPUT → A0 (D0), LO+ → D1, LO- → D3 |
-| DS18B20 | DATA → D2 |
-| Màn hình GC9A01 | CS → D7, DC → D6, SCK → D8, MOSI → D10 |
+| MAX30102 (0x57), MAX30205 (0x48) | SDA → D4, SCL → D5. IMU trên XIAO nằm ở bus I2C riêng bên trong, không chung D4/D5 |
+| AD8232 | OUTPUT → A0 (D0), LO+ → D1, LO- → D3 (breadboard). Mạch in: LO+ và LO- gộp vào D1 qua 2 diode |
+| Nút SOS | D9 → GND (INPUT_PULLUP) |
+| Động cơ rung | D2 qua MOSFET AO3400A, không nối thẳng |
+| Màn hình GC9A01 | CS → D7, DC → D6, SCL → D8, SDA → D10, BLK → D3 (mạch in), RST không dùng (-1) |
+
+`kiem_tra_thu_vien` còn dùng DS18B20 ở D2 theo phương án cũ; phương án cuối đã bỏ DS18B20.
 
 ## Lưu dữ liệu CSV để phân tích
 
@@ -67,7 +71,7 @@ ví dụ script Python với thư viện `pyserial`. Dòng bắt đầu bằng `
   `Documents\Arduino\libraries` có nhiều bản GFX cũ. Dời các bản cũ ra ngoài thư mục `libraries`
   (trên máy SV1 đã dời sang `Documents\Arduino\_thu_vien_cu_backup`), rồi cài lại GC9A01A và chọn **Install all**.
 - **Cảnh báo `OneWire. Fallback mode` khi biên dịch:** OneWire chưa có code tối ưu riêng cho nRF52 nên dùng
-  `digitalRead/digitalWrite`. Chỉ là cảnh báo; DS18B20 vẫn chạy. Bản mạch thật dùng TMP117 qua I2C nên
+  `digitalRead/digitalWrite`. Chỉ là cảnh báo; DS18B20 vẫn chạy. Bản mạch thật dùng MAX30205 qua I2C nên
   không còn phụ thuộc OneWire.
 - **MAX30102 không trả lời I2C:** nhiều module giá rẻ (mạch tím) có điện trở kéo lên I2C nối vào 1,8 V,
   thấp hơn mức logic cao của XIAO (3,3 V). Nếu gặp, chuyển điện trở kéo lên sang 3,3 V (cắt/hàn lại jumper
