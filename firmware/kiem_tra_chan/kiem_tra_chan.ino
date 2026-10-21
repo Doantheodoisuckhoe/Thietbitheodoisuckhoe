@@ -9,6 +9,8 @@
 //   1. Bat dien tro keo len ben trong: chan phai doc HIGH. Doc LOW = chap xuong GND.
 //   2. Bat dien tro keo xuong ben trong: chan phai doc LOW. Doc HIGH = chap len 3V3.
 //   3. Keo mot chan xuong LOW, cac chan khac de keo len: chan nao cung bi LOW theo = hai chan chap nhau.
+// Khong phat hien duoc chan HAN HO (thiec khong an vao XIAO): xem muc 'Moi han ho' trong README,
+// thu bang day noi 2 chan canh nhau.
 // Dien tro keo ben trong chi khoang 13 kOhm nen dong rat nho, khong hai board du co chap.
 
 #include <Adafruit_TinyUSB.h>
