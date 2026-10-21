@@ -1,4 +1,9 @@
-# Mạch in đồng hồ (KiCad)
+# Mạch in đồng hồ (KiCad) – bản chip rời 40 × 40 mm (lưu trữ)
+
+> **Lưu trữ – hướng phát triển.** Từ 21/10/2026 nhóm làm mạch theo phương án **ghép module**
+> (XIAO cắm header, module MAX30102, AD8232, MAX30205), xem [`../pcb_module/`](../pcb_module/README.md).
+> Bản chip rời dưới đây (MAX30101, AD8232, TMP117 hàn sẵn ở JLCPCB, 40 × 40 mm) giữ lại làm
+> hướng phát triển khi thu nhỏ thiết bị; chưa có layout và không cần sửa cùng bản module.
 
 Bản 0.1 (15/10/2026): **mới có sơ đồ nguyên lý**, chưa có layout PCB. ERC: 0 lỗi, 0 cảnh báo (KiCad 10.0.7).
 

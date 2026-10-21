@@ -10,7 +10,7 @@ phát hiện té ngã, gửi cảnh báo tự động đến người thân qua 
 ## Kiến trúc
 
 ```
-Đồng hồ (XIAO nRF52840 Sense + MAX30101 + AD8232 + TMP117)
+Đồng hồ (XIAO nRF52840 Sense + module MAX30102 + AD8232 + MAX30205)
    │ BLE
    ▼
 App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
@@ -27,7 +27,8 @@ App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
 | `algorithm/` | Thuật toán viết và kiểm thử bằng Python (nhịp tim, SpO2, Pan-Tompkins, PAT, té ngã) | SV2 |
 | `app/` | App Flutter cho người đeo và người nhà; web dashboard (Flutter Web) | SV2 |
 | `server/` | Backend FastAPI, cơ sở dữ liệu, bộ xử lý cảnh báo, gửi push/SMS | SV2 |
-| `hardware/pcb/` | File KiCad: sơ đồ nguyên lý, layout, Gerber, BOM, CPL | SV1 |
+| `hardware/pcb_module/` | KiCad bản ghép module đang làm: sơ đồ, PCB 2 lớp, Gerber, BOM | SV1 |
+| `hardware/pcb/` | KiCad bản chip rời 40 × 40 mm (lưu trữ, hướng phát triển) | SV1 |
 | `hardware/enclosure/` | File thiết kế vỏ (Fusion 360, STL) | SV1 |
 | `data/` | Dữ liệu đo thô (CSV) và kết quả kiểm chứng | Chung |
 | `docs/` | Tài liệu, hình ảnh cho báo cáo | Chung |
@@ -37,11 +38,11 @@ App Android (Flutter) ──Internet──► Server (FastAPI + PostgreSQL)
 | Khối | Linh kiện |
 |---|---|
 | Vi điều khiển + BLE + IMU | Seeed XIAO nRF52840 Sense |
-| PPG (nhịp tim, SpO2) | MAX30101 (thử nghiệm: module MAX30102) |
-| ECG 1 chuyển đạo | AD8232 |
-| Nhiệt độ da | TMP117 (thử nghiệm: DS18B20) |
+| PPG (nhịp tim, SpO2) | Module MAX30102 (bản chip rời MAX30101 để hướng phát triển) |
+| ECG 1 chuyển đạo | Module AD8232 |
+| Nhiệt độ da | Module MAX30205 (CJMCU-30205) |
 | Hiển thị, cảnh báo | Màn hình tròn 1,28" GC9A01, motor rung, nút SOS |
-| Nguồn | Pin LiPo 200–250 mAh, sạc qua chân pogo |
+| Nguồn | Pin LiPo 603040 (có mạch bảo vệ), sạc qua chân pogo nam châm |
 
 ## Cài đặt môi trường
 
