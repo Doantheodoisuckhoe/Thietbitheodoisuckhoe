@@ -40,3 +40,10 @@ hardware/pcb/**/_autosave-*
 *.key
 secrets.*
 hardware/pcb/**/*.kicad_prl
+hardware/pcb_module/*-backups/
+hardware/pcb_module/**/*.lck
+hardware/pcb_module/**/fp-info-cache
+hardware/pcb_module/**/_autosave-*
+hardware/pcb_module/**/*.kicad_prl
+hardware/pcb_module/.history/
+hardware/pcb_module/cong_cu/*.net

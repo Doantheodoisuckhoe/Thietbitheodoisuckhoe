@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "DoAnModule")(type "KiCad")(uri "${KIPRJMOD}/lib/DoAnModule.kicad_sym")(options "")(descr "Ký hiệu riêng: XIAO cắm header, module MAX30102, CJMCU-30205, AD8232, màn GC9A01"))
+)
