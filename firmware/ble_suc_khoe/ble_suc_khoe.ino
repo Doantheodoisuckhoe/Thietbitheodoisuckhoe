@@ -304,7 +304,9 @@ void capNhatTeNga() {
 // ============================================================
 // Nhip tim va SpO2 (MAX30102, 100 mau/giay)
 // ============================================================
-// Nhip tim: tim dinh song IR sau khi bo thanh phan mot chieu.
+// Nhip tim: loc IR 0,5-5 Hz, lay dao ham, tu tuong quan (autocorrelation) trong cua so 6 giay.
+//   Cach nay chiu duoc nen troi do ngon tay xe dich (do thu 24/10: nen troi lon hon ca nhip tim,
+//   cach tim dinh cu khong bat duoc nhip nao). Thu bang song gia: algorithm/nhip_tim/thu_nhip_tim.py
 // SpO2: ty so R = (AC do / DC do) / (AC IR / DC IR) trong cua so 4 giay, SpO2 ~ 110 - 25R.
 // Cong thuc nay la cong thuc chung, CHUA hieu chuan; se chinh he so khi do doi chung voi may kep ngon tay.
 const uint16_t CUA_SO_SPO2 = 400;
@@ -314,14 +316,32 @@ uint16_t soMauCuaSo = 0;
 bool   cuaSoHong = false;
 float  spo2Cac[3]; uint8_t soSpo2 = 0, viTriSpo2 = 0;
 
-float  irLoc = 0, irTruoc = 0, irTruoc2 = 0, nguongDinh = 0;
-uint32_t soMauPpg = 0, mauDinhTruoc = 0;
-uint8_t  cacNhip[6]; uint8_t soNhip = 0, viTriNhip = 0;
+// Bo loc bac 2 (Butterworth, 100 mau/giay): thong cao 0,5 Hz bo nen troi, thong thap 5 Hz bo nhieu.
+struct LocBac2 {
+  float b0, b1, b2, a1, a2, z1, z2;
+  float loc(float x) {
+    float y = b0 * x + z1;
+    z1 = b1 * x - a1 * y + z2;
+    z2 = b2 * x - a2 * y;
+    return y;
+  }
+};
+LocBac2 locCao = { 0.97803048f, -1.95606096f, 0.97803048f, -1.95557824f, 0.95654368f, 0, 0 };
+LocBac2 locThap = { 0.02008337f, 0.04016673f, 0.02008337f, -1.56101808f, 0.64135154f, 0, 0 };
+
+const uint16_t CUA_SO_NHIP = 600;              // 6 giay
+const uint8_t  TRE_MIN = 30, TRE_MAX = 150;    // khoang giua 2 nhip: 0,3-1,5 giay = 200-40 lan/phut
+float    songNhip[CUA_SO_NHIP];
+uint16_t viTriSong = 0;
+uint32_t soMauPpg = 0;                         // so mau tu luc dat tay
+float    locTruoc = 0;
+uint8_t  cacNhip[3]; uint8_t soNhip = 0, viTriNhip = 0;
 uint32_t lanCoNhipCuoi = 0;
 
 void xoaPpg() {
   soNhip = viTriNhip = soSpo2 = viTriSpo2 = 0;
   nhipTim = spo2 = 0;
+  soMauPpg = 0;
   dcDo = dcIr = 0;
   cuaSoHong = true;
 }
@@ -334,8 +354,50 @@ uint8_t trungVi(const uint8_t* a, uint8_t n) {
   return b[n / 2];
 }
 
+// Uoc luong nhip tim tu cua so 6 giay. Tra ve 0 neu song khong ro (nhieu, cu dong).
+uint8_t uocLuongNhipTim() {
+  static float v[CUA_SO_NHIP];
+  float tb = 0;
+  for (uint16_t k = 0; k < CUA_SO_NHIP; k++) { v[k] = songNhip[(viTriSong + k) % CUA_SO_NHIP]; tb += v[k]; }
+  tb /= CUA_SO_NHIP;
+  float r0 = 0, nangLuong[6] = {0};
+  for (uint16_t k = 0; k < CUA_SO_NHIP; k++) {
+    v[k] -= tb;
+    r0 += v[k] * v[k];
+    nangLuong[k / 100] += v[k] * v[k];
+  }
+  if (r0 <= 0) return 0;
+  // Co 1 giay nang luong gap 8 lan giay khac = cu dong manh, bo cua so nay.
+  float nlMin = nangLuong[0], nlMax = nangLuong[0];
+  for (uint8_t j = 1; j < 6; j++) { nlMin = min(nlMin, nangLuong[j]); nlMax = max(nlMax, nangLuong[j]); }
+  if (nlMax > 8 * nlMin) return 0;
+
+  static float r[TRE_MAX + 2];
+  for (uint16_t L = TRE_MIN - 1; L <= TRE_MAX + 1; L++) {
+    float tong = 0;
+    for (uint16_t k = 0; k + L < CUA_SO_NHIP; k++) tong += v[k] * v[k + L];
+    r[L] = tong / r0 * CUA_SO_NHIP / (CUA_SO_NHIP - L);
+  }
+  // Dinh cao nhat trong cac dinh cuc bo
+  uint8_t tot = 0;
+  for (uint8_t L = TRE_MIN; L <= TRE_MAX; L++)
+    if (r[L] >= r[L - 1] && r[L] >= r[L + 1] && (tot == 0 || r[L] > r[tot])) tot = L;
+  if (tot == 0) return 0;
+  // Neu co dinh ngan hon cao gan bang va tot gap 2, 3 lan no thi nhip that la dinh ngan (tranh dem thieu nhip)
+  for (uint8_t L = TRE_MIN; L < tot; L++) {
+    if (r[L] >= r[L - 1] && r[L] >= r[L + 1] && r[L] > 0.8f * r[tot]) {
+      float ti = (float)tot / L; int k = (int)(ti + 0.5f);
+      if (k >= 2 && fabsf(ti - k) < 0.15f * k) { tot = L; break; }
+    }
+  }
+  if (r[tot] < 0.3f) return 0;                 // song khong du giong nhau giua cac nhip
+  float a = r[tot - 1], b = r[tot], c = r[tot + 1];
+  float mau = a - 2 * b + c;
+  float lech = (mau != 0) ? 0.5f * (a - c) / mau : 0;   // noi suy de chinh xac hon 1 mau
+  return (uint8_t)(6000.0f / (tot + lech) + 0.5f);
+}
+
 void xuLyMauPpg(uint32_t doRaw, uint32_t irRaw) {
-  soMauPpg++;
   bool tayTruoc = coTay;
   coTay = irRaw >= NGUONG_CO_TAY;
   if (!coTay) { if (tayTruoc) xoaPpg(); return; }
@@ -367,23 +429,25 @@ void xuLyMauPpg(uint32_t doRaw, uint32_t irRaw) {
     cuaSoHong = false;
   }
 
-  // --- Nhip tim: song PPG dao nguoc (mau nhieu -> IR it), nen tim dinh cua -acIr ---
-  irLoc += (-acIr - irLoc) * 0.3f;            // lam muot nhe
-  nguongDinh *= 0.995f;                       // nguong giam dan theo bien do song
-  if (irLoc > nguongDinh) nguongDinh = irLoc;
-  bool laDinh = irTruoc > irTruoc2 && irTruoc >= irLoc && irTruoc > 0.5f * nguongDinh && irTruoc > 0;
-  irTruoc2 = irTruoc; irTruoc = irLoc;
-  if (!laDinh) return;
+  // --- Nhip tim ---
+  if (soMauPpg == 0) {                         // vua dat tay: dat san trang thai loc de khong bi giat
+    locCao.z1 = -locCao.b0 * irRaw; locCao.z2 = locCao.b2 * irRaw;
+    locThap.z1 = locThap.z2 = 0; locTruoc = 0;
+  }
+  float y = locThap.loc(locCao.loc((float)irRaw));
+  songNhip[viTriSong] = y - locTruoc;          // dao ham: lam ro suon len cua moi nhip
+  locTruoc = y;
+  viTriSong = (viTriSong + 1) % CUA_SO_NHIP;
+  soMauPpg++;
+  if (soMauPpg < CUA_SO_NHIP + 200 || soMauPpg % 100 != 0) return;   // bo 2 giay dau, moi giay tinh 1 lan
 
-  uint32_t khoang = soMauPpg - mauDinhTruoc;   // so mau giua 2 dinh (10 ms/mau)
-  if (khoang < 27) return;                    // > 220 lan/phut: nhieu, bo
-  mauDinhTruoc = soMauPpg;
-  if (khoang > 200) return;                   // < 30 lan/phut: mat nhip truoc do
-  cacNhip[viTriNhip] = 6000 / khoang;
-  viTriNhip = (viTriNhip + 1) % 6;
-  if (soNhip < 6) soNhip++;
+  uint8_t uocLuong = uocLuongNhipTim();
+  if (uocLuong == 0) return;                   // giu so cu; qua 5 giay khong co so moi thi loop() xoa
+  cacNhip[viTriNhip] = uocLuong;
+  viTriNhip = (viTriNhip + 1) % 3;
+  if (soNhip < 3) soNhip++;
   lanCoNhipCuoi = millis();
-  if (soNhip >= 3) nhipTim = trungVi(cacNhip, soNhip);
+  if (soNhip >= 2) nhipTim = trungVi(cacNhip, soNhip);
 }
 
 // ============================================================
