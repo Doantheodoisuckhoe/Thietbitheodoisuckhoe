@@ -12,7 +12,15 @@ Dùng sau khi hàn header vào XIAO, để biết có chân nào bị chạm thi
 
 Sketch dùng điện trở kéo lên/kéo xuống bên trong chip (khoảng 13 kΩ), dòng rất nhỏ nên không hại board dù có chập.
 
-## Ba chân nguồn: đo bằng đồng hồ
+## Mối hàn hở: thử bằng dây nối
+
+Bước trên chỉ tìm được chân **bị chập**. Nó không phát hiện được chân **hàn hở**, tức là thiếc không ăn vào miếng đồng của XIAO, vì phép thử chỉ chạy bên trong chip. Một chân XIAO chưa hàn, chỉ đặt hờ lên thanh chân, sketch vẫn báo "11 chân tốt".
+
+Để thử mối hàn hở, vẫn chạy sketch này, rồi lần lượt cắm **một sợi dây nối 2 chân cạnh nhau**: D0-D1, D1-D2, ... D5-D6, rồi D7-D8, D8-D9, D9-D10.
+- Mỗi lần phải hiện đúng dòng `LOI: Dx chap voi Dy` của 2 chân đó. Ở đây chữ LOI là kết quả mong muốn, vì chính bạn đang cố ý nối 2 chân.
+- Cặp nào **không** hiện dòng đó thì một trong 2 chân bị hàn hở. Thử chân đó với chân bên cạnh còn lại để biết là chân nào, rồi hàn lại.
+
+
 
 Code không kiểm tra được 5V, GND, 3V3. **Rút USB**, để đồng hồ ở chế độ kêu bíp:
 
