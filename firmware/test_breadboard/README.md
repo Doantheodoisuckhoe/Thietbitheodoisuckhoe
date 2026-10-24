@@ -3,7 +3,9 @@
 Cắm XIAO và các module đã mua lên breadboard, nạp `test_breadboard.ino`, rồi xem trên Serial Monitor từng module có chạy không.
 Số chân giữ đúng như mạch in `hardware/pcb_module`, nên code test xong dùng lại được khi có mạch in.
 
-![Sơ đồ cắm breadboard](so_do_cam_breadboard.png)
+![Hình breadboard, dây đánh số](so_do_breadboard_tung_day.png)
+
+![Sơ đồ khối](so_do_cam_breadboard.png)
 
 ## 1. Chuẩn bị
 
