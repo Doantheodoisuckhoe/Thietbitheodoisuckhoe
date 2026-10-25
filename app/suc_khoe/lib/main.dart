@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'dam_may.dart';
 import 'dich_vu_dien_thoai.dart' as dt;
 import 'dong_ho.dart';
 import 'giao_thuc.dart';
@@ -14,6 +15,7 @@ import 'xu_ly_canh_bao.dart';
 
 final dongHo = DongHo();
 final luuTru = LuuTru();
+final damMay = DamMay();
 late final XuLyCanhBao xuLy;
 final _thongBao = GlobalKey<ScaffoldMessengerState>();
 final _dieuHuong = GlobalKey<NavigatorState>();
@@ -30,6 +32,9 @@ void main() async {
     tenNguoiDeo: () => luuTru.tenNguoiDeo,
   );
   dongHo.khiCoCanhBao = _khiCoCanhBao;
+  damMay.cauHinh = luuTru.damMay;
+  dongHo.khiCoSoDo = (s) => damMay.nhanSoDo(s, ketNoi: true);
+  dongHo.khiMatKetNoi = damMay.baoMatKetNoi;
   runApp(const UngDung());
 }
 
@@ -52,6 +57,7 @@ Future<void> _khiCoCanhBao(CanhBao cb) async {
     if (!kq.coViTri) 'không lấy được vị trí',
   ].join(' · ');
   await luuTru.ghiLichSu(MucLichSu(kq.luc, cb.loai.ten, chiTiet, cb.loai.khanCap));
+  unawaited(damMay.nhanCanhBao(kq));
   FlutterForegroundTask.updateService(
     notificationTitle: 'CẢNH BÁO: ${cb.loai.ten}',
     notificationText: chiTiet,
@@ -140,7 +146,7 @@ class _ManHinhChinhState extends State<ManHinhChinh> {
 
   @override
   Widget build(BuildContext context) {
-    final trang = [const TrangSoDo(), const TrangNguoiThan(), const TrangLichSu()][_tab];
+    final trang = [const TrangSoDo(), const TrangNguoiThan(), const TrangLichSu(), const TrangCaiDat()][_tab];
     return WithForegroundTask(
       child: Scaffold(
         appBar: AppBar(title: const Text('Đồng hồ sức khỏe')),
@@ -169,6 +175,7 @@ class _ManHinhChinhState extends State<ManHinhChinh> {
             NavigationDestination(icon: Icon(Icons.favorite), label: 'Số đo'),
             NavigationDestination(icon: Icon(Icons.contacts), label: 'Người thân'),
             NavigationDestination(icon: Icon(Icons.history), label: 'Lịch sử'),
+            NavigationDestination(icon: Icon(Icons.cloud_outlined), label: 'Web'),
           ],
         ),
       ),
@@ -292,6 +299,8 @@ class _O extends StatelessWidget {
 }
 
 // ---------------- Trang nguoi than ----------------
+Timer? _henGuiTen;
+
 class TrangNguoiThan extends StatelessWidget {
   const TrangNguoiThan({super.key});
 
@@ -307,7 +316,11 @@ class TrangNguoiThan extends StatelessWidget {
             hintText: 'VD: Ba Nguyen Thi Hang',
             border: OutlineInputBorder(),
           ),
-          onChanged: luuTru.datTen,
+          onChanged: (t) {
+            luuTru.datTen(t);
+            _henGuiTen?.cancel();
+            _henGuiTen = Timer(const Duration(seconds: 2), () => damMay.guiThongTin(t));
+          },
         ),
         const SizedBox(height: 16),
         Text('Người thân nhận SMS', style: Theme.of(context).textTheme.titleMedium),
@@ -437,5 +450,130 @@ class ManHinhCanhBao extends StatelessWidget {
         ]),
       ),
     );
+  }
+}
+
+// ---------------- Trang cai dat web (Firebase) ----------------
+class TrangCaiDat extends StatefulWidget {
+  const TrangCaiDat({super.key});
+  @override
+  State<TrangCaiDat> createState() => _TrangCaiDatState();
+}
+
+class _TrangCaiDatState extends State<TrangCaiDat> {
+  final _apiKey = TextEditingController();
+  final _dbUrl = TextEditingController();
+  final _email = TextEditingController();
+  final _matKhau = TextEditingController();
+  bool _dangChay = false;
+  String? _loi;
+  Timer? _capNhat;
+
+  @override
+  void initState() {
+    super.initState();
+    final c = luuTru.damMay;
+    _apiKey.text = c?.apiKey ?? '';
+    _dbUrl.text = c?.dbUrl ?? '';
+    _email.text = c?.email ?? '';
+    // Cap nhat dong "lan gui cuoi" moi 5 giay.
+    _capNhat = Timer.periodic(const Duration(seconds: 5), (_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _capNhat?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _dangNhap() async {
+    setState(() {
+      _dangChay = true;
+      _loi = null;
+    });
+    try {
+      final c = await damMay.dangNhap(_apiKey.text, _dbUrl.text, _email.text, _matKhau.text);
+      await luuTru.luuDamMay(c);
+      await damMay.guiThongTin(luuTru.tenNguoiDeo);
+      _matKhau.clear();
+    } catch (e) {
+      damMay.dangXuat();
+      _loi = e.toString();
+    }
+    if (mounted) setState(() => _dangChay = false);
+  }
+
+  Future<void> _dangXuat() async {
+    damMay.dangXuat();
+    await luuTru.luuDamMay(null);
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = luuTru.damMay;
+    String h(int n) => n.toString().padLeft(2, '0');
+    final cuoi = damMay.lanGuiCuoi;
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      const Text('Gửi số đo và cảnh báo lên Firebase để người thân xem trên web. '
+          'Cách tạo Firebase và lấy các thông tin dưới đây: web/README.md trong repo.'),
+      const SizedBox(height: 16),
+      if (c != null && c.daDangNhap) ...[
+        Card(
+          color: damMay.loi == null ? Colors.green.shade50 : Colors.orange.shade50,
+          child: ListTile(
+            leading: Icon(damMay.loi == null ? Icons.cloud_done : Icons.cloud_off,
+                color: damMay.loi == null ? Colors.green : Colors.orange, size: 36),
+            title: Text('Đã đăng nhập: ${c.email}'),
+            subtitle: Text([
+              if (cuoi != null) 'Lần gửi cuối: ${h(cuoi.hour)}:${h(cuoi.minute)}:${h(cuoi.second)}',
+              if (cuoi == null) 'Chưa gửi gì (chờ đồng hồ kết nối)',
+              if (damMay.loi != null) damMay.loi!,
+            ].join('\n')),
+          ),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton(onPressed: _dangXuat, child: const Text('Đăng xuất (ngừng gửi lên web)')),
+      ] else ...[
+        TextField(
+          controller: _apiKey,
+          decoration: const InputDecoration(labelText: 'Web API key', border: OutlineInputBorder()),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _dbUrl,
+          keyboardType: TextInputType.url,
+          decoration: const InputDecoration(
+            labelText: 'Địa chỉ Realtime Database',
+            hintText: 'https://...firebasedatabase.app',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _email,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(labelText: 'Email tài khoản gia đình', border: OutlineInputBorder()),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _matKhau,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: 'Mật khẩu', border: OutlineInputBorder()),
+        ),
+        if (_loi != null) ...[
+          const SizedBox(height: 8),
+          Text(_loi!, style: const TextStyle(color: Colors.red)),
+        ],
+        const SizedBox(height: 16),
+        FilledButton(
+          onPressed: _dangChay ? null : _dangNhap,
+          child: Text(_dangChay ? 'Đang đăng nhập...' : 'Đăng nhập và bắt đầu gửi'),
+        ),
+        const SizedBox(height: 8),
+        const Text('App chỉ lưu mã đăng nhập, không lưu mật khẩu. Người thân dùng cùng email '
+            'và mật khẩu này để đăng nhập trên web.'),
+      ],
+    ]);
   }
 }

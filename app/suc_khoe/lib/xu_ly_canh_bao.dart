@@ -18,10 +18,11 @@ class KetQuaCanhBao {
   final DateTime luc;
   final int soTinDaGui;
   final int soNguoiThan;
-  final bool coViTri;
+  final (double, double)? viTri; // (vi do, kinh do)
   final String noiDung;
   const KetQuaCanhBao(
-      this.canhBao, this.luc, this.soTinDaGui, this.soNguoiThan, this.coViTri, this.noiDung);
+      this.canhBao, this.luc, this.soTinDaGui, this.soNguoiThan, this.viTri, this.noiDung);
+  bool get coViTri => viTri != null;
 }
 
 typedef GuiSms = Future<bool> Function(String so, String noiDung);
@@ -83,7 +84,7 @@ class XuLyCanhBao {
         _daXuLy[cb.khoa] = now;
         await guiLenh(lenhXacNhan(cb.soThuTu));
       }
-      return KetQuaCanhBao(cb, now, daGui, ds.length, viTri != null, noiDung);
+      return KetQuaCanhBao(cb, now, daGui, ds.length, viTri, noiDung);
     } finally {
       _dangXuLy.remove(cb.khoa);
     }

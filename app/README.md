@@ -9,4 +9,4 @@ App Android nhận dữ liệu từ đồng hồ qua BLE và gửi SMS / gọi c
 | `thu_ble_tren_may_tinh.py` | Thử đồng hồ bằng máy tính có Bluetooth khi chưa có app: in số đo, in cảnh báo, tự gửi xác nhận. Cài `pip install bleak` |
 
 Đã có (25/10): kết nối đồng hồ, hiện số đo, danh bạ người thân, gửi SMS kèm GPS khi có cảnh báo, gửi xác nhận về đồng hồ.
-Sau M2: đẩy dữ liệu lên Firebase và làm web cho người thân.
+Đã có (25/10): app gửi dữ liệu lên Firebase, web React cho người thân ở thư mục [`web/`](../web/README.md).
