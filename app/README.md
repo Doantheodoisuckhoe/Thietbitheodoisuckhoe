@@ -5,7 +5,8 @@ App Android nhận dữ liệu từ đồng hồ qua BLE và gửi SMS / gọi c
 
 | File | Mục đích |
 |---|---|
+| `suc_khoe/` | **App Android (Flutter).** Cách tải APK và cài: `suc_khoe/README.md` |
 | `thu_ble_tren_may_tinh.py` | Thử đồng hồ bằng máy tính có Bluetooth khi chưa có app: in số đo, in cảnh báo, tự gửi xác nhận. Cài `pip install bleak` |
 
-Việc cần làm cho M2 (01/11): app kết nối đồng hồ, hiện số đo, lưu danh sách số người thân,
-khi có cảnh báo thì gửi SMS kèm vị trí GPS và gửi lệnh xác nhận về đồng hồ.
+Đã có (25/10): kết nối đồng hồ, hiện số đo, danh bạ người thân, gửi SMS kèm GPS khi có cảnh báo, gửi xác nhận về đồng hồ.
+Sau M2: đẩy dữ liệu lên Firebase và làm web cho người thân.
