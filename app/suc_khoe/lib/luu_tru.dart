@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dam_may.dart';
 import 'xu_ly_canh_bao.dart';
 
 class MucLichSu {
@@ -24,19 +25,26 @@ class MucLichSu {
 }
 
 class LuuTru extends ChangeNotifier {
-  static const _kDanhBa = 'danh_ba', _kTen = 'ten_nguoi_deo', _kLichSu = 'lich_su';
+  static const _kDanhBa = 'danh_ba', _kTen = 'ten_nguoi_deo', _kLichSu = 'lich_su', _kDamMay = 'dam_may';
   static const soMucToiDa = 100;
 
   late SharedPreferences _p;
   List<NguoiThan> danhBa = [];
   String tenNguoiDeo = '';
   List<MucLichSu> lichSu = [];
+  CauHinhDamMay? damMay;
 
   Future<void> tai() async {
     _p = await SharedPreferences.getInstance();
     danhBa = _docDs(_kDanhBa).map(NguoiThan.fromJson).toList();
     tenNguoiDeo = _p.getString(_kTen) ?? '';
     lichSu = _docDs(_kLichSu).map(MucLichSu.fromJson).toList();
+    try {
+      final j = _p.getString(_kDamMay);
+      damMay = j == null ? null : CauHinhDamMay.fromJson(jsonDecode(j) as Map<String, dynamic>);
+    } catch (_) {
+      damMay = null;
+    }
     notifyListeners();
   }
 
@@ -69,6 +77,16 @@ class LuuTru extends ChangeNotifier {
   Future<void> ghiLichSu(MucLichSu m) async {
     lichSu = [m, ...lichSu].take(soMucToiDa).toList();
     await _p.setString(_kLichSu, jsonEncode(lichSu.map((e) => e.toJson()).toList()));
+    notifyListeners();
+  }
+
+  Future<void> luuDamMay(CauHinhDamMay? c) async {
+    damMay = c;
+    if (c == null) {
+      await _p.remove(_kDamMay);
+    } else {
+      await _p.setString(_kDamMay, jsonEncode(c.toJson()));
+    }
     notifyListeners();
   }
 }

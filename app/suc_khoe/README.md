@@ -19,6 +19,7 @@ thì tự gửi SMS kèm vị trí GPS cho người thân (phương án 1). Giao
 - **Người thân**: nhập tên người đeo (ghi trong SMS) và số điện thoại người thân. Thêm số xong, bấm
   "Gửi thử SMS" ở trang Số đo để kiểm tra.
 - **Lịch sử**: các cảnh báo đã nhận, đã gửi SMS cho bao nhiêu người.
+- **Web**: đăng nhập Firebase để gửi số đo và cảnh báo lên web cho người thân xem. Cách tạo Firebase: [`web/README.md`](../../web/README.md).
 
 Khi có cảnh báo, app: lấy vị trí → gửi SMS cho từng người thân → báo đồng hồ "đã gửi" (đồng hồ rung dài 1 giây)
 → hiện màn hình cảnh báo có nút gọi. Với SOS và té ngã, app gọi luôn người thân đầu tiên nếu app đang mở trên
@@ -41,7 +42,7 @@ Cần Flutter 3.47.6 và Android Studio (để có Android SDK).
 ```
 cd app/suc_khoe
 flutter pub get
-flutter test          # 16 test cho phần đọc gói BLE và xử lý cảnh báo
+flutter test          # 24 test cho phần đọc gói BLE và xử lý cảnh báo
 flutter run           # cắm điện thoại bật USB debugging
 ```
 
@@ -51,8 +52,9 @@ flutter run           # cắm điện thoại bật USB debugging
 | `lib/xu_ly_canh_bao.dart` | Bỏ gói gửi lại, gửi SMS cho từng người, gửi xác nhận về đồng hồ |
 | `lib/dong_ho.dart` | Tìm, kết nối, tự kết nối lại, nhận dữ liệu BLE (flutter_blue_plus) |
 | `lib/dich_vu_dien_thoai.dart` | Gửi SMS, gọi điện, GPS, xin quyền |
+| `lib/dam_may.dart` | Gửi số đo (10 giây/lần, lịch sử 1 phút/lần) và cảnh báo lên Firebase qua REST |
 | `lib/luu_tru.dart` | Lưu danh bạ, tên người đeo, lịch sử trên điện thoại |
-| `lib/main.dart` | Giao diện 3 trang + màn hình cảnh báo, chạy nền (flutter_foreground_task) |
+| `lib/main.dart` | Giao diện 4 trang + màn hình cảnh báo, chạy nền (flutter_foreground_task) |
 | `android/app/src/main/kotlin/.../MainActivity.kt` | Code Android gửi SMS (SmsManager) và gọi điện |
 
 Thư viện BLE `flutter_blue_plus` miễn phí cho cá nhân và trường học (`License.nonprofit` trong code);

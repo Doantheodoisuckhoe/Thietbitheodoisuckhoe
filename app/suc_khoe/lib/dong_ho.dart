@@ -25,6 +25,8 @@ class DongHo extends ChangeNotifier {
 
   /// Ham xu ly khi co goi Canh bao (main.dart gan vao XuLyCanhBao).
   void Function(CanhBao)? khiCoCanhBao;
+  void Function(SoDo)? khiCoSoDo;
+  void Function()? khiMatKetNoi;
 
   TrangThai trangThai = TrangThai.dangTim;
   SoDo? soDo;
@@ -134,6 +136,7 @@ class DongHo extends ChangeNotifier {
       if (trangThai != TrangThai.tatBluetooth && trangThai != TrangThai.dangKetNoi) {
         _dat(TrangThai.matKetNoi);
       }
+      if (soDo != null) khiMatKetNoi?.call();
     }
   }
 
@@ -158,6 +161,7 @@ class DongHo extends ChangeNotifier {
         final s = SoDo.tuByte(b);
         if (s != null) {
           soDo = s;
+          khiCoSoDo?.call(s);
           notifyListeners();
         }
       });

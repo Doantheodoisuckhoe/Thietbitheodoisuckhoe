@@ -1,0 +1,169 @@
+/* Mau: nen xanh suong lanh, chu xanh muc dam; dai trang thai doi mau theo tinh trang nguoi deo. */
+:root {
+  --nen: #f1f5f4;
+  --nen-khoi: #ffffff;
+  --chu: #1c2b2a;
+  --chu-nhat: #5d6f6c;
+  --vien: #d6e0de;
+  --luoi: #e4ebe9;
+  --chinh: #2f7f6f;
+  --canh-bao: #c4372b;
+  --chu-y: #b9791a;
+  --dai-on: #dcefe9;
+  --dai-on-chu: #174a40;
+  --dai-khan: #c4372b;
+  --dai-khan-chu: #ffffff;
+  --dai-chu-y: #fbe7c4;
+  --dai-chu-y-chu: #5a3a06;
+  --dai-xam: #e2e6e5;
+  --dai-xam-chu: #2e3a39;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nen: #101a19;
+    --nen-khoi: #172423;
+    --chu: #e3ecea;
+    --chu-nhat: #93a6a3;
+    --vien: #2a3a38;
+    --luoi: #22312f;
+    --chinh: #5fc2ad;
+    --canh-bao: #ff7a6b;
+    --chu-y: #f0b45a;
+    --dai-on: #18352f;
+    --dai-on-chu: #c9eee5;
+    --dai-khan: #9e2a20;
+    --dai-khan-chu: #ffffff;
+    --dai-chu-y: #4a3510;
+    --dai-chu-y-chu: #fbe7c4;
+    --dai-xam: #222d2c;
+    --dai-xam-chu: #d5dedc;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--nen);
+  color: var(--chu);
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2 { line-height: 1.2; margin: 0; }
+h2 { font-size: 1.15rem; font-weight: 600; }
+a { color: var(--chinh); }
+code { font-size: 0.9em; }
+
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--chinh); outline-offset: 2px; }
+
+.khung { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+.cho { padding: 48px 16px; text-align: center; color: var(--chu-nhat); }
+
+/* ---------- Dai trang thai ---------- */
+.dai-trang-thai { padding: 16px 0 40px; }
+.muc-onDinh { background: var(--dai-on); color: var(--dai-on-chu); }
+.muc-khanCap { background: var(--dai-khan); color: var(--dai-khan-chu); }
+.muc-canChuY { background: var(--dai-chu-y); color: var(--dai-chu-y-chu); }
+.muc-matLienLac, .muc-chuaDeo, .muc-chuaCo { background: var(--dai-xam); color: var(--dai-xam-chu); }
+
+.thanh-tren {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  font-size: 0.9rem; margin-bottom: 36px; opacity: 0.85;
+}
+.ten-web { font-weight: 600; }
+.tai-khoan { display: flex; align-items: center; gap: 12px; }
+.nut-phu {
+  background: transparent; color: inherit; border: 1px solid currentColor; border-radius: 999px;
+  padding: 2px 12px; font-size: 0.85rem;
+}
+
+.dai-trang-thai h1 {
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  max-width: 20ch;
+}
+.dai-trang-thai .phu { margin: 12px 0 0; font-size: 1.1rem; max-width: 60ch; }
+
+/* Canh bao khan cap: dai do nhay nhe 1 lan khi xuat hien de keo su chu y. */
+.muc-khanCap h1 { animation: nhay 1.2s ease-out 1; }
+@keyframes nhay { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .muc-khanCap h1 { animation: none; } }
+
+/* ---------- Noi dung ---------- */
+.noi-dung { padding-top: 0; padding-bottom: 48px; }
+
+.chi-so {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--nen-khoi); border: 1px solid var(--vien); border-radius: 14px;
+  margin-top: -24px; position: relative;
+}
+.o-chi-so { padding: 18px 20px; }
+.o-chi-so + .o-chi-so { border-left: 1px solid var(--vien); }
+.ten-chi-so { color: var(--chu-nhat); font-size: 0.9rem; }
+.gia-tri {
+  font-size: 2.4rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  line-height: 1.1; margin-top: 4px;
+}
+.don-vi { font-size: 0.95rem; font-weight: 500; color: var(--chu-nhat); margin-left: 4px; letter-spacing: 0; }
+
+.khoi { margin-top: 36px; }
+.dau-khoi { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.chon-loai { display: inline-flex; border: 1px solid var(--vien); border-radius: 999px; padding: 3px; background: var(--nen-khoi); }
+.chon-loai button {
+  border: 0; background: transparent; color: var(--chu-nhat); padding: 6px 14px; border-radius: 999px; font-size: 0.9rem;
+}
+.chon-loai button.dang-chon { background: var(--chinh); color: var(--nen-khoi); font-weight: 600; }
+
+.bieu-do { margin-top: 16px; }
+.chu-thich { margin: 8px 0 0; font-size: 0.85rem; color: var(--chu-nhat); }
+.trong { color: var(--chu-nhat); margin: 12px 0 0; }
+
+.dong-thoi-gian { list-style: none; margin: 16px 0 0; padding: 0; }
+.dong-thoi-gian li {
+  display: grid; grid-template-columns: 9.5rem 1fr; gap: 16px;
+  padding: 14px 0 14px 18px; border-left: 3px solid var(--chu-y); margin-left: 4px;
+}
+.dong-thoi-gian li.khan-cap { border-left-color: var(--canh-bao); }
+.dong-thoi-gian li + li { border-top: 1px solid var(--luoi); }
+.thoi-diem { color: var(--chu-nhat); font-variant-numeric: tabular-nums; }
+.khan-cap strong { color: var(--canh-bao); }
+.phu-canh-bao { font-size: 0.92rem; color: var(--chu-nhat); margin-top: 2px; }
+
+.bao-demo {
+  margin: 28px 0 0; padding: 12px 16px; border: 1px dashed var(--vien); border-radius: 10px; font-size: 0.95rem;
+}
+.loi { color: var(--canh-bao); font-weight: 500; }
+.ghi-chu { margin-top: 40px; font-size: 0.85rem; color: var(--chu-nhat); max-width: 70ch; }
+
+/* ---------- Dang nhap ---------- */
+.dang-nhap { max-width: 420px; margin: 0 auto; padding: 72px 16px; }
+.dang-nhap h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+.dang-nhap p { color: var(--chu-nhat); }
+.dang-nhap p.loi { color: var(--canh-bao); }
+.dang-nhap form { display: grid; gap: 14px; margin-top: 24px; }
+.dang-nhap label { display: grid; gap: 4px; font-weight: 500; }
+.dang-nhap input {
+  font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--vien);
+  background: var(--nen-khoi); color: var(--chu);
+}
+.dang-nhap button[type='submit'] {
+  padding: 12px; border: 0; border-radius: 10px; background: var(--chinh); color: var(--nen-khoi); font-weight: 600;
+}
+.dang-nhap button:disabled { opacity: 0.6; cursor: default; }
+
+@media (max-width: 640px) {
+  .chi-so { grid-template-columns: repeat(2, 1fr); }
+  .o-chi-so:nth-child(3) { border-left: 0; }
+  .o-chi-so:nth-child(n + 3) { border-top: 1px solid var(--vien); }
+  .gia-tri { font-size: 2rem; }
+  .dong-thoi-gian li { grid-template-columns: 1fr; gap: 2px; }
+}

@@ -8,6 +8,8 @@
     <!-- Vi tri gui kem SMS (Android 11 tro xuong cung can de quet BLE) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Gui du lieu len Firebase -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Canh bao -->
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
