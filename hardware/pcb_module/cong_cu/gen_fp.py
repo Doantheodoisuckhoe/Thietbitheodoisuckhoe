@@ -64,22 +64,28 @@ footprint('XIAO_nRF52840_DeCam_2x7_P2.54_15.24mm',
           'Seeed XIAO nRF52840 (Sense) cắm trên 2 header cái 1x7 2,54 mm, hai hàng cách 15,24 mm. Chân 1 = D0 ở đầu USB-C; đầu kia là anten.',
           'XIAO nRF52840 socket', (7.62, -5.0), (7.62, 20.0), b)
 
-# 2) Module MAX30102 tím: 1x7 dọc mép, thân ~21x16 mm (kiểm tra lại)
+# 2) Module MAX30102 đen 2x4 (HW-605): thân 20x15 mm, 2 hàng 4 chân cách nhau 10,16 mm.
+#    Gốc toạ độ = tâm cảm biến. Footprint vẽ nhìn từ mặt cảm biến (mặt trên linh kiện).
+#    Mặt chữ của module (nhìn từ mặt chữ): hàng A "GND RD IRD INT", hàng B "VIN SDA SCL GND",
+#    GND hàng A thẳng cột với VIN hàng B. Nhìn từ mặt cảm biến thì thứ tự trái-phải bị lật.
 b = []
-for i in range(7):
-    b.append(tht(str(i + 1), i * P, 0, 1.8, 1.0, square=(i == 0)))
-x1, x2, y1, y2 = -2.88, 18.12, -1.5, 14.5
+ROW_A = [('5', 'GND', 3.81), ('6', 'RD', 1.27), ('7', 'IRD', -1.27), ('8', 'INT', -3.81)]
+ROW_B = [('1', 'VIN', 3.81), ('2', 'SDA', 1.27), ('3', 'SCL', -1.27), ('4', 'GND', -3.81)]
+for num, nm, x in ROW_A:
+    b.append(tht(num, x, -5.08, 1.8, 1.0))
+    b.append(text(nm, x, -3.4, 'F.SilkS', 0.55, 0.09))
+for num, nm, x in ROW_B:
+    b.append(tht(num, x, 5.08, 1.8, 1.0, square=(num == '1')))
+    b.append(text(nm, x, 3.4, 'F.SilkS', 0.55, 0.09))
+x1, x2, y1, y2 = -10.0, 10.0, -7.5, 7.5
 b.append(rect(x1, y1, x2, y2, 'F.Fab', 0.1))
 b.append(rect(x1 - 0.12, y1 - 0.12, x2 + 0.12, y2 + 0.12, 'F.SilkS', 0.12))
 b.append(rect(x1 - 0.25, y1 - 0.25, x2 + 0.25, y2 + 0.25, 'F.CrtYd', 0.05))
-b.append(rect(7.62 - 2.8, 7 - 1.65, 7.62 + 2.8, 7 + 1.65, 'F.Fab', 0.1))
-b.append(circle(7.62, 7, 3.5, 'F.SilkS', 0.12))
-for i, nm in enumerate(['VIN', 'SCL', 'SDA', 'INT', 'IRD', 'RD', 'GND']):
-    b.append(text(nm, i * P, 1.9, 'F.Fab', 0.6, 0.09))
-b.append(text('${REFERENCE}', 7.62, 11.5, 'F.Fab', 1.0))
-footprint('Module_MAX30102_1x7',
-          'Module MAX30102 (tím) gắn mặt cảm biến hướng ra ngoài, header 1x7 2,54 mm: VIN SCL SDA INT IRD RD GND. Kích thước thân 21x16 mm là ước lượng, đo lại module thật.',
-          'MAX30102 module', (7.62, -3.0), (7.62, 16.0), b)
+b.append(rect(-2.8, -1.65, 2.8, 1.65, 'F.Fab', 0.1))       # con cảm biến (vị trí ước lượng: giữa module)
+b.append(text('${REFERENCE}', 0, 6.4, 'F.Fab', 0.8))
+footprint('Module_MAX30102_2x4',
+          'Module MAX30102 đen 2 hàng chân (HW-605), thân 20x15 mm, 2x4 chân 2,54 mm, hai hàng cách 10,16 mm. Gắn mặt cảm biến hướng ra da, mặt chữ áp vào mạch. Chân: 1 VIN, 2 SDA, 3 SCL, 4 GND, 5 GND, 6 RD, 7 IRD, 8 INT. Gốc = tâm cảm biến.',
+          'MAX30102 module', (0, -9.0), (0, 9.0), b)
 
 # 3) Module CJMCU-30205: 1x8, thân ~22x13 mm (kiểm tra lại)
 b = []
