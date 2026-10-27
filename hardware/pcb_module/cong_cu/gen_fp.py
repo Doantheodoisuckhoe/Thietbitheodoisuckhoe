@@ -73,10 +73,10 @@ ROW_A = [('5', 'GND', 3.81), ('6', 'RD', 1.27), ('7', 'IRD', -1.27), ('8', 'INT'
 ROW_B = [('1', 'VIN', 3.81), ('2', 'SDA', 1.27), ('3', 'SCL', -1.27), ('4', 'GND', -3.81)]
 for num, nm, x in ROW_A:
     b.append(tht(num, x, -5.08, 1.8, 1.0))
-    b.append(text(nm, x, -3.4, 'F.SilkS', 0.55, 0.09))
+    b.append(text(nm, x, -3.4, 'F.SilkS', 0.6, 0.1))
 for num, nm, x in ROW_B:
     b.append(tht(num, x, 5.08, 1.8, 1.0, square=(num == '1')))
-    b.append(text(nm, x, 3.4, 'F.SilkS', 0.55, 0.09))
+    b.append(text(nm, x, 3.4, 'F.SilkS', 0.6, 0.1))
 x1, x2, y1, y2 = -10.0, 10.0, -7.5, 7.5
 b.append(rect(x1, y1, x2, y2, 'F.Fab', 0.1))
 b.append(rect(x1 - 0.12, y1 - 0.12, x2 + 0.12, y2 + 0.12, 'F.SilkS', 0.12))
