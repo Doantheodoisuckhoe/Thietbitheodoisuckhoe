@@ -61,7 +61,7 @@ POWER = {'GND', '+3V3', '+5V', '/VCHG', '/VBAT+', '/VBAT-', '/MOTOR_N'}
 # ref: (x, y, góc, mặt dưới?)   toạ độ trong khung bảng 50x62, gốc góc trên-trái, nhìn từ mặt trên
 PLACE = {
     'U1': (32.62, 18.12, 180, False),     # XIAO: chân 1 (D0) ở dưới-phải, đầu anten sát mép trên
-    'U2': (32.62, 23.0, 180, True),         # MAX30102 mặt da
+    'U2': (25.0, 30.0, 0, True),          # MAX30102 2x4 mặt da, gốc = tâm cảm biến; hàng VIN SDA SCL GND phía XIAO
     'U3': (16.11, 56.5, 0, True),       # CJMCU-30205 mặt da
     'U4': (37.0, 7.5, 0, False),          # pad dây AD8232
     'U5': (2.8, 7.4, 0, False),           # pad dây màn GC9A01
@@ -86,7 +86,7 @@ PLACE = {
     'J1': (47.6, 42.6, 0, False),         # motor (THT, ngoài vùng điện cực mặt dưới)
     'R1': (47.6, 50.0, 90, False),
     'D5': (2.4, 28.0, 270, False),
-    'D4': (2.4, 34.6, 270, False),
+    'D4': (2.4, 35.4, 270, False),
     'J2': (2.4, 42.6, 0, False),          # chân sạc pogo
     'J3': (8.6, 58.6, 0, False),          # JST pin
     'C3': (19.6, 60.2, 0, False),
@@ -644,7 +644,7 @@ silk('40 x 30 x 6 mm', 25, 40.2, 1.0)
 silk('(dán băng keo cách điện)', 25, 42.2, 0.8)
 silk('ANTEN', 25, 2.4, 0.8)
 silk('ĐỒNG HỒ SỨC KHỎE', 25, 46.5, 1.0)
-silk('v1.0  10/2026', 25, 48.5, 0.8)
+silk('v1.1  10/2026', 25, 48.5, 0.8)
 silk('MẶT DA', 25, 40.5, 1.2, pcbnew.B_SilkS)
 silk('LA', 41.0, 22.9, 1.0, pcbnew.B_SilkS)
 silk('RL', 9.0, 22.9, 1.0, pcbnew.B_SilkS)
@@ -656,6 +656,7 @@ silk('SOS', 8.3, 21.9, 0.8)
 silk('J5', 10.8, 21.9, 0.8)
 silk('BAT-  BAT+', 22.46, 7.0, 0.7)
 silk('RA', 45.6, 22.0, 0.7)
+silk('VIN', 31.1, 24.92, 0.6)            # chân VIN của U2 (MAX30102), pad vuông
 silk('+', 8.6, 55.5, 0.8)
 
 if '--nozone' not in sys.argv and '--nofill' not in sys.argv:

@@ -63,11 +63,11 @@ LIBSYMS = [
    right=[('8','D7/RX','bidirectional'),('9','D8/SCK','bidirectional'),('10','D9/MISO','bidirectional'),('11','D10/MOSI','bidirectional')],
    top=[('14','5V','power_in',-2.54),('12','3V3','power_out',2.54)],
    bottom=[('13','GND','power_in',0)]),
- box_symbol('Module_MAX30102', 'U', 'Module MAX30102', 'DoAnModule:Module_MAX30102_1x7',
-   'Module MAX30102 màu tím (I2C 0x57), header 1x7: VIN SCL SDA INT IRD RD GND - kiểm tra lại trên module thật', 15.24,
-   left=[('2','SCL','input'),('3','SDA','bidirectional')],
-   right=[('4','INT','output'),('5','IRD','passive'),('6','RD','passive')],
-   top=[('1','VIN','power_in',0)], bottom=[('7','GND','power_in',0)]),
+ box_symbol('Module_MAX30102', 'U', 'Module MAX30102', 'DoAnModule:Module_MAX30102_2x4',
+   'Module MAX30102 đen 2x4 chân (HW-605, I2C 0x57): 1 VIN, 2 SDA, 3 SCL, 4 GND, 5 GND, 6 RD, 7 IRD, 8 INT', 15.24,
+   left=[('3','SCL','input'),('2','SDA','bidirectional')],
+   right=[('8','INT','output'),('7','IRD','passive'),('6','RD','passive')],
+   top=[('1','VIN','power_in',0)], bottom=[('4','GND','power_in',-2.54),('5','GND','passive',2.54)]),
  box_symbol('Module_MAX30205_CJMCU', 'U', 'CJMCU-30205', 'DoAnModule:Module_CJMCU-30205_1x8',
    'Module CJMCU-30205 (MAX30205, I2C 0x48 khi A0=A1=A2=GND), header 1x8: VCC GND SDA SCL OS A0 A1 A2. VCC chỉ 3,3 V', 20.32,
    left=[('3','SDA','bidirectional'),('4','SCL','input')],
@@ -283,13 +283,13 @@ text('Gán chân: D0=ECG_OUT, D1=ECG_LOD (LO+ hoặc LO-), D2=motor, D3=đèn n�
 frame(15, 125, 125, 280, 'B. Nguồn: sạc pogo 5 V, pin LiPo')
 place('Connector_Generic:Conn_01x02', 'J2', 'Pogo sạc (cái, nam châm)', 30.48, 148.59, fp=HDR.format(2),
       desc='Hai pad hàn dây chân sạc pogo nam châm (cái): 1 = +5V, 2 = GND', pinnets={'1': 'VCHG', '2': 'GND'}, refpos=(29.21, 144.78), valpos=(33.02, 149.86))
-place('Diode:SMF5V0A', 'D4', 'SMF5.0A', 55.88, 160.02, fp='Diode_SMD:D_SOD-123F',
-      desc='TVS một chiều 5 V, 200 W, SOD-123FL (bảo vệ chân sạc)', pinnets={'1': 'VCHG', '2': 'GND'}, refpos=(52.07, 156.21), valpos=(45.72, 165.1))
+place('Diode:SMAJ5.0A', 'D4', 'SMAJ5.0A', 55.88, 160.02, fp='Diode_SMD:D_SMA',
+      desc='TVS một chiều 5 V, 400 W, SMA (bảo vệ chân sạc)', pinnets={'1': 'VCHG', '2': 'GND'}, refpos=(52.07, 156.21), valpos=(45.72, 165.1))
 place('Diode:SS14', 'D5', 'SS14', 93.98, 148.59, fp='Diode_SMD:D_SMA',
       desc='Diode Schottky 40 V 1 A, SMA (chặn dòng ngược về chân pogo)', pinnets={'1': '+5V', '2': 'VCHG'}, refpos=(90.17, 144.78), valpos=(90.17, 153.67))
 pwrflag((97.79, 170.18), '+5V')
 pwrflag((97.79, 185.42), 'GND')
-text('Chân sạc pogo -> TVS SMF5.0A về GND -> SS14 nối tiếp -> chân 5V của XIAO.\n'
+text('Chân sạc pogo -> TVS SMAJ5.0A về GND -> SS14 nối tiếp -> chân 5V của XIAO.\n'
      'SS14 chặn dòng ngược từ USB-C ra chân pogo khi cắm cả hai.\n'
      'Mạch sạc LiPo nằm sẵn trên XIAO (BQ25101).', 20.32, 195.58)
 place('Connector_Generic:Conn_01x02', 'J3', 'Pin LiPo 603040 (JST PH2.0)', 30.48, 228.6,
@@ -303,11 +303,11 @@ text('J3: pin 603040 (40x30x6 mm, có mạch bảo vệ), đầu JST PH2.0.\n'
 
 # ===== Khối C: PPG MAX30102
 frame(130, 20, 235, 95, 'C. PPG: module MAX30102 (mặt da)')
-place('DoAnModule:Module_MAX30102', 'U2', 'MAX30102 (module tím)', 165.1, 55.88,
-      pinnets={'1': '+3V3', '7': 'GND', '2': 'I2C_SCL', '3': 'I2C_SDA', '4': 'NC', '5': 'NC', '6': 'NC'})
+place('DoAnModule:Module_MAX30102', 'U2', 'MAX30102 (module 2x4)', 165.1, 55.88,
+      pinnets={'1': '+3V3', '4': 'GND', '5': 'GND', '3': 'I2C_SCL', '2': 'I2C_SDA', '6': 'NC', '7': 'NC', '8': 'NC'})
 C('C1', '100nF', 200.66, 55.88)
 C('C2', '10uF', 213.36, 55.88)
-text('Thứ tự chân VIN SCL SDA INT IRD RD GND: kiểm tra trên module thật.\n'
+text('Module đen 2x4: VIN SDA SCL GND / GND RD IRD INT (đã đo 27/10/2026).\n'
      'INT, IRD, RD bỏ trống. Module có LDO 1,8 V và điện trở kéo lên riêng.', 135.89, 83.82)
 
 # ===== Khối D: Nhiệt độ MAX30205
@@ -324,10 +324,10 @@ frame(240, 20, 405, 125, 'E. ECG: module AD8232 (nối dây) và điện cực')
 place('DoAnModule:Module_AD8232', 'U4', 'AD8232 (module)', 294.64, 64.77,
       pinnets={'2': '+3V3', '1': 'GND', '7': 'ECG_RA', '8': 'ECG_LA', '9': 'ECG_RL',
                '3': 'ECG_OUT', '4': 'LO_N', '5': 'LO_P', '6': 'NC'})
-place('Diode:1N4148W', 'D2', '1N4148W', 342.9, 50.8, fp='Diode_SMD:D_SOD-123',
-      desc='Diode tín hiệu 75 V 150 mA, SOD-123 (cổng OR LO+)', pinnets={'2': 'LO_P', '1': 'ECG_LOD'}, refpos=(339.09, 46.99), valpos=(339.09, 55.88))
-place('Diode:1N4148W', 'D3', '1N4148W', 342.9, 66.04, fp='Diode_SMD:D_SOD-123',
-      desc='Diode tín hiệu 75 V 150 mA, SOD-123 (cổng OR LO-)', pinnets={'2': 'LO_N', '1': 'ECG_LOD'}, refpos=(339.09, 62.23), valpos=(339.09, 71.12))
+place('Diode:1N4148WS', 'D2', '1N4148WS', 342.9, 50.8, fp='Diode_SMD:D_SOD-323',
+      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO+)', pinnets={'2': 'LO_P', '1': 'ECG_LOD'}, refpos=(339.09, 46.99), valpos=(339.09, 55.88))
+place('Diode:1N4148WS', 'D3', '1N4148WS', 342.9, 66.04, fp='Diode_SMD:D_SOD-323',
+      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO-)', pinnets={'2': 'LO_N', '1': 'ECG_LOD'}, refpos=(339.09, 62.23), valpos=(339.09, 71.12))
 R('R3', '100k', 381.0, 58.42, 'ECG_LOD', 'GND')
 C('C5', '100nF', 254.0, 45.72)
 C('C6', '10uF', 266.7, 45.72)
@@ -386,7 +386,7 @@ def build():
 		(date "2026-10-21")
 		(rev "1.0")
 		(comment 1 "XIAO nRF52840 Sense + MAX30102 + AD8232 + MAX30205 (dạng module), màn GC9A01")
-		(comment 2 "Mạch 2 lớp, linh kiện hàn tay (0805, SOT-23, SOD-123, SMA, header 2,54 mm)")
+		(comment 2 "Mạch 2 lớp, linh kiện hàn tay (0805, SOT-23, SOD-323, SMA, header 2,54 mm)")
 	)
 	(lib_symbols
 {libs}

@@ -1,10 +1,13 @@
 # Mạch in đồng hồ – bản ghép module (KiCad)
 
-Bản 1.0 (21/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
-(điện trở, tụ 0805; SOT-23; SOD-123/SOD-123FL; SMA; header 2,54 mm). Thay cho bản chip rời 40 × 40 mm
+Bản 1.1 (27/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
+(điện trở, tụ 0805; SOT-23; SOD-323; SMA; header 2,54 mm). Thay cho bản chip rời 40 × 40 mm
 trong [`../pcb/`](../pcb/README.md) (bản đó giữ lại làm hướng phát triển).
 
 Kiểm tra bằng KiCad 10.0.7: **ERC 0 lỗi, 0 cảnh báo; DRC 0 vi phạm, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+
+Thay đổi bản 1.1: footprint MAX30102 đổi sang module đen 2 × 4 chân (đo thật); D2/D3 đổi sang 1N4148WS SOD-323,
+D4 đổi sang TVS SMAJ5.0A SMA (đúng loại icdayroi bán).
 
 ## Mở bằng KiCad
 
@@ -30,7 +33,7 @@ Sửa sơ đồ hoặc PCB xong thì chạy lại ERC/DRC và xuất lại các 
 | Chân | Tín hiệu | Nối tới |
 |---|---|---|
 | D0 (A0) | ECG_OUT | OUTPUT của AD8232 |
-| D1 | ECG_LOD | LO+ và LO- gộp qua 2 diode 1N4148W, R3 100k kéo xuống. **D1 = 1 khi tuột điện cực** |
+| D1 | ECG_LOD | LO+ và LO- gộp qua 2 diode 1N4148WS, R3 100k kéo xuống. **D1 = 1 khi tuột điện cực** |
 | D2 | MOTOR_EN | Cổng AO3400A qua R1 100 Ω, R2 100k kéo xuống |
 | D3 | TFT_BLK | Đèn nền màn hình (mới, trước đây D3 là LO-) |
 | D4 / D5 | I2C SDA / SCL | MAX30102 (0x57) và MAX30205 (0x48). Không thêm điện trở kéo lên: hai module đã có |
@@ -51,7 +54,7 @@ Firmware khởi tạo màn với chân RST = -1.
 | U4 – AD8232 (lưới 3 × 3, bước 3 mm) | 1 GND, 2 3V3, 3 OUT / 4 LO-, 5 LO+, 6 SDN / 7 RA, 8 LA, 9 RL | SDN bỏ trống (module tự kéo lên). RA/LA/RL: hàn dây từ pad điện cực trên module, tháo giắc 3,5 mm |
 | U5 – GC9A01 (lưới 2 × 4, bước 3 mm) | 1 VCC, 2 GND / 3 SCL, 4 SDA / 5 RES, 6 DC / 7 CS, 8 BLK | Chữ in cạnh pad |
 | J1 – motor 1027 | 1 VBAT+ (dây đỏ), 2 MOTOR_N | Diode SS14 dập xung ngược nằm ngay cạnh |
-| J2 – chân sạc pogo (cái, nam châm) | 1 +5V vào, 2 GND | Qua TVS SMF5.0A rồi SS14 tới chân 5V của XIAO |
+| J2 – chân sạc pogo (cái, nam châm) | 1 +5V vào, 2 GND | Qua TVS SMAJ5.0A rồi SS14 tới chân 5V của XIAO |
 | J3 – JST PH2.0 | 1 VBAT+, 2 VBAT- | Pin 603040 có mạch bảo vệ |
 | J4 – dây sang XIAO | 1 VBAT+, 2 VBAT- | Hàn 2 dây ngắn lên pad BAT+ / BAT- ở mặt dưới XIAO |
 | J5 – nút SOS | 1 SOS_BTN, 2 GND | |
@@ -72,7 +75,10 @@ Firmware khởi tạo màn với chân RST = -1.
 - Mép dưới: JST pin J3, tụ C3/C4 của MAX30205.
 
 **Mặt dưới (mặt da):**
-- Module MAX30102 ở giữa (tâm cảm biến ~ (25; 30) mm), cắm qua header 1x7, mặt cảm biến hướng ra da.
+- Module MAX30102 đen 2 × 4 chân (20 × 15 mm) ở giữa, tâm cảm biến (25; 30) mm, mặt cảm biến hướng ra da,
+  mặt chữ áp vào mạch. Hàng VIN SDA SCL GND nằm phía XIAO (y 24,9 mm), hàng GND RD IRD INT phía pin (y 35,1 mm);
+  pad vuông = VIN (có chữ VIN ở mặt trên). 8 mối hàn của module nằm trong vùng pin: cắt sát chân, dán Kapton
+  và 1 lớp mút mỏng trước khi đặt pin.
 - Module CJMCU-30205 phía dưới (tâm ~ (25; 50,5) mm), cách LED MAX30102 khoảng 21 mm.
 - Hai điện cực E2 (RL) và E1 (LA) hai bên MAX30102, mỗi cái 9 × 16 mm, mở mask lộ đồng.
 - Lớp dưới gần như là mặt GND liền; mọi chân GND còn được nối bằng dây 0,5 mm nên không phụ thuộc vào đổ đồng.
@@ -95,16 +101,15 @@ băng keo cách điện, nối bằng 9 sợi dây ngắn vào lưới pad U4. M
 
 1. **Khoảng cách hai hàng chân XIAO = 15,24 mm** (đo bằng thước kẹp, hoặc cắm thử XIAO lên breadboard:
    hai hàng cách nhau đúng 6 lỗ). Chân D0 phải ở đầu USB-C, anten ở đầu D6/D7.
-2. **Thứ tự chân module MAX30102**: VIN, SCL, SDA, INT, IRD, RD, GND (theo silkscreen). Có loại 8 chân
-   (thêm GND) – nếu vậy phải sửa footprint. Kích thước thân 21 × 16 mm là ước lượng.
-3. **Điện trở kéo lên I2C của module MAX30102 tím**: nhiều module kéo SDA/SCL lên 1,8 V. Đo điện áp
-   SDA/SCL khi chỉ cấp 3,3 V cho module; nếu khoảng 1,8 V thì chuyển cầu hàn trên module sang 3,3 V
-   (hoặc tháo 2 điện trở kéo lên của nó, dùng điện trở kéo lên của module MAX30205).
-4. **Thứ tự chân CJMCU-30205**: VCC, GND, SDA, SCL, OS, A0, A1, A2 (1x8). Kích thước 22 × 13 mm là
-   ước lượng. VCC chỉ cấp 3,3 V.
-5. **Module AD8232**: thứ tự header GND, 3.3V, OUTPUT, LO-, LO+, SDN; vị trí 3 pad RA/LA/RL.
+2. **Module MAX30102 đen 2 × 4** (đo 27/10/2026: 20 × 15 mm, hai hàng cách 10 mm). Nhìn từ mặt chữ: hàng
+   "GND RD IRD INT" và hàng "VIN SDA SCL GND", GND hàng trên thẳng cột với VIN hàng dưới; hai chân GND nằm
+   chéo góc (đo thông mạch phải kêu). Trước khi hàn: úp mặt chữ vào mặt dưới mạch, chân VIN phải vào pad vuông.
+3. **Điện trở kéo lên I2C của module MAX30102**: đã chạy tốt trên breadboard ở 3,3 V (0x57, 24/10/2026).
+4. **Thứ tự chân CJMCU-30205**: VCC, GND, SDA, SCL, OS, A0, A1, A2 (1x8), đã khớp ảnh module thật; dài 21 mm. VCC chỉ cấp 3,3 V.
+5. **Module AD8232** (30 × 27 mm): thứ tự header GND, 3.3V, OUTPUT, LO-, LO+, SDN và 3 pad RL, LA, RA ở mép trên, đã khớp.
 6. **Vị trí anten XIAO**: mạch giả định anten ở đầu đối diện USB-C.
-7. **Độ cao**: module mặt dưới cao khoảng 5–6 mm (header + module), nên điện cực E1/E2 trên mạch lùi vào
+7. **Độ cao**: nên hàn MAX30102 áp sát mạch (rút bỏ đệm nhựa của header, lót Kapton), module chỉ cao ~3 mm.
+   Nếu dùng header có đệm thì cao 5–6 mm, điện cực E1/E2 trên mạch lùi vào
    so với mặt cảm biến. Vỏ cần lỗ/gờ để điện cực chạm da, hoặc gắn thêm nút kim loại/lò xo hàn lên E1, E2.
 8. Motor rung lấy nguồn từ VBAT+ (3,0–4,2 V). Motor 1027 loại 3 V chạy được; nếu rung quá mạnh, thêm
    điện trở 10–22 Ω nối tiếp hoặc chỉnh PWM ở D2.

@@ -9,7 +9,7 @@
 		(date "2026-10-21")
 		(rev "1.0")
 		(comment 1 "XIAO nRF52840 Sense + MAX30102 + AD8232 + MAX30205 (dạng module), màn GC9A01")
-		(comment 2 "Mạch 2 lớp, linh kiện hàn tay (0805, SOT-23, SOD-123, SMA, header 2,54 mm)")
+		(comment 2 "Mạch 2 lớp, linh kiện hàn tay (0805, SOT-23, SOD-323, SMA, header 2,54 mm)")
 	)
 	(lib_symbols
 		(symbol "DoAnModule:XIAO_nRF52840_Sense_DeCam"
@@ -893,7 +893,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Diode:SMF5V0A"
+		(symbol "Diode:SMAJ5.0A"
 			(pin_numbers
 				(hide yes)
 			)
@@ -916,7 +916,7 @@
 					)
 				)
 			)
-			(property "Value" "SMF5V0A"
+			(property "Value" "SMAJ5.0A"
 				(at 0 -2.54 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -926,7 +926,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Diode_SMD:D_SMF"
+			(property "Footprint" "Diode_SMD:D_SMA"
 				(at 0 -5.08 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -937,7 +937,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.vishay.com/doc?85881"
+			(property "Datasheet" "https://www.littelfuse.com/media?resourcetype=datasheets&itemid=75e32973-b177-4ee3-a0ff-cedaf1abdb93&filename=smaj-datasheet"
 				(at -1.27 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -948,7 +948,7 @@
 					)
 				)
 			)
-			(property "Description" "200W unidirectional Transil Transient Voltage Suppressor, 5Vrwm, SMF"
+			(property "Description" "400W unidirectional Transient Voltage Suppressor, 5.0Vr, SMA(DO-214AC)"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -959,7 +959,7 @@
 					)
 				)
 			)
-			(property "ki_keywords" "diode TVS voltage suppressor"
+			(property "ki_keywords" "unidirectional diode TVS voltage suppressor"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -970,7 +970,7 @@
 					)
 				)
 			)
-			(property "ki_fp_filters" "D*SMF*"
+			(property "ki_fp_filters" "D*SMA*"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -981,7 +981,7 @@
 					)
 				)
 			)
-			(symbol "SMF5V0A_0_1"
+			(symbol "SMAJ5.0A_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27)
@@ -1012,7 +1012,7 @@
 					)
 				)
 			)
-			(symbol "SMF5V0A_1_1"
+			(symbol "SMAJ5.0A_1_1"
 				(pin passive line
 					(at -3.81 0 0)
 					(length 2.54)
@@ -1370,7 +1370,7 @@
 					)
 				)
 			)
-			(property "Footprint" "DoAnModule:Module_MAX30102_1x7"
+			(property "Footprint" "DoAnModule:Module_MAX30102_2x4"
 				(at 0 0 0)
 				(hide yes)
 				(effects
@@ -1388,7 +1388,7 @@
 					)
 				)
 			)
-			(property "Description" "Module MAX30102 màu tím (I2C 0x57), header 1x7: VIN SCL SDA INT IRD RD GND - kiểm tra lại trên module thật"
+			(property "Description" "Module MAX30102 đen 2x4 chân (HW-605, I2C 0x57): 1 VIN, 2 SDA, 3 SCL, 4 GND, 5 GND, 6 RD, 7 IRD, 8 INT"
 				(at 0 0 0)
 				(hide yes)
 				(effects
@@ -1421,7 +1421,7 @@
 							)
 						)
 					)
-					(number "2"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1439,7 +1439,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1457,7 +1457,7 @@
 							)
 						)
 					)
-					(number "4"
+					(number "8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1475,7 +1475,7 @@
 							)
 						)
 					)
-					(number "5"
+					(number "7"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1520,7 +1520,7 @@
 					)
 				)
 				(pin power_in line
-					(at 0.00 -12.70 90)
+					(at -2.54 -12.70 90)
 					(length 2.54)
 					(name "GND"
 						(effects
@@ -1529,7 +1529,25 @@
 							)
 						)
 					)
-					(number "7"
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -12.70 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2137,7 +2155,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Diode:1N4148W"
+		(symbol "Diode:1N4148WS"
 			(pin_numbers
 				(hide yes)
 			)
@@ -2159,7 +2177,7 @@
 					)
 				)
 			)
-			(property "Value" "1N4148W"
+			(property "Value" "1N4148WS"
 				(at 0 -2.54 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2169,7 +2187,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Diode_SMD:D_SOD-123"
+			(property "Footprint" "Diode_SMD:D_SOD-323"
 				(at 0 -4.445 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2180,7 +2198,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
+			(property "Datasheet" "https://www.vishay.com/docs/85751/1n4148ws.pdf"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2191,7 +2209,7 @@
 					)
 				)
 			)
-			(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
+			(property "Description" "75V 0.15A Fast switching Diode, SOD-323"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2235,7 +2253,7 @@
 					)
 				)
 			)
-			(property "ki_fp_filters" "D*SOD?123*"
+			(property "ki_fp_filters" "D*SOD?323*"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2246,7 +2264,7 @@
 					)
 				)
 			)
-			(symbol "1N4148W_0_1"
+			(symbol "1N4148WS_0_1"
 				(polyline
 					(pts
 						(xy -1.27 1.27)
@@ -2289,7 +2307,7 @@
 					)
 				)
 			)
-			(symbol "1N4148W_1_1"
+			(symbol "1N4148WS_1_1"
 				(pin passive line
 					(at -3.81 0 0)
 					(length 2.54)
@@ -4049,7 +4067,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Diode:SMF5V0A")
+		(lib_id "Diode:SMAJ5.0A")
 		(at 55.88 160.02 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4066,7 +4084,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "SMF5.0A"
+		(property "Value" "SMAJ5.0A"
 			(at 45.72 165.10 0)
 			(effects
 				(font
@@ -4075,7 +4093,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123F"
+		(property "Footprint" "Diode_SMD:D_SMA"
 			(at 55.88 160.02 0)
 			(hide yes)
 			(effects
@@ -4093,7 +4111,7 @@
 				)
 			)
 		)
-		(property "Description" "TVS một chiều 5 V, 200 W, SOD-123FL (bảo vệ chân sạc)"
+		(property "Description" "TVS một chiều 5 V, 400 W, SMA (bảo vệ chân sạc)"
 			(at 55.88 160.02 0)
 			(hide yes)
 			(effects
@@ -4696,7 +4714,7 @@
 			)
 		)
 	)
-	(text "Chân sạc pogo -> TVS SMF5.0A về GND -> SS14 nối tiếp -> chân 5V của XIAO.\nSS14 chặn dòng ngược từ USB-C ra chân pogo khi cắm cả hai.\nMạch sạc LiPo nằm sẵn trên XIAO (BQ25101)."
+	(text "Chân sạc pogo -> TVS SMAJ5.0A về GND -> SS14 nối tiếp -> chân 5V của XIAO.\nSS14 chặn dòng ngược từ USB-C ra chân pogo khi cắm cả hai.\nMạch sạc LiPo nằm sẵn trên XIAO (BQ25101)."
 		(exclude_from_sim no)
 		(at 20.32 195.58 0)
 		(effects
@@ -4972,7 +4990,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3b987d68-0884-5f6d-b594-a7714eac0806")
+		(uuid "7917a1f3-7b38-503e-b1d3-58a3ca34b0c2")
 		(property "Reference" "U2"
 			(at 165.10 33.02 0)
 			(effects
@@ -4981,7 +4999,7 @@
 				)
 			)
 		)
-		(property "Value" "MAX30102 (module tím)"
+		(property "Value" "MAX30102 (module 2x4)"
 			(at 165.10 78.74 0)
 			(effects
 				(font
@@ -4989,7 +5007,7 @@
 				)
 			)
 		)
-		(property "Footprint" "DoAnModule:Module_MAX30102_1x7"
+		(property "Footprint" "DoAnModule:Module_MAX30102_2x4"
 			(at 165.1 55.88 0)
 			(hide yes)
 			(effects
@@ -5007,7 +5025,7 @@
 				)
 			)
 		)
-		(property "Description" "Module MAX30102 màu tím (I2C 0x57), header 1x7: VIN SCL SDA INT IRD RD GND - kiểm tra lại trên module thật"
+		(property "Description" "Module MAX30102 đen 2x4 chân (HW-605, I2C 0x57): 1 VIN, 2 SDA, 3 SCL, 4 GND, 5 GND, 6 RD, 7 IRD, 8 INT"
 			(at 165.1 55.88 0)
 			(hide yes)
 			(effects
@@ -5016,17 +5034,17 @@
 				)
 			)
 		)
-		(pin "2"
-			(uuid "8b135178-d0bc-5c5f-be11-9f0a9f56e3db")
-		)
 		(pin "3"
-			(uuid "c16304fe-3bfa-5188-8550-8600d98a1565")
+			(uuid "5b9fc054-1f64-544f-946a-a8dde4773c0e")
 		)
-		(pin "4"
-			(uuid "0d22bccb-002d-511d-b905-1c11f25effe6")
+		(pin "2"
+			(uuid "dc916f29-be9b-5c31-b6a0-cc3a2829189d")
 		)
-		(pin "5"
-			(uuid "85546378-c340-57d9-bde8-c64557482272")
+		(pin "8"
+			(uuid "3000f335-82fc-5f73-a93e-4083d9d8aaa7")
+		)
+		(pin "7"
+			(uuid "77501ab0-3300-5b3c-904f-5ee8b2808ea5")
 		)
 		(pin "6"
 			(uuid "0ac28f00-b7ed-5d9e-872d-b655ceffcca9")
@@ -5034,8 +5052,11 @@
 		(pin "1"
 			(uuid "f8aa4243-e6d3-57a0-a9ed-cc30fbc35991")
 		)
-		(pin "7"
-			(uuid "1022d7bc-cdbc-502d-8145-d1cc6f5cee50")
+		(pin "4"
+			(uuid "ce6709e0-81b7-54d5-af4b-99487da4b7ab")
+		)
+		(pin "5"
+			(uuid "aef68ee4-759f-5e83-a0c8-7d85c33897ed")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -5055,7 +5076,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "084e805a-2289-51fb-9f05-b6f4577e39e6")
+		(uuid "db3ad289-b7e2-5b02-b2d1-981a424ef0a9")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -5065,7 +5086,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4e9d93b4-c43d-548d-a413-e6898e03a629")
+		(uuid "9e0c9510-8775-5f9f-9ddd-abb7148f28b3")
 		(property "Reference" "#PWR11"
 			(at 165.10 40.64 0)
 			(hide yes)
@@ -5113,7 +5134,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "736c14e9-76bf-5647-82e8-592ad2832847")
+			(uuid "1322dde2-b82d-5021-82db-8528037b070c")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -5126,26 +5147,26 @@
 	)
 	(wire
 		(pts
-			(xy 165.10 68.58)
-			(xy 165.10 71.12)
+			(xy 162.56 68.58)
+			(xy 162.56 71.12)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4a639d1f-1629-5983-a070-dcb3248d900f")
+		(uuid "1af75947-ce37-5a76-91ed-2a52ea21e38a")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 165.1 71.12 0)
+		(at 162.56 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b277b214-31dc-5019-9fa2-dcf38be239b2")
+		(uuid "25886950-eb15-5608-80fe-e2a586b6fd1d")
 		(property "Reference" "#PWR12"
-			(at 165.10 71.12 0)
+			(at 162.56 71.12 0)
 			(hide yes)
 			(effects
 				(font
@@ -5155,7 +5176,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 163.39 74.93 0)
+			(at 160.85 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5164,7 +5185,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 165.1 71.12 0)
+			(at 162.56 71.12 0)
 			(hide yes)
 			(effects
 				(font
@@ -5173,7 +5194,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 165.1 71.12 0)
+			(at 162.56 71.12 0)
 			(hide yes)
 			(effects
 				(font
@@ -5182,7 +5203,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 165.1 71.12 0)
+			(at 162.56 71.12 0)
 			(hide yes)
 			(effects
 				(font
@@ -5191,12 +5212,90 @@
 			)
 		)
 		(pin "1"
-			(uuid "3f3f1e87-de3c-5409-8b91-853fedd28a98")
+			(uuid "9dc3b66d-1ded-5230-aa2f-07bf7a782e87")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
 					(reference "#PWR12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 167.64 68.58)
+			(xy 167.64 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b1d9cf6b-3d2e-52a0-9eb6-e7974ce2228d")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 167.64 71.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "18278de1-aea0-5255-86ee-790d8fdef1dd")
+		(property "Reference" "#PWR13"
+			(at 167.64 71.12 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 165.93 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 167.64 71.12 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 167.64 71.12 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 167.64 71.12 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "17cf9007-3df8-5f6d-a86c-e59f3302af95")
+		)
+		(instances
+			(project "dong_ho_module"
+				(path "/a5de97c6-3664-5251-8e87-9234db558207"
+					(reference "#PWR13")
 					(unit 1)
 				)
 			)
@@ -5211,7 +5310,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "b10bb211-abfa-53dd-b7ed-70093f9df774")
+		(uuid "734e41ab-6f80-5b7a-9f20-14ddad93945e")
 	)
 	(label "I2C_SCL"
 		(at 152.40 53.34 180)
@@ -5221,7 +5320,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "59859716-03da-5e05-a402-be7dfc3cdfee")
+		(uuid "831d3323-9431-5d7b-917a-0ffcf00c5777")
 	)
 	(wire
 		(pts
@@ -5232,7 +5331,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "75b3d2fb-0ab8-5a49-944e-86b3eca0f6ea")
+		(uuid "7f419d12-cdcf-527c-9331-a44aa3493899")
 	)
 	(label "I2C_SDA"
 		(at 152.40 55.88 180)
@@ -5242,19 +5341,19 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "2a3c7de8-bfb3-5784-99b8-63a7a63f0c43")
-	)
-	(no_connect
-		(at 175.26 53.34)
-		(uuid "cfe11a3c-c464-508a-b1aa-8a2cdde51a79")
-	)
-	(no_connect
-		(at 175.26 55.88)
-		(uuid "f27b91de-64b3-51d0-83ac-0e61976f3504")
+		(uuid "9dc98025-24cb-571d-b869-11f8ef541efe")
 	)
 	(no_connect
 		(at 175.26 58.42)
-		(uuid "c5b172dc-f52c-530b-a223-eae58dd2ee3f")
+		(uuid "3d6b5b6f-bf3e-583a-8b94-c85943fd0ac0")
+	)
+	(no_connect
+		(at 175.26 55.88)
+		(uuid "edaf61b2-4ead-5c81-bcaa-b215f1ca53cc")
+	)
+	(no_connect
+		(at 175.26 53.34)
+		(uuid "7d96e35a-9874-53e0-8d56-d0949cf2076c")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -5264,7 +5363,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4d3288cd-c858-52c1-8245-d295f651003d")
+		(uuid "a08dcc8c-707b-51f0-9194-e3157a3c956d")
 		(property "Reference" "C1"
 			(at 203.20 54.61 0)
 			(effects
@@ -5311,10 +5410,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "4285b661-ff53-57af-8ab0-9ae4c7b28892")
+			(uuid "83bac5ff-a609-5eda-9cc8-ab9d106070c0")
 		)
 		(pin "2"
-			(uuid "71000834-35cd-5ab6-8ed6-4130fabf3dbc")
+			(uuid "4a9e604a-cf1e-5765-895a-2d5f48115d97")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -5334,7 +5433,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d0f134fa-9565-5064-9188-1f704f526703")
+		(uuid "89f51973-1b8b-5227-8d7b-1377e207d55a")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -5344,8 +5443,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b1f833bb-7376-54a9-8ed0-ec0e8aeab2ca")
-		(property "Reference" "#PWR13"
+		(uuid "f05cf490-9576-5e27-9fe8-28d1ce168377")
+		(property "Reference" "#PWR14"
 			(at 200.66 49.53 0)
 			(hide yes)
 			(effects
@@ -5392,12 +5491,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "75d32968-2e58-5bb8-bce6-49599d2f2ce5")
+			(uuid "01909018-62f0-578e-82d3-f558adf7c7a2")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR13")
+					(reference "#PWR14")
 					(unit 1)
 				)
 			)
@@ -5412,7 +5511,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fb4f6a45-2c29-5014-8fc5-e4fa20a0c923")
+		(uuid "19e9e13a-4fe9-5b80-8578-9196d814e49b")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5422,8 +5521,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d25ed07b-1c29-5bbe-9d92-3c7454daa489")
-		(property "Reference" "#PWR14"
+		(uuid "749b1fd5-b972-5ca4-a03e-49b69878a349")
+		(property "Reference" "#PWR15"
 			(at 200.66 62.23 0)
 			(hide yes)
 			(effects
@@ -5470,12 +5569,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "d9615d2d-edb9-571b-bcd1-0b0e7313c70f")
+			(uuid "c768276b-87fe-511a-b6aa-4d5d74ddc13c")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR14")
+					(reference "#PWR15")
 					(unit 1)
 				)
 			)
@@ -5489,7 +5588,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c511b6cf-b351-52ee-b39b-721f97c6530a")
+		(uuid "0af53190-abd7-5a59-9c64-75a43e29def5")
 		(property "Reference" "C2"
 			(at 215.90 54.61 0)
 			(effects
@@ -5536,10 +5635,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "b16772d3-8188-5f7b-84de-cb9d2bd56bcf")
+			(uuid "ab974ea2-b287-530b-950f-2aacbd2d4006")
 		)
 		(pin "2"
-			(uuid "85f01354-c1de-5ed7-b0f8-92a65f991142")
+			(uuid "5d56e366-801e-5e1c-ad50-b5828eb28bb5")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -5559,7 +5658,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "932f4cd8-7501-5468-a6b3-d0d42688c3fe")
+		(uuid "dfa3051b-0de1-571b-b23c-0a5837580e0e")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -5569,8 +5668,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3608966f-00d4-5632-b5fe-f0c83ee3eaed")
-		(property "Reference" "#PWR15"
+		(uuid "d24fa786-01ce-5632-aab6-60a10a4b0a03")
+		(property "Reference" "#PWR16"
 			(at 213.36 49.53 0)
 			(hide yes)
 			(effects
@@ -5617,12 +5716,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "ab112b62-5969-5f59-93cb-786e94334d09")
+			(uuid "de2eeae4-f03a-5abd-83db-4d430a625e86")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR15")
+					(reference "#PWR16")
 					(unit 1)
 				)
 			)
@@ -5637,7 +5736,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9b0c5fa1-5b31-51be-a42c-92e2a0e66fe7")
+		(uuid "b1f3c690-4cbb-5227-923f-00338c0cf064")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5647,8 +5746,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "21c5dcdb-1ca0-5b4c-b0fb-a7df94acae4f")
-		(property "Reference" "#PWR16"
+		(uuid "28e8c217-294c-5271-8fde-436e7072e351")
+		(property "Reference" "#PWR17"
 			(at 213.36 62.23 0)
 			(hide yes)
 			(effects
@@ -5695,18 +5794,18 @@
 			)
 		)
 		(pin "1"
-			(uuid "8f322b47-e32c-5a18-8770-429739e28578")
+			(uuid "30de83f5-8979-5c63-88a1-a4bb7603d0e9")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR16")
+					(reference "#PWR17")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(text "Thứ tự chân VIN SCL SDA INT IRD RD GND: kiểm tra trên module thật.\nINT, IRD, RD bỏ trống. Module có LDO 1,8 V và điện trở kéo lên riêng."
+	(text "Module đen 2x4: VIN SDA SCL GND / GND RD IRD INT (đã đo 27/10/2026).\nINT, IRD, RD bỏ trống. Module có LDO 1,8 V và điện trở kéo lên riêng."
 		(exclude_from_sim no)
 		(at 135.89 83.82 0)
 		(effects
@@ -5715,7 +5814,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "0b0a3fd6-a313-5322-bc2a-418cc39abf77")
+		(uuid "6fc734b0-acc5-55bd-878a-8838a6ee0542")
 	)
 	(rectangle
 		(start 130 100)
@@ -5727,7 +5826,7 @@
 		(fill
 			(type none)
 		)
-		(uuid "a8b92ea9-6dc8-58f1-9061-c501212f002c")
+		(uuid "c1e85624-0714-56ef-80ef-66e1c14dc03b")
 	)
 	(text "D. Nhiệt độ da: module CJMCU-30205 (mặt da)"
 		(exclude_from_sim no)
@@ -5739,7 +5838,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "43dc8f3c-17bd-5a66-846c-a6628fafdd72")
+		(uuid "75a97da4-97c3-588d-88c5-c2c22e94c2d5")
 	)
 	(symbol
 		(lib_id "DoAnModule:Module_MAX30205_CJMCU")
@@ -5749,7 +5848,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0fdaabdc-ebe3-5d07-8951-499c8ec03b83")
+		(uuid "17442f7b-492e-5437-8d2c-bdb843126c88")
 		(property "Reference" "U3"
 			(at 167.64 110.49 0)
 			(effects
@@ -5794,28 +5893,28 @@
 			)
 		)
 		(pin "3"
-			(uuid "240b6854-edd6-5be3-a441-989cf7056474")
+			(uuid "d6435665-aa9d-5147-82e2-3345e64d2d29")
 		)
 		(pin "4"
-			(uuid "e7c666b4-a6c3-5546-8a23-a2110a6dec2d")
+			(uuid "496c4243-c1c9-53bd-b1b4-82db61c52b31")
 		)
 		(pin "5"
-			(uuid "09cc8dd3-87e7-52a3-9447-124281ac7f10")
+			(uuid "2fcba16b-4443-5139-ba36-b76ed322ac4c")
 		)
 		(pin "1"
-			(uuid "e2e3bfa6-f550-5477-afb8-36a897a99528")
+			(uuid "ea3a5013-04dc-5763-b8d1-3c09b7b00702")
 		)
 		(pin "2"
-			(uuid "bedab432-cd24-5ea6-a172-f2055959949a")
+			(uuid "28c94a57-69d0-590a-9ae7-d7f9cf413a75")
 		)
 		(pin "6"
-			(uuid "0dc30f4b-9692-5cab-809b-9b1ded083be5")
+			(uuid "b793fd2b-f8a7-5e1b-9f06-aba157952e36")
 		)
 		(pin "7"
-			(uuid "fe224d0d-3016-58aa-b4d8-7a578a1fe466")
+			(uuid "83952f9b-c2a7-5fb0-ab0c-c8343c380ff2")
 		)
 		(pin "8"
-			(uuid "00acf28c-1f2b-5d17-aa9d-37dd17404659")
+			(uuid "1e85042d-7e49-504f-acc8-c220e2194f09")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -5835,7 +5934,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c7cfedf1-32fb-568f-99a1-7fa28d52ae59")
+		(uuid "215ff52d-c5cd-52ac-9878-08246ca65b16")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -5845,8 +5944,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "273216d4-79f4-5845-a8c7-c446335f39f7")
-		(property "Reference" "#PWR17"
+		(uuid "78276cc8-d2ab-5cbf-87d1-8a4a548fe573")
+		(property "Reference" "#PWR18"
 			(at 167.64 118.11 0)
 			(hide yes)
 			(effects
@@ -5893,12 +5992,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "7704a25e-8b20-51cc-9972-84840dd1f3c1")
+			(uuid "f8e4e23e-1ca0-51ba-a243-da04951d7456")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR17")
+					(reference "#PWR18")
 					(unit 1)
 				)
 			)
@@ -5913,7 +6012,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "02e69625-1b25-5771-9481-fd6a20b4d449")
+		(uuid "005c7575-487f-56e2-b6b4-27a9d0adca05")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5923,8 +6022,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "13929e39-e583-574b-8fcb-f3b81d4067fb")
-		(property "Reference" "#PWR18"
+		(uuid "c8ee56c3-4156-5831-a440-5e8b3ae96e6e")
+		(property "Reference" "#PWR19"
 			(at 160.02 148.59 0)
 			(hide yes)
 			(effects
@@ -5971,12 +6070,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "f1702537-805f-53b0-a685-2fb815db2ab5")
+			(uuid "1529a4c6-45f8-5e50-b05f-85a6fec531ec")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR18")
+					(reference "#PWR19")
 					(unit 1)
 				)
 			)
@@ -5991,7 +6090,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "baee0b3d-dacc-59a5-8212-9a7ecc0d9afb")
+		(uuid "2e6628dd-6713-590c-a356-21ec96465dcd")
 	)
 	(label "I2C_SDA"
 		(at 152.40 130.81 180)
@@ -6001,7 +6100,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "504cba27-687f-596d-b0e5-65c78788c6df")
+		(uuid "e25790cd-8dc4-5356-ad64-e284bf9be798")
 	)
 	(wire
 		(pts
@@ -6012,7 +6111,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1423a523-0cb8-5ee2-9bea-c753f9ca9c40")
+		(uuid "2044fb23-fd1a-54af-8737-d666b1dd2a78")
 	)
 	(label "I2C_SCL"
 		(at 152.40 133.35 180)
@@ -6022,11 +6121,11 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "d0075562-8585-5659-a1fb-69ce233a1cc7")
+		(uuid "57f1b307-b8b7-5bab-9410-34ec38f92450")
 	)
 	(no_connect
 		(at 180.34 130.81)
-		(uuid "9c10cd73-3618-5a62-8412-49f105a14c35")
+		(uuid "1183a0c5-5818-5055-8c72-8ae042388a10")
 	)
 	(wire
 		(pts
@@ -6037,7 +6136,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2787a454-8c4d-53da-8524-2c88df8a620b")
+		(uuid "79f3f8f7-3fed-586d-88c0-192bb59be24f")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6047,8 +6146,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "21e6c8c8-4c50-592b-84fa-3d510406e0de")
-		(property "Reference" "#PWR19"
+		(uuid "6762975e-5e01-5227-bcf7-795e22646361")
+		(property "Reference" "#PWR20"
 			(at 165.10 148.59 0)
 			(hide yes)
 			(effects
@@ -6095,12 +6194,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "07138f31-fc0e-50fc-b39a-1b852ef986f1")
+			(uuid "1cc71c21-7cef-594c-9178-7f9da3b4b69b")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR19")
+					(reference "#PWR20")
 					(unit 1)
 				)
 			)
@@ -6115,7 +6214,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c5d02627-7dcf-5dcc-8d1f-556432fd7990")
+		(uuid "0dae2cde-d5ec-5e11-8b90-26fb04414845")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6125,8 +6224,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0da6fdad-41cb-591d-af38-18d16da4e2a8")
-		(property "Reference" "#PWR20"
+		(uuid "8ab2d68b-0394-523a-a1de-bd765057cce5")
+		(property "Reference" "#PWR21"
 			(at 170.18 148.59 0)
 			(hide yes)
 			(effects
@@ -6173,12 +6272,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "0fe2f43d-0e7c-5ad9-87a4-bb5baecc6311")
+			(uuid "a20a1dd5-05a7-58f4-beba-5a2be6156f77")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR20")
+					(reference "#PWR21")
 					(unit 1)
 				)
 			)
@@ -6193,7 +6292,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "4fdeba11-959c-56b6-bfad-1fce7cadf81c")
+		(uuid "092f46ba-e4a4-52e2-acd1-12099686fe0e")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6203,8 +6302,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e43ae097-ccb7-5f8b-a838-d075507be134")
-		(property "Reference" "#PWR21"
+		(uuid "676bbe58-0374-543b-8829-0dee0ba587bf")
+		(property "Reference" "#PWR22"
 			(at 175.26 148.59 0)
 			(hide yes)
 			(effects
@@ -6251,12 +6350,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "bb1f9b82-33d9-556d-9e38-65aaf03ee246")
+			(uuid "c35e8dd6-0040-5bf0-9cac-63cc54e063aa")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR21")
+					(reference "#PWR22")
 					(unit 1)
 				)
 			)
@@ -6270,7 +6369,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "fc370384-3e4f-594f-8a08-65880c3d8b3f")
+		(uuid "6c2af91e-36b9-5c94-a3ba-0b20e2cfbfc9")
 		(property "Reference" "C3"
 			(at 208.28 132.08 0)
 			(effects
@@ -6317,10 +6416,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "7512af21-72b2-59da-ae43-33903e02959d")
+			(uuid "0a6bd3b5-ddc4-5802-b83e-60fa4b96fd11")
 		)
 		(pin "2"
-			(uuid "d0ce1608-dee9-5ff2-97c7-ac4d22fa2868")
+			(uuid "86ad0aa3-a6dc-54e9-b6b5-73874b6d75f2")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -6340,7 +6439,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "97bfbe40-a3a7-515f-8b0a-3b8181dbfe27")
+		(uuid "883f5af2-29f5-5170-a963-2a5e3d24f5d1")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -6350,8 +6449,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "365533d5-60ad-5cdd-a42b-236cbebf556a")
-		(property "Reference" "#PWR22"
+		(uuid "c9d78487-5cb9-51f9-a409-52588349e315")
+		(property "Reference" "#PWR23"
 			(at 205.74 127.00 0)
 			(hide yes)
 			(effects
@@ -6398,12 +6497,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "ac1651f2-9ca5-54f6-9bd1-623ad547ac40")
+			(uuid "e95f211c-be70-5ec2-adb4-ce8288553824")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR22")
+					(reference "#PWR23")
 					(unit 1)
 				)
 			)
@@ -6418,7 +6517,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5d175e21-3bba-53cd-a483-6be1813e1068")
+		(uuid "6e36ea82-73f5-53c8-99ab-043b98430df1")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6428,8 +6527,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "edcdbe5e-4585-56bf-8968-895bd389eaf2")
-		(property "Reference" "#PWR23"
+		(uuid "6559fb8d-10de-5750-a81b-96f54f8aad5f")
+		(property "Reference" "#PWR24"
 			(at 205.74 139.70 0)
 			(hide yes)
 			(effects
@@ -6476,12 +6575,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "8336cf96-c6e4-5701-a9de-31d47638e49e")
+			(uuid "d2a48dd1-c6e5-565d-b319-1b11f6abd635")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR23")
+					(reference "#PWR24")
 					(unit 1)
 				)
 			)
@@ -6495,7 +6594,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "08af383b-3be9-5d30-99a7-288c676685a2")
+		(uuid "3f286aa7-0a3e-5513-a3f8-af1a90169ee9")
 		(property "Reference" "C4"
 			(at 220.98 132.08 0)
 			(effects
@@ -6542,10 +6641,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "55320ef2-82d7-54a9-92c5-29746f96c791")
+			(uuid "3a97c8a0-bb2a-5a07-964e-fa68ed9eb719")
 		)
 		(pin "2"
-			(uuid "820709e1-cdb1-5b84-8db2-fcffb8102790")
+			(uuid "29ede5d3-6b6c-5df2-8cfc-f165fea220c6")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -6565,7 +6664,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fd682e8f-314b-52b8-b64b-bb57512c33e4")
+		(uuid "7bddcad4-6849-56f4-ae66-2641c974ac2e")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -6575,8 +6674,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "125ca442-db44-50da-a06b-eba8f3aa26d4")
-		(property "Reference" "#PWR24"
+		(uuid "9a7ae668-3244-55af-8359-be2123dd4758")
+		(property "Reference" "#PWR25"
 			(at 218.44 127.00 0)
 			(hide yes)
 			(effects
@@ -6623,12 +6722,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "2bf54a81-09b9-56bc-b996-4b46855c130f")
+			(uuid "dbd3220d-1da9-56de-a9a2-1f0ef9bdea56")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR24")
+					(reference "#PWR25")
 					(unit 1)
 				)
 			)
@@ -6643,7 +6742,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "79e736c9-4f9b-5aab-ad73-9d4fde0e0636")
+		(uuid "6112f475-f38a-50b0-9329-00a810d9aec7")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6653,8 +6752,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e645bee6-3917-50ff-b86b-d105f04116cb")
-		(property "Reference" "#PWR25"
+		(uuid "db8c21e9-6833-5b07-b9c7-204c076644c3")
+		(property "Reference" "#PWR26"
 			(at 218.44 139.70 0)
 			(hide yes)
 			(effects
@@ -6701,12 +6800,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "0564d7eb-fabf-524e-b56e-e8ad87f04b3b")
+			(uuid "692112f1-455c-5226-93dc-f2c10944279f")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR25")
+					(reference "#PWR26")
 					(unit 1)
 				)
 			)
@@ -6721,7 +6820,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "600da10f-7dcc-531d-84c4-4ce9a4c91fa5")
+		(uuid "6125834d-1a0a-5351-a544-0d5cf2465304")
 	)
 	(rectangle
 		(start 240 20)
@@ -6733,7 +6832,7 @@
 		(fill
 			(type none)
 		)
-		(uuid "763acf58-4d15-537b-9a14-07bec2df453a")
+		(uuid "e5b1c96a-b4eb-5c19-9d32-d1d21f394443")
 	)
 	(text "E. ECG: module AD8232 (nối dây) và điện cực"
 		(exclude_from_sim no)
@@ -6745,7 +6844,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "c0180f80-3f20-5e81-b50c-cf8c07a9d62d")
+		(uuid "de0be5d4-c019-5dd6-a9dd-bb03eb35a5f3")
 	)
 	(symbol
 		(lib_id "DoAnModule:Module_AD8232")
@@ -6755,7 +6854,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8d046dc5-d26d-590d-a5a1-b056682bdac3")
+		(uuid "4e2cfc40-7a8a-58b8-aee9-26e2f9374a59")
 		(property "Reference" "U4"
 			(at 294.64 41.91 0)
 			(effects
@@ -6800,31 +6899,31 @@
 			)
 		)
 		(pin "7"
-			(uuid "daf6d4fb-ca2b-5fa5-8545-7cfd01a65538")
+			(uuid "df4a686d-cd52-5e32-9ca5-31cc3862fd61")
 		)
 		(pin "8"
-			(uuid "a963a56a-5f2b-5364-823b-087e430e677e")
+			(uuid "12850044-3ef0-58fe-9b9d-1faad31e5a09")
 		)
 		(pin "9"
-			(uuid "e9b321eb-d4fd-5237-adde-3c6969ebfae4")
+			(uuid "2cffd15e-2044-5269-8e35-b7c64623c354")
 		)
 		(pin "3"
-			(uuid "c33012c5-e0f5-5d36-86c7-bb4ecc852741")
+			(uuid "3de59e8d-a976-5a08-9bde-64777754e23d")
 		)
 		(pin "4"
-			(uuid "f1fadc3e-4475-5b95-ab84-e2ed7c103f7f")
+			(uuid "b7438662-3f62-5242-8f48-b3822972c44f")
 		)
 		(pin "5"
-			(uuid "09070a80-c0cc-5de1-a09a-83593818a484")
+			(uuid "8d2b8556-a281-506f-86e1-56e46483c41c")
 		)
 		(pin "6"
-			(uuid "a65f8e76-be92-57e1-893d-698d046a025f")
+			(uuid "f36eaf71-5876-5fbe-a7ec-00ee0ee5b9e9")
 		)
 		(pin "2"
-			(uuid "6349ef36-59ea-5c61-b938-3521d24f3c35")
+			(uuid "aecd8b8f-814f-53b8-8613-6dd6c3fe2239")
 		)
 		(pin "1"
-			(uuid "6b5b8ca9-d4b3-597a-ae45-2232a29d6014")
+			(uuid "b0eb0e9b-0c90-55ff-8336-a0429c2f1779")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -6844,7 +6943,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a67b6043-5df9-51a2-8f0b-bb52ff711a01")
+		(uuid "973a99f7-6450-53b9-8b76-9c110a9a855a")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -6854,8 +6953,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "bffabce5-d6f6-5c18-ad82-0da0f1350749")
-		(property "Reference" "#PWR26"
+		(uuid "0f5f21cf-5df9-5157-8967-93171451c1ff")
+		(property "Reference" "#PWR27"
 			(at 294.64 49.53 0)
 			(hide yes)
 			(effects
@@ -6902,12 +7001,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "cf9d4df1-068f-5581-9214-4a05ed3076b4")
+			(uuid "80435c39-44f9-5da4-b339-9391c74b1e44")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR26")
+					(reference "#PWR27")
 					(unit 1)
 				)
 			)
@@ -6922,7 +7021,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "3b4915b6-c029-52ee-bfb9-7ef87c925b93")
+		(uuid "785000e8-33c7-5149-8e1d-7c056af097a4")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6932,8 +7031,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "fd527630-0d02-5160-b673-ec7e9b3db258")
-		(property "Reference" "#PWR27"
+		(uuid "788dc2dd-f4d4-5640-a15f-890c095374e4")
+		(property "Reference" "#PWR28"
 			(at 294.64 80.01 0)
 			(hide yes)
 			(effects
@@ -6980,12 +7079,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "3b8b384f-4af6-5139-b1ca-7c6f47a1b558")
+			(uuid "57584605-c4c9-52ca-ac23-a05af73e309a")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR27")
+					(reference "#PWR28")
 					(unit 1)
 				)
 			)
@@ -7000,52 +7099,10 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1a29c340-e061-53fa-91be-f0917969a4a9")
+		(uuid "b06c437f-84a3-5817-a70c-55f733bdb2e7")
 	)
 	(label "ECG_RA"
 		(at 280.67 62.23 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "6b67d67e-6935-5d51-9e77-6de38088978d")
-	)
-	(wire
-		(pts
-			(xy 283.21 64.77)
-			(xy 280.67 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e840768a-0f8e-53c1-9b2f-300115256452")
-	)
-	(label "ECG_LA"
-		(at 280.67 64.77 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "a3efcf15-f4ec-51e6-b83a-208db28d6213")
-	)
-	(wire
-		(pts
-			(xy 283.21 67.31)
-			(xy 280.67 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b06c437f-84a3-5817-a70c-55f733bdb2e7")
-	)
-	(label "ECG_RL"
-		(at 280.67 67.31 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7056,6 +7113,48 @@
 	)
 	(wire
 		(pts
+			(xy 283.21 64.77)
+			(xy 280.67 64.77)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "15a45f3d-d12e-5d67-9429-d1d21bdc92e8")
+	)
+	(label "ECG_LA"
+		(at 280.67 64.77 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "b0749785-5b7a-59aa-aeff-bb83e358d17c")
+	)
+	(wire
+		(pts
+			(xy 283.21 67.31)
+			(xy 280.67 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8237c97e-a765-54f3-ac31-50d187c3c420")
+	)
+	(label "ECG_RL"
+		(at 280.67 67.31 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "19c4e941-031f-57f4-943a-7a5132acd1ff")
+	)
+	(wire
+		(pts
 			(xy 306.07 62.23)
 			(xy 308.61 62.23)
 		)
@@ -7063,7 +7162,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "15a45f3d-d12e-5d67-9429-d1d21bdc92e8")
+		(uuid "86325ca8-6edf-53db-be6c-4c87de98aa66")
 	)
 	(label "ECG_OUT"
 		(at 308.61 62.23 0)
@@ -7073,7 +7172,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "b0749785-5b7a-59aa-aeff-bb83e358d17c")
+		(uuid "51ebc56a-55da-523c-9a39-30dac33a4bf2")
 	)
 	(wire
 		(pts
@@ -7084,7 +7183,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "8237c97e-a765-54f3-ac31-50d187c3c420")
+		(uuid "a1145822-706a-51e3-9b62-71770f910650")
 	)
 	(label "LO_N"
 		(at 308.61 64.77 0)
@@ -7094,7 +7193,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "19c4e941-031f-57f4-943a-7a5132acd1ff")
+		(uuid "56bac2fb-512a-52d4-998d-aef5ac70cd3a")
 	)
 	(wire
 		(pts
@@ -7105,7 +7204,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "86325ca8-6edf-53db-be6c-4c87de98aa66")
+		(uuid "226437d2-b8a4-504a-bb4e-1e1739c8ab47")
 	)
 	(label "LO_P"
 		(at 308.61 67.31 0)
@@ -7115,21 +7214,21 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "51ebc56a-55da-523c-9a39-30dac33a4bf2")
+		(uuid "fa954d60-db95-52c1-aae0-6679bbae58cd")
 	)
 	(no_connect
 		(at 306.07 69.85)
-		(uuid "c7e16077-006f-5f56-b05b-293173f666d1")
+		(uuid "d3ab399d-d1eb-52be-a912-ea3fd041d08d")
 	)
 	(symbol
-		(lib_id "Diode:1N4148W")
+		(lib_id "Diode:1N4148WS")
 		(at 342.9 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "87874808-6da8-57a3-95a3-e4f9f14ba88b")
+		(uuid "5ab1e10f-4fb7-581f-b1b0-678a6f93a50c")
 		(property "Reference" "D2"
 			(at 339.09 46.99 0)
 			(effects
@@ -7139,7 +7238,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1N4148W"
+		(property "Value" "1N4148WS"
 			(at 339.09 55.88 0)
 			(effects
 				(font
@@ -7148,7 +7247,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
+		(property "Footprint" "Diode_SMD:D_SOD-323"
 			(at 342.9 50.8 0)
 			(hide yes)
 			(effects
@@ -7166,7 +7265,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode tín hiệu 75 V 150 mA, SOD-123 (cổng OR LO+)"
+		(property "Description" "Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO+)"
 			(at 342.9 50.8 0)
 			(hide yes)
 			(effects
@@ -7176,10 +7275,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "9f7c8e7d-0a2d-5a60-b597-15b6ccce4e58")
+			(uuid "9192448e-5d70-56ea-915f-ab75237fbeab")
 		)
 		(pin "2"
-			(uuid "74413d21-bf75-5d5f-adcc-3c3c782340e5")
+			(uuid "80b1a1ec-8191-5a40-9a12-18af30434350")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -7199,7 +7298,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "28cc4e9c-fda2-5f45-9afa-0f05bacabfd3")
+		(uuid "23d823b0-e6bb-56cb-9acb-8854b61c8c56")
 	)
 	(label "LO_P"
 		(at 349.25 50.80 0)
@@ -7209,7 +7308,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "e5d8eb42-c15a-50dc-b585-66e6cf11e520")
+		(uuid "1e02d36e-d18a-5a77-8571-769d57f5a20a")
 	)
 	(wire
 		(pts
@@ -7220,7 +7319,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "6388a6b6-b506-552c-8878-190ee40c3200")
+		(uuid "8ea011f1-ce0c-509e-b25f-f140eb9b758a")
 	)
 	(label "ECG_LOD"
 		(at 336.55 50.80 180)
@@ -7230,17 +7329,17 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "df3f11cb-b81c-5396-af3d-e28327b428a1")
+		(uuid "504fe31e-eaa5-5a8c-aa76-505eacb849b6")
 	)
 	(symbol
-		(lib_id "Diode:1N4148W")
+		(lib_id "Diode:1N4148WS")
 		(at 342.9 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "da79e5ed-c9e9-5c5d-affe-e3253b907ec1")
+		(uuid "31669319-31e0-5913-af5c-59e40f3994c6")
 		(property "Reference" "D3"
 			(at 339.09 62.23 0)
 			(effects
@@ -7250,7 +7349,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1N4148W"
+		(property "Value" "1N4148WS"
 			(at 339.09 71.12 0)
 			(effects
 				(font
@@ -7259,7 +7358,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
+		(property "Footprint" "Diode_SMD:D_SOD-323"
 			(at 342.9 66.04 0)
 			(hide yes)
 			(effects
@@ -7277,7 +7376,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode tín hiệu 75 V 150 mA, SOD-123 (cổng OR LO-)"
+		(property "Description" "Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO-)"
 			(at 342.9 66.04 0)
 			(hide yes)
 			(effects
@@ -7287,10 +7386,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "4bcdead9-2245-5ca0-9fe7-db93173e6a3b")
+			(uuid "f87f7802-b316-54ff-b245-35c776455b17")
 		)
 		(pin "2"
-			(uuid "1f1e4beb-795a-5fb9-9921-31234f772563")
+			(uuid "9b5360b2-2e4c-5d7d-adf9-d245eec7b17a")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -7310,7 +7409,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "38584a48-4a33-51df-ae7a-919274b36032")
+		(uuid "69c03973-e92a-58d8-b1b8-6db86062c7ea")
 	)
 	(label "LO_N"
 		(at 349.25 66.04 0)
@@ -7320,7 +7419,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "59af34f3-dc00-5956-bb75-426ddc9f5288")
+		(uuid "2f9a3708-f82b-51fa-aaf3-316d60aa634c")
 	)
 	(wire
 		(pts
@@ -7331,7 +7430,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "28c34c14-d55e-56c3-90e7-8d5fe18edbd0")
+		(uuid "21a37330-a29a-5676-8bef-dfd5d9f1e6a3")
 	)
 	(label "ECG_LOD"
 		(at 336.55 66.04 180)
@@ -7341,7 +7440,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "61d2d3c4-dbda-580c-b12c-70a0cb810bbe")
+		(uuid "ef27d72f-7fb9-51bc-bdb3-ff7003dc854c")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -7351,7 +7450,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "bab8a088-f2d8-567f-8140-6afec3d39389")
+		(uuid "1aaad55c-e706-5370-8b53-c624d1ad04d3")
 		(property "Reference" "R3"
 			(at 383.54 57.15 0)
 			(effects
@@ -7398,10 +7497,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "62fff535-5370-5e3a-ac6f-5f132561468a")
+			(uuid "c78a6c10-2ba7-5cbb-9517-f8673da6b24d")
 		)
 		(pin "2"
-			(uuid "4b4f0894-1145-5614-8805-a5683b8bebd9")
+			(uuid "ced1f461-a4fa-5576-81f1-3b1e6e82173b")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -7421,7 +7520,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5ca216de-deda-57bc-ad58-a283eabf0828")
+		(uuid "94e5d251-65bb-5692-9d89-e571e9917521")
 	)
 	(label "ECG_LOD"
 		(at 381.00 52.07 90)
@@ -7431,7 +7530,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "daddc27f-ff50-592c-8cc7-07a9ec76601e")
+		(uuid "a2ac66b0-fe71-5e24-b694-63caf3f43dbd")
 	)
 	(wire
 		(pts
@@ -7442,7 +7541,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "316ca774-536d-5b97-a4b9-9da869c76a25")
+		(uuid "64fb3314-45a2-5ef3-9704-b47cb86c497f")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -7452,8 +7551,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "91afff53-342d-56d7-aa27-70651889f130")
-		(property "Reference" "#PWR28"
+		(uuid "9cf46020-77c0-5a15-b1d4-ee089e7a6498")
+		(property "Reference" "#PWR29"
 			(at 381.00 64.77 0)
 			(hide yes)
 			(effects
@@ -7500,12 +7599,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "1e875bc6-83c4-5e65-9627-3ded51af34e0")
+			(uuid "2a39d567-3c02-5f81-b866-a1e49a514bbb")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR28")
+					(reference "#PWR29")
 					(unit 1)
 				)
 			)
@@ -7519,7 +7618,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4ff7da82-b753-5ac7-9654-6f1d95ef1883")
+		(uuid "f924e62a-632d-5e97-8106-3d905ad67a0f")
 		(property "Reference" "C5"
 			(at 256.54 44.45 0)
 			(effects
@@ -7566,10 +7665,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "4748acd9-788a-5d4a-9ac1-2b25be9fa11a")
+			(uuid "86a102de-321e-562f-8810-2db794adce39")
 		)
 		(pin "2"
-			(uuid "b3d779f6-f3f0-5a6e-a7c9-9279c01aa85d")
+			(uuid "784d5b12-25fe-5dfa-88d4-08f874ebf17a")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -7589,7 +7688,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "b7b2e2b9-f6ec-5bbb-9bd6-faf13a29553d")
+		(uuid "9a814197-de6d-56e0-8123-abf7b11b90ac")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -7599,8 +7698,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "a944e14c-ae7e-5465-a500-49c59a9f5aeb")
-		(property "Reference" "#PWR29"
+		(uuid "a0a72e1f-0792-53d2-af52-b6254869399c")
+		(property "Reference" "#PWR30"
 			(at 254.00 39.37 0)
 			(hide yes)
 			(effects
@@ -7647,12 +7746,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "a728bffa-bbfb-5a5b-a98d-ccf2d8cf2aab")
+			(uuid "138bf818-9cbf-5eca-8d3e-4c86b6d63929")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR29")
+					(reference "#PWR30")
 					(unit 1)
 				)
 			)
@@ -7667,7 +7766,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c9b4110b-3cd0-5ac7-8767-b34e65526476")
+		(uuid "6678ddea-bf73-549a-ae3e-69236faa3b5f")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -7677,8 +7776,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "a14c0599-49c5-5f54-8b20-c93cdaa794f2")
-		(property "Reference" "#PWR30"
+		(uuid "b9dc0d66-824d-50f7-89f1-bf5fa5ece6d7")
+		(property "Reference" "#PWR31"
 			(at 254.00 52.07 0)
 			(hide yes)
 			(effects
@@ -7725,12 +7824,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "78e39495-a857-5ad9-9981-867dc3104b9a")
+			(uuid "9ed8a403-744a-5625-8338-556a752218c6")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR30")
+					(reference "#PWR31")
 					(unit 1)
 				)
 			)
@@ -7744,7 +7843,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "661fb9ca-7e7e-5882-b38b-b21c18528040")
+		(uuid "19c49115-e586-50c8-a456-f2a992e0dd36")
 		(property "Reference" "C6"
 			(at 269.24 44.45 0)
 			(effects
@@ -7791,10 +7890,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "1bd7b37f-c571-5a75-8571-825d39588b0d")
+			(uuid "e55ec268-f860-58d9-bd2a-1576b1173d9c")
 		)
 		(pin "2"
-			(uuid "f4108380-d7f8-51c7-83f9-fd44a980fe70")
+			(uuid "e9fa4cf1-1af5-51dd-a2f2-d0801f30e883")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -7814,7 +7913,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "bc20d745-ccef-518a-a9a7-61de902068a1")
+		(uuid "59ebd602-66c9-5afc-abbf-65e7dd0f7c83")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -7824,8 +7923,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "1c871a9e-8a7d-52aa-93d0-9019553c187f")
-		(property "Reference" "#PWR31"
+		(uuid "7497b768-7776-5c62-abc3-8d33a26446fc")
+		(property "Reference" "#PWR32"
 			(at 266.70 39.37 0)
 			(hide yes)
 			(effects
@@ -7872,12 +7971,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "74918f58-6d9e-5743-8d16-534c5100db59")
+			(uuid "a19862ff-d577-5720-a566-43bc4d19eb1e")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR31")
+					(reference "#PWR32")
 					(unit 1)
 				)
 			)
@@ -7892,7 +7991,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a8794640-71ca-5961-b0f3-175adb1f82a8")
+		(uuid "c05d96dc-d30a-50dc-b4d7-de1a99e8a6dd")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -7902,8 +8001,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "cb6611d0-747b-51c9-bd2d-de845600df12")
-		(property "Reference" "#PWR32"
+		(uuid "807a7fc9-3377-53d6-bd60-1b5949b7b12e")
+		(property "Reference" "#PWR33"
 			(at 266.70 52.07 0)
 			(hide yes)
 			(effects
@@ -7950,12 +8049,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "c1388632-d42d-556a-a78f-1c03f83826e0")
+			(uuid "5538c4c2-de56-533c-8f95-34e8980fa8a7")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR32")
+					(reference "#PWR33")
 					(unit 1)
 				)
 			)
@@ -7969,7 +8068,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "6be3fec0-ab6c-5127-8045-2cd3d94e9841")
+		(uuid "6bd77bcc-8e98-54b6-9d2e-9586ac46220a")
 		(property "Reference" "E1"
 			(at 337.82 90.17 0)
 			(effects
@@ -8016,7 +8115,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "f8617a6e-2d85-5bc3-bfa9-343b7f4ad266")
+			(uuid "867c7748-2ab1-5ce5-aa47-ec69b254f8a7")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8036,7 +8135,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "be11044e-a315-5f2f-ba8a-075728c5cef1")
+		(uuid "83ce5b9b-8df8-5347-9941-d16596b9efa8")
 	)
 	(label "ECG_LA"
 		(at 327.66 92.71 180)
@@ -8046,7 +8145,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "d8240e21-0a5f-59f6-bf59-f2174ff6492b")
+		(uuid "650cd203-aa49-5577-b67b-cfdb13d95381")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
@@ -8056,7 +8155,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "58dbdab8-d981-5f61-afb1-463035923d70")
+		(uuid "3e93eb46-e4c3-5c4f-8f81-bf47c68b839e")
 		(property "Reference" "E2"
 			(at 337.82 100.33 0)
 			(effects
@@ -8103,7 +8202,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "047bef6d-1c3d-5d3d-a73e-02a76b82b5d2")
+			(uuid "33864dff-7f28-572d-b909-f81c58d63a0c")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8123,7 +8222,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "83ce5b9b-8df8-5347-9941-d16596b9efa8")
+		(uuid "a60fa887-99e7-50f5-a42d-2fa7e88f67f1")
 	)
 	(label "ECG_RL"
 		(at 327.66 102.87 180)
@@ -8133,7 +8232,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "650cd203-aa49-5577-b67b-cfdb13d95381")
+		(uuid "6dac2656-eb57-50f3-ac13-d0774b3817a5")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
@@ -8143,7 +8242,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "422f65c0-2331-5f54-b322-21631e71d2f6")
+		(uuid "308a0bf2-395d-5e24-bf48-209375f947ec")
 		(property "Reference" "J6"
 			(at 337.82 110.49 0)
 			(effects
@@ -8190,7 +8289,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "44e1041e-7656-5f1f-be1d-76da50fe067a")
+			(uuid "5f485741-4ebb-50dc-a41b-c364ae57c6f0")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8210,7 +8309,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a60fa887-99e7-50f5-a42d-2fa7e88f67f1")
+		(uuid "e4770835-7250-561a-a0ef-17cce123e2b8")
 	)
 	(label "ECG_RA"
 		(at 327.66 113.03 180)
@@ -8220,7 +8319,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "6dac2656-eb57-50f3-ac13-d0774b3817a5")
+		(uuid "b061f98e-9c60-5dcf-8941-8c92fc533326")
 	)
 	(text "LO+ và LO- gộp bằng 2 diode (OR) vào D1, R3 kéo xuống: D1 = 1 khi tuột điện cực.\nGiắc 3,5 mm trên module tháo bỏ; hàn dây từ pad RA/LA/RL của module.\nSDN bỏ trống (module tự kéo lên, AD8232 luôn chạy)."
 		(exclude_from_sim no)
@@ -8231,7 +8330,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "68d4a0ac-7a9e-52b2-b206-73cc4a34bee8")
+		(uuid "e243df78-32e7-5e4a-a9fa-ab33b3dea652")
 	)
 	(rectangle
 		(start 240 130)
@@ -8243,7 +8342,7 @@
 		(fill
 			(type none)
 		)
-		(uuid "5fc31de0-6830-50f9-81b7-7c46b8813332")
+		(uuid "cb9fad1a-cc5a-562d-9d61-24e67f1392e9")
 	)
 	(text "F. Màn hình tròn GC9A01 1,28\" (nối dây)"
 		(exclude_from_sim no)
@@ -8255,7 +8354,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "92d039cf-0986-52e0-a2b8-3092b78ee05d")
+		(uuid "61b7143f-a816-5330-b630-5a0c77d73341")
 	)
 	(symbol
 		(lib_id "DoAnModule:Display_GC9A01")
@@ -8265,7 +8364,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e3de6a7c-e7c1-5e5d-ab42-89d15717bd24")
+		(uuid "16fca378-7ecb-5221-a263-57d15a2caf07")
 		(property "Reference" "U5"
 			(at 278.13 138.43 0)
 			(effects
@@ -8310,28 +8409,28 @@
 			)
 		)
 		(pin "3"
-			(uuid "8366829a-beb8-554b-8bf5-8c262738ae89")
+			(uuid "b305d754-abaf-5a8e-93a5-ac0e88b86af6")
 		)
 		(pin "4"
-			(uuid "641031bf-92e2-5b62-8fcb-f8869cb3b61e")
+			(uuid "9f0940f5-f559-517a-852b-a22a48ee13c7")
 		)
 		(pin "5"
-			(uuid "da2460aa-829e-506d-8cc6-84b111edad41")
+			(uuid "df251ccf-d694-5627-b8a5-5df8922d984b")
 		)
 		(pin "6"
-			(uuid "1e3e5be4-894f-538f-b2e9-a72c6bd240bd")
+			(uuid "463d73d8-faa2-55c6-a678-a93d6a481ed1")
 		)
 		(pin "7"
-			(uuid "561e4f27-9276-5606-87fb-9853bcfab8f9")
+			(uuid "50ad2db3-5de8-51be-b466-0da7a2165872")
 		)
 		(pin "8"
-			(uuid "650ac015-04cc-5d5e-baee-69c706494910")
+			(uuid "78a0f641-646c-52dd-ba09-84bd48e44015")
 		)
 		(pin "1"
-			(uuid "69739571-209c-589b-8dd8-838bd2eceb0f")
+			(uuid "74064ea3-458e-5888-b468-33e4f8d3d96c")
 		)
 		(pin "2"
-			(uuid "81b4e07c-e347-59e9-bdbb-c8c9df7d68c1")
+			(uuid "f15337ff-ab60-583a-ba51-a6f9425c8941")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8351,7 +8450,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "aecb76dc-fbf0-5cbc-8366-a069eaf9913f")
+		(uuid "d0af6f19-f09a-5238-85fd-6d48951a5f9e")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -8361,8 +8460,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8cd71c66-abc8-5628-8c46-2cdec688fbfa")
-		(property "Reference" "#PWR33"
+		(uuid "6bf56f6f-7fb8-58b1-b885-a4aa6a0cfa59")
+		(property "Reference" "#PWR34"
 			(at 278.13 146.05 0)
 			(hide yes)
 			(effects
@@ -8409,12 +8508,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "7bb34863-c917-519f-b36c-bd042e28b1d4")
+			(uuid "f4bf4c3b-9436-5bfc-bfa1-d70b6d32c68d")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR33")
+					(reference "#PWR34")
 					(unit 1)
 				)
 			)
@@ -8429,7 +8528,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d757fa8f-b035-5a5f-b726-9713c8b45f34")
+		(uuid "57bde8fe-86ee-5941-abb9-7339ea6808a9")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -8439,8 +8538,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "aa4b2206-baa4-54ef-afb6-81a312fee962")
-		(property "Reference" "#PWR34"
+		(uuid "7cd8eea8-0fee-552e-98e8-fb12872dd052")
+		(property "Reference" "#PWR35"
 			(at 278.13 186.69 0)
 			(hide yes)
 			(effects
@@ -8487,12 +8586,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "c3bfe60f-1695-5d6e-b699-6ca603a3e9b8")
+			(uuid "a2e25986-eb31-51a7-b78e-01f9b3be1aa9")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR34")
+					(reference "#PWR35")
 					(unit 1)
 				)
 			)
@@ -8507,52 +8606,10 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9acf5c60-b7e2-54f6-a2b0-d9a4faabf04a")
+		(uuid "66331360-6d14-5329-9e57-593fdf319828")
 	)
 	(label "TFT_SCK"
 		(at 265.43 158.75 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "a6ffd41f-3c6f-50dc-b7ae-3eaf206a5185")
-	)
-	(wire
-		(pts
-			(xy 267.97 161.29)
-			(xy 265.43 161.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fa9ca431-affc-5d6c-b15d-52b12a7ad682")
-	)
-	(label "TFT_MOSI"
-		(at 265.43 161.29 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "65d6b7aa-5141-5f8c-ba97-ffa58788abad")
-	)
-	(wire
-		(pts
-			(xy 267.97 163.83)
-			(xy 265.43 163.83)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "66331360-6d14-5329-9e57-593fdf319828")
-	)
-	(label "TFT_RES"
-		(at 265.43 163.83 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8563,8 +8620,8 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 166.37)
-			(xy 265.43 166.37)
+			(xy 267.97 161.29)
+			(xy 265.43 161.29)
 		)
 		(stroke
 			(width 0)
@@ -8572,8 +8629,8 @@
 		)
 		(uuid "dda2a226-f0cb-5cd7-a99a-f06c55c5cdb6")
 	)
-	(label "TFT_DC"
-		(at 265.43 166.37 180)
+	(label "TFT_MOSI"
+		(at 265.43 161.29 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8584,8 +8641,8 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 168.91)
-			(xy 265.43 168.91)
+			(xy 267.97 163.83)
+			(xy 265.43 163.83)
 		)
 		(stroke
 			(width 0)
@@ -8593,8 +8650,8 @@
 		)
 		(uuid "ebe88739-28b8-5b25-84fd-d15e050051a9")
 	)
-	(label "TFT_CS"
-		(at 265.43 168.91 180)
+	(label "TFT_RES"
+		(at 265.43 163.83 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8605,6 +8662,48 @@
 	)
 	(wire
 		(pts
+			(xy 267.97 166.37)
+			(xy 265.43 166.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c924cd2-179b-5597-af30-2b710e176ab4")
+	)
+	(label "TFT_DC"
+		(at 265.43 166.37 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d1e3502c-2a36-5dda-bb5c-bedd50bf4b4a")
+	)
+	(wire
+		(pts
+			(xy 267.97 168.91)
+			(xy 265.43 168.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b9fef6c4-5fac-5eeb-b96f-b8892e9bbc93")
+	)
+	(label "TFT_CS"
+		(at 265.43 168.91 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "418cfe5c-8965-560a-85ad-32468a505101")
+	)
+	(wire
+		(pts
 			(xy 267.97 171.45)
 			(xy 265.43 171.45)
 		)
@@ -8612,7 +8711,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2c924cd2-179b-5597-af30-2b710e176ab4")
+		(uuid "28f585f2-8a81-5e64-865c-0d7b5cd54b31")
 	)
 	(label "TFT_BLK"
 		(at 265.43 171.45 180)
@@ -8622,7 +8721,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "d1e3502c-2a36-5dda-bb5c-bedd50bf4b4a")
+		(uuid "79e3a682-ec50-53c9-9100-7386964de6c6")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -8632,7 +8731,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c2963e25-bcbd-550f-9724-0947c28c6141")
+		(uuid "7f02cf2a-3f0f-5a5f-9139-cfc5b5dafd5d")
 		(property "Reference" "R4"
 			(at 322.58 156.21 0)
 			(effects
@@ -8679,10 +8778,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "62f46691-6bbe-5459-a935-f2e71be97964")
+			(uuid "9221f589-945b-5238-920b-715756d6cfbd")
 		)
 		(pin "2"
-			(uuid "4298ea51-9701-5f08-91cf-3cc4f29fe9c3")
+			(uuid "c3baed54-e643-5d7f-97f2-795b6c22b500")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8702,7 +8801,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f1ed8987-4e51-5682-aacf-c73bc8ce8f41")
+		(uuid "d7e1d489-3489-5eaa-a430-a2d573bac2e6")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -8712,8 +8811,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "1106e53e-9f8e-5827-b53d-11dfd5bc8484")
-		(property "Reference" "#PWR35"
+		(uuid "5988b0a3-1251-5611-957e-eb298f73c954")
+		(property "Reference" "#PWR36"
 			(at 320.04 151.13 0)
 			(hide yes)
 			(effects
@@ -8760,12 +8859,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "4e3a8f32-ac61-53f4-ade0-1431e0ef2c51")
+			(uuid "d832aac9-675f-556c-aac9-caf3314d098a")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR35")
+					(reference "#PWR36")
 					(unit 1)
 				)
 			)
@@ -8780,7 +8879,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c4c23e4b-959a-5210-b5ec-e985fda519af")
+		(uuid "d1feefdc-5e91-51b0-af5b-31b0080b2930")
 	)
 	(label "TFT_RES"
 		(at 320.04 163.83 270)
@@ -8790,7 +8889,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "801342fc-1e75-5d91-aaca-e3e02a45a9de")
+		(uuid "334a73c8-de3a-56c2-af81-2329db9358a1")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -8800,7 +8899,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f321404a-d941-57e1-b8b6-a3f5258a1e35")
+		(uuid "539627c0-bf3a-503d-b0e2-635fb0297e13")
 		(property "Reference" "C9"
 			(at 337.82 171.45 0)
 			(effects
@@ -8847,10 +8946,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "68662406-55d4-54c3-a0a6-1cc178f87afd")
+			(uuid "9c44ed40-6cfb-560c-b134-373f0ae973a3")
 		)
 		(pin "2"
-			(uuid "b65baddc-81c3-56c7-afab-07a27c80825a")
+			(uuid "fa121a3b-6d0e-5dea-af10-a600469ea7a6")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -8870,7 +8969,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "034fa692-667a-553a-83a1-6518722cc1ea")
+		(uuid "b0931e15-009f-59a3-9e78-7266ef1ecb1c")
 	)
 	(label "TFT_RES"
 		(at 335.28 166.37 90)
@@ -8880,7 +8979,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "1f433dd1-0d51-5175-8774-974e95157206")
+		(uuid "01abb3d5-bd66-5fc9-9224-0ca2d464522c")
 	)
 	(wire
 		(pts
@@ -8891,7 +8990,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "aaa91823-95ca-5bea-ac5c-1cbc0a69edff")
+		(uuid "006a1fef-262a-5709-bf31-7feb5d466b4f")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -8901,8 +9000,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "485b7b6c-8ce6-53fb-9458-1256037acc70")
-		(property "Reference" "#PWR36"
+		(uuid "3ba834ef-baab-5370-b43e-1e939a663b71")
+		(property "Reference" "#PWR37"
 			(at 335.28 179.07 0)
 			(hide yes)
 			(effects
@@ -8949,12 +9048,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "fd9d7748-a088-5801-9e33-3d00ebb8ac51")
+			(uuid "a0c70175-76ac-5705-ad96-96fec0f42ffb")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR36")
+					(reference "#PWR37")
 					(unit 1)
 				)
 			)
@@ -8968,7 +9067,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3cb19379-4986-52b6-b7b7-9831b87d6767")
+		(uuid "c7b1c672-82ca-5fc3-a3ee-981368a90c46")
 		(property "Reference" "C7"
 			(at 360.68 158.75 0)
 			(effects
@@ -9015,10 +9114,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "d1e44434-7833-56ac-8558-8e58d6831077")
+			(uuid "95e8a413-91fc-59bd-8c7a-a41f919158dc")
 		)
 		(pin "2"
-			(uuid "d0dde46c-149e-52e3-9f5c-7a7d66549468")
+			(uuid "3ca702d4-cc1e-5aec-9f87-a17cac18efdd")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9038,7 +9137,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fc55c74a-d434-5ff5-a0c7-a8b7c1a12512")
+		(uuid "9f94e907-f9e9-5eb1-ac59-a14069e627e5")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -9048,8 +9147,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "494beeee-85a5-5017-8607-18d6ec633f5a")
-		(property "Reference" "#PWR37"
+		(uuid "1fe995cb-6e27-5c76-aa01-5387dd1da681")
+		(property "Reference" "#PWR38"
 			(at 358.14 153.67 0)
 			(hide yes)
 			(effects
@@ -9096,12 +9195,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "cef3805a-c1da-5510-b738-cbaf3d2db63b")
+			(uuid "0e476660-5299-5ae3-81ae-d9bfdeb5977b")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR37")
+					(reference "#PWR38")
 					(unit 1)
 				)
 			)
@@ -9116,7 +9215,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2911a8d3-914c-5b63-8499-f54891e45f75")
+		(uuid "0b9bae22-d146-58a0-80e8-f128a28b1522")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -9126,8 +9225,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f9b0c9fc-15c4-59a2-8d16-4089087d17cf")
-		(property "Reference" "#PWR38"
+		(uuid "667edf16-ed99-5d3c-b2dc-74340e62a3d9")
+		(property "Reference" "#PWR39"
 			(at 358.14 166.37 0)
 			(hide yes)
 			(effects
@@ -9174,12 +9273,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "b21c9ab9-c92a-5fc3-9ce4-9fb2ad4220e1")
+			(uuid "e83ee9ab-3c3e-5fbf-aee9-6b10de32f63f")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR38")
+					(reference "#PWR39")
 					(unit 1)
 				)
 			)
@@ -9193,7 +9292,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e6660ad3-f17d-5100-b191-14a514185133")
+		(uuid "cb6b0cef-7d28-5527-be39-05ff7c2bd252")
 		(property "Reference" "C8"
 			(at 373.38 158.75 0)
 			(effects
@@ -9240,10 +9339,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "8b70e773-dcdd-5979-bec3-dd102d316132")
+			(uuid "e85e7352-41de-593a-9653-d0f00f3f68a4")
 		)
 		(pin "2"
-			(uuid "cc53f8d1-47fb-5ad5-8ac2-5f1a441217ca")
+			(uuid "06962f71-a69f-5279-8b56-f1073fba823a")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9263,7 +9362,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e79a80d1-d713-5d5a-ad39-7ae904f09e25")
+		(uuid "7ee1e491-45bf-56a2-a4eb-e1976ae0963f")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -9273,8 +9372,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f0ab1545-bd2d-5afb-8cb4-5dc9accea5ef")
-		(property "Reference" "#PWR39"
+		(uuid "6684774e-272e-5972-aff7-427da7a3a712")
+		(property "Reference" "#PWR40"
 			(at 370.84 153.67 0)
 			(hide yes)
 			(effects
@@ -9321,12 +9420,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "0b883431-2e75-5759-b025-6e828d8ded18")
+			(uuid "dd16df87-9843-5468-8d44-03e06b0de2f9")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR39")
+					(reference "#PWR40")
 					(unit 1)
 				)
 			)
@@ -9341,7 +9440,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "26529049-1fcf-55de-9901-aeec1fcd0fbc")
+		(uuid "16c6207f-00c5-5757-8978-0e04b7d54c59")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -9351,8 +9450,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "9b11e462-7f48-5997-93ff-76a4d1b699d9")
-		(property "Reference" "#PWR40"
+		(uuid "25558046-c3da-5080-bcd7-179a8a32fbb7")
+		(property "Reference" "#PWR41"
 			(at 370.84 166.37 0)
 			(hide yes)
 			(effects
@@ -9399,12 +9498,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "6b6fcdaf-ca9f-5ad6-89be-627887513fe0")
+			(uuid "ec3d2eff-c2c9-5e48-a697-d464bbb8b20f")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR40")
+					(reference "#PWR41")
 					(unit 1)
 				)
 			)
@@ -9419,7 +9518,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "b039b33c-c31b-5c03-9244-584cfc6fa1f9")
+		(uuid "b1c816b2-a03e-565d-a4fe-78a6087e8bd0")
 	)
 	(rectangle
 		(start 130 185)
@@ -9431,7 +9530,7 @@
 		(fill
 			(type none)
 		)
-		(uuid "305fbeb4-e67f-5377-a089-24a50bd02bd0")
+		(uuid "44329839-ed3a-50db-8c8d-98fc199218b1")
 	)
 	(text "G. Motor rung 1027 và nút SOS"
 		(exclude_from_sim no)
@@ -9443,7 +9542,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "a5d7771b-cc0b-52ea-a2b8-3cdbc2cae683")
+		(uuid "c4f3bba0-1e35-54d3-ad76-6eb4d2212a71")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
@@ -9453,7 +9552,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f4ca719f-f384-5201-9837-c973a84e7d8e")
+		(uuid "84efed0e-bab0-5ce8-9e76-4ba5d04b4ccb")
 		(property "Reference" "J1"
 			(at 215.90 199.39 0)
 			(effects
@@ -9500,10 +9599,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "7615d37b-2c1c-57f1-9115-f49fe0feb6e3")
+			(uuid "4c179ec3-7f58-5668-a54e-13996d7400b2")
 		)
 		(pin "2"
-			(uuid "06f67e82-d44a-576c-81f6-3dcf1a48229d")
+			(uuid "3199a94e-3af3-5bda-a202-f9fd897cb3db")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9523,7 +9622,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9e2b194b-39cf-576e-abe9-4b56aae5dcac")
+		(uuid "54766209-eab9-512b-b5f9-153cb638caef")
 	)
 	(label "VBAT+"
 		(at 205.74 201.93 180)
@@ -9533,7 +9632,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "4291c1a5-5247-577e-b928-1e3b44dfd6e1")
+		(uuid "1fcf996f-4c09-54ce-81c8-e934137c0a87")
 	)
 	(wire
 		(pts
@@ -9544,7 +9643,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d79593c2-82b3-58f9-a655-c1be2ca170f1")
+		(uuid "7b0cd98a-a5e4-5ceb-947f-9c3338334bad")
 	)
 	(label "MOTOR_N"
 		(at 205.74 204.47 180)
@@ -9554,7 +9653,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "b73efbe1-8542-57a3-8d77-f0d7de30af72")
+		(uuid "42b233f3-c31c-5131-8e01-7c9edead314f")
 	)
 	(symbol
 		(lib_id "Diode:SS14")
@@ -9564,7 +9663,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d5cbf3df-62bd-5753-934d-fed7a97b077f")
+		(uuid "21aebccc-6eb0-5e90-a819-2f6ed2a20791")
 		(property "Reference" "D1"
 			(at 168.91 199.39 0)
 			(effects
@@ -9611,10 +9710,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "5b33864f-6e72-5f73-8b96-e8af557078c0")
+			(uuid "8f638c38-8a20-5692-9dad-ea406d4a51fd")
 		)
 		(pin "2"
-			(uuid "5a1ccd6b-4a85-593b-a152-8cc00cac4188")
+			(uuid "8836dc44-3b0b-58c7-92aa-5ebd20eacb3a")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9634,7 +9733,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "dbea71f6-748e-5d13-9774-41b43172450f")
+		(uuid "6701d002-bb56-5e5f-b71b-a2f7e9fa0db6")
 	)
 	(label "VBAT+"
 		(at 166.37 203.20 180)
@@ -9644,7 +9743,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "1029a05b-6c88-5241-802b-6cb01b35e07f")
+		(uuid "dc7090c7-d53d-5013-814d-78bd20c9afec")
 	)
 	(wire
 		(pts
@@ -9655,7 +9754,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a388b978-3d56-5e0c-a0f3-43dd71fad8b9")
+		(uuid "996c423d-0d87-55b1-a124-b777ca6c19ae")
 	)
 	(label "MOTOR_N"
 		(at 179.07 203.20 0)
@@ -9665,7 +9764,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "b4db0813-7fb9-54c9-92aa-a12bab9645ec")
+		(uuid "b2d1648a-f0ff-54ab-9fcb-816d2eb9d7f5")
 	)
 	(symbol
 		(lib_id "Transistor_FET:AO3400A")
@@ -9675,7 +9774,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0ffd5c4e-1354-535b-9a37-6e9a4a21d355")
+		(uuid "ab66ff42-c1fe-5bec-9f5a-fa889c476655")
 		(property "Reference" "Q1"
 			(at 180.34 226.06 0)
 			(effects
@@ -9722,13 +9821,13 @@
 			)
 		)
 		(pin "1"
-			(uuid "f2b99000-9b2c-5117-9eb3-eaa6ab4ed58a")
+			(uuid "6a22a7f7-8d2b-5a9b-a077-072a7f5d88a3")
 		)
 		(pin "2"
-			(uuid "e63ace2e-7fe9-5034-a203-30b9bf02aa9c")
+			(uuid "9bcc820d-9df1-57be-884f-77e7b66b4f00")
 		)
 		(pin "3"
-			(uuid "bb0ded3b-d1c9-5ee5-8954-25c6c8ff996b")
+			(uuid "f96bd624-efa2-5c37-a8a8-eafa74432dcc")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9748,7 +9847,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a596e0e2-4314-59ef-ad23-ce53df71b1f3")
+		(uuid "b102d25f-c9b4-5c47-bbeb-d3b2fc6625c8")
 	)
 	(label "MOTOR_G"
 		(at 167.64 228.60 180)
@@ -9758,7 +9857,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "bb51cd82-80e3-51de-b5c9-b305f9a51642")
+		(uuid "fe7468ef-3fb7-59cd-b11b-1b6aaadcb8fb")
 	)
 	(wire
 		(pts
@@ -9769,7 +9868,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "ce715d58-23bc-55b4-8517-74923bd38583")
+		(uuid "b035d10e-df41-55f5-816f-975426ddd0c3")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -9779,8 +9878,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "de0d68a6-f4d8-5130-bcda-186180d259ab")
-		(property "Reference" "#PWR41"
+		(uuid "0165ff69-6474-5c55-b475-d20751b185a1")
+		(property "Reference" "#PWR42"
 			(at 177.80 236.22 0)
 			(hide yes)
 			(effects
@@ -9827,12 +9926,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "620c32c4-e03d-58e8-a879-2238a301d190")
+			(uuid "6c693d95-d9eb-529a-8364-dd28079b1b5e")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR41")
+					(reference "#PWR42")
 					(unit 1)
 				)
 			)
@@ -9847,7 +9946,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "59947f76-e280-5bf2-b2de-6f057f19fa1f")
+		(uuid "148ef705-0341-5e7a-9458-8ff2beb9e138")
 	)
 	(label "MOTOR_N"
 		(at 177.80 220.98 90)
@@ -9857,7 +9956,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "d60f716d-2b9a-594a-8407-acc8d18e7f61")
+		(uuid "cf9237aa-ed95-5395-b123-e7daecc9ef81")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -9867,7 +9966,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d6cf4630-4a89-5986-873d-ec61ae5c427c")
+		(uuid "ce173126-1199-5cec-b12e-f12762c91d8a")
 		(property "Reference" "R1"
 			(at 149.86 217.17 0)
 			(effects
@@ -9914,10 +10013,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "94fd1e93-9492-5b60-8110-e7428854effd")
+			(uuid "3df07821-9f6d-5d5b-9c5b-f0c41c4f8e4e")
 		)
 		(pin "2"
-			(uuid "15151b72-3ab9-5de2-b378-eb3ce38987a7")
+			(uuid "7d957c42-d25a-5adb-8dc4-d57d1b85993c")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -9937,7 +10036,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "92fab1ee-6e81-5f9f-8f06-e961c7bfb100")
+		(uuid "57827fb2-88c8-5c25-b653-b11d86302af6")
 	)
 	(label "MOTOR_EN"
 		(at 147.32 212.09 90)
@@ -9947,7 +10046,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "1b35119e-feb5-58f0-b2f3-d91f5ff295a1")
+		(uuid "97c968f2-d5ff-5a2e-b843-07483e7b5cf5")
 	)
 	(wire
 		(pts
@@ -9958,7 +10057,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "708ad425-39ab-543e-a582-7c153b5367fa")
+		(uuid "370fa908-6cb8-548f-80ef-03eeacf6a2bf")
 	)
 	(label "MOTOR_G"
 		(at 147.32 224.79 270)
@@ -9968,7 +10067,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "e4836c22-4575-5522-aff6-53b97e5a15e6")
+		(uuid "a3b0210d-1178-55f3-9c18-b3976a6f1c41")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -9978,7 +10077,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c023d798-5fea-506c-99ad-a98132e860e2")
+		(uuid "de5bb055-eea7-55d3-84bf-0b31c074e968")
 		(property "Reference" "R2"
 			(at 154.94 240.03 0)
 			(effects
@@ -10025,10 +10124,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "f2baa575-0cc1-5dbc-99e3-9de3c54b9ff9")
+			(uuid "1bad8406-ac05-563c-91ec-d1d55f6f093b")
 		)
 		(pin "2"
-			(uuid "1c16d42c-203d-56b7-8b5f-74d820ad0765")
+			(uuid "1ab3c9e8-2827-5fe4-9314-ab07e9ed6ee0")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -10048,7 +10147,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "cb7e6786-c153-5df8-a4f0-c73433af16eb")
+		(uuid "20978dd9-1b8d-5926-9346-347daa3d7b56")
 	)
 	(label "MOTOR_G"
 		(at 152.40 234.95 90)
@@ -10058,7 +10157,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "ce114198-5125-5204-acdc-0a30f0f3bade")
+		(uuid "cf3da8dd-f2ff-5da2-93cd-e5d8466c70c4")
 	)
 	(wire
 		(pts
@@ -10069,7 +10168,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e0ec40ad-92b7-52f3-9cc7-ea6519cbaf6f")
+		(uuid "84e424e1-5d35-5883-a4f8-7b0ae35ec9a5")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -10079,8 +10178,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "bb15b8fe-03f5-5b49-9605-8a69675b2f54")
-		(property "Reference" "#PWR42"
+		(uuid "1f0e3cd2-0037-5103-ae13-07ee143e6bfe")
+		(property "Reference" "#PWR43"
 			(at 152.40 247.65 0)
 			(hide yes)
 			(effects
@@ -10127,12 +10226,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "023f9a0a-98f0-516f-a592-066a200407b5")
+			(uuid "09cb708f-d2de-50dd-a0b4-8864ec8054a4")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR42")
+					(reference "#PWR43")
 					(unit 1)
 				)
 			)
@@ -10146,7 +10245,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e3fd0427-4f73-56f1-b9c9-e7a81ae02e2c")
+		(uuid "2577a583-ad3d-56ab-a63e-6e35a2762988")
 		(property "Reference" "J5"
 			(at 215.90 238.76 0)
 			(effects
@@ -10193,10 +10292,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "711a8c90-3f00-58c2-90fc-7ea4d42a586f")
+			(uuid "0b184cdd-f44a-55c3-af78-adeca77c3f93")
 		)
 		(pin "2"
-			(uuid "7b61f0f9-6c24-521f-b0d1-dd89a74b636a")
+			(uuid "a10e5f48-71ce-52ab-ab04-e70935dd9275")
 		)
 		(instances
 			(project "dong_ho_module"
@@ -10216,7 +10315,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1ee0aa7a-1dcf-5731-b950-ccc13f1227f5")
+		(uuid "1e5171c8-6889-59b3-81cc-2ce82924f5b7")
 	)
 	(label "SOS_BTN"
 		(at 205.74 241.30 180)
@@ -10226,7 +10325,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "9c59da2d-43fd-53b3-b5b6-c2814bf085e2")
+		(uuid "56a98e95-75c8-5e6e-a053-b9fed1c0952e")
 	)
 	(wire
 		(pts
@@ -10237,7 +10336,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1c51de1b-849a-5ba2-8c38-7dd2456fbf38")
+		(uuid "fafee832-2d70-5ee2-b87c-acfa128b39ed")
 	)
 	(wire
 		(pts
@@ -10248,7 +10347,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "ddcc4649-98ae-5be1-b556-9e65c74f0840")
+		(uuid "de1db0b6-9b62-5d70-adb5-33918d16dd3b")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -10258,8 +10357,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3a47eb25-e3ab-5f40-b7f5-b6b905ad9707")
-		(property "Reference" "#PWR43"
+		(uuid "f9e9ee9b-feeb-5598-8302-b86da2edeec8")
+		(property "Reference" "#PWR44"
 			(at 205.74 246.38 0)
 			(hide yes)
 			(effects
@@ -10306,12 +10405,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "5239406d-5fcd-5677-8370-338d06fd2b27")
+			(uuid "a9623b8c-c9fe-542d-8c20-2e854b284626")
 		)
 		(instances
 			(project "dong_ho_module"
 				(path "/a5de97c6-3664-5251-8e87-9234db558207"
-					(reference "#PWR43")
+					(reference "#PWR44")
 					(unit 1)
 				)
 			)
@@ -10326,7 +10425,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "af176778-a151-5ed5-a126-c90e36745b99")
+		(uuid "f1526fdc-28db-5f34-8295-999152a34829")
 	)
 	(rectangle
 		(start 240 210)
@@ -10338,7 +10437,7 @@
 		(fill
 			(type none)
 		)
-		(uuid "66022888-2a71-53d0-983e-73e933a4c2ca")
+		(uuid "fe28439e-848d-5d9b-aa87-88eab20edaf3")
 	)
 	(text "H. Cơ khí"
 		(exclude_from_sim no)
@@ -10350,7 +10449,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "062565d4-7f2b-5224-a91a-b77c8b00988e")
+		(uuid "1e76a3ea-b9bd-53f3-bb96-f664a6ec541d")
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
@@ -10360,7 +10459,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "7921506d-4edf-599e-a5bd-984ae2132227")
+		(uuid "aa60ba6a-5fc0-57b2-915c-15be5f8530f3")
 		(property "Reference" "H1"
 			(at 247.65 223.52 0)
 			(effects
@@ -10423,7 +10522,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "1d8f3287-e830-5411-9b13-793e6e5fda21")
+		(uuid "dceffe0e-35a1-5d89-99f9-26e367e04fa7")
 		(property "Reference" "H2"
 			(at 260.35 223.52 0)
 			(effects
@@ -10486,7 +10585,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "f35c688f-e840-53f6-af86-486561f7fac9")
+		(uuid "924f6e1d-6694-5a03-a067-d4a912a82def")
 		(property "Reference" "H3"
 			(at 273.05 223.52 0)
 			(effects
@@ -10549,7 +10648,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "34fa0acf-be11-57ac-bd0a-7b7527f079ff")
+		(uuid "3daf8337-3de7-5a21-aa89-796c9d765861")
 		(property "Reference" "H4"
 			(at 285.75 223.52 0)
 			(effects
@@ -10613,7 +10712,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "fd9cbf8d-d240-5437-81c1-c56d6f53ca95")
+		(uuid "472b2fe8-ba11-538b-a372-2bb9ef615d10")
 	)
 	(sheet_instances
 		(path "/"

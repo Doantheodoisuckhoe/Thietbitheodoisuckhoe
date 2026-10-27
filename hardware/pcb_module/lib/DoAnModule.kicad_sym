@@ -344,7 +344,7 @@
 				)
 			)
 		)
-		(property "Footprint" "DoAnModule:Module_MAX30102_1x7"
+		(property "Footprint" "DoAnModule:Module_MAX30102_2x4"
 			(at 0 0 0)
 			(hide yes)
 			(effects
@@ -362,7 +362,7 @@
 				)
 			)
 		)
-		(property "Description" "Module MAX30102 màu tím (I2C 0x57), header 1x7: VIN SCL SDA INT IRD RD GND - kiểm tra lại trên module thật"
+		(property "Description" "Module MAX30102 đen 2x4 chân (HW-605, I2C 0x57): 1 VIN, 2 SDA, 3 SCL, 4 GND, 5 GND, 6 RD, 7 IRD, 8 INT"
 			(at 0 0 0)
 			(hide yes)
 			(effects
@@ -395,7 +395,7 @@
 						)
 					)
 				)
-				(number "2"
+				(number "3"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -413,7 +413,7 @@
 						)
 					)
 				)
-				(number "3"
+				(number "2"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -431,7 +431,7 @@
 						)
 					)
 				)
-				(number "4"
+				(number "8"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -449,7 +449,7 @@
 						)
 					)
 				)
-				(number "5"
+				(number "7"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -494,7 +494,7 @@
 				)
 			)
 			(pin power_in line
-				(at 0.00 -12.70 90)
+				(at -2.54 -12.70 90)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -503,7 +503,25 @@
 						)
 					)
 				)
-				(number "7"
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 2.54 -12.70 90)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
 					(effects
 						(font
 							(size 1.27 1.27)
