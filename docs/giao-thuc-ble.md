@@ -27,6 +27,7 @@ Tài liệu cho người làm app (SV2). Firmware tương ứng: `firmware/ble_s
 | Riêng `4b3a0001-…` | **Số đo** | `4b3a0002-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Read, Notify | 10 byte, mỗi giây 1 lần |
 | | **Cảnh báo** | `4b3a0003-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Read, Notify | 4 byte, khi có cảnh báo (gửi lại mỗi 5 giây đến khi xác nhận) |
 | | **Lệnh** | `4b3a0004-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Write, Write without response | 1–2 byte, app gửi xuống |
+| | **ECG** | `4b3a0005-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Notify | gói sóng điện tim khi đang đo 30 giây (từ 28/10/2026) |
 | Heart Rate chuẩn `0x180D` | Heart Rate Measurement `0x2A37` | | Notify | nhịp tim, để thử bằng nRF Connect |
 | Battery chuẩn `0x180F` | Battery Level `0x2A19` | | Read, Notify | % pin |
 | Device Information `0x180A` | | | Read | tên hãng, model |
@@ -78,6 +79,33 @@ SOS/té ngã được ghi đè lên cảnh báo chỉ số đang chờ, ngược
 |---|---|
 | `01 nn` | Xác nhận đã xử lý cảnh báo số thứ tự `nn` (đã gửi SMS). Đồng hồ ngừng gửi lại và rung dài 1 giây để người đeo biết "đã báo người thân" |
 | `02` | Tìm đồng hồ: rung 2 giây |
+| `03` | Bắt đầu đo ECG 30 giây (chỉ chạy khi app đã bật notify ở đặc tính ECG) |
+| `04` | Dừng đo ECG giữa chừng |
+
+### ECG (gói sóng điện tim)
+
+Khi nhận lệnh `03`, đồng hồ đọc OUTPUT của AD8232 (chân A0, ADC 12 bit) **250 mẫu/giây trong 30 giây**
+(7500 mẫu) bằng ngắt TIMER4, rồi gửi dần qua notify. Chân D1 (LO+/LO- gộp) = 1 nghĩa là tuột điện cực.
+
+| Byte | Kiểu | Tên | Ý nghĩa |
+|---|---|---|---|
+| 0–1 | uint16 | số gói | 0, 1, 2… trong một lần đo. App thấy nhảy số thì biết mất gói |
+| 2 | uint8 | cờ | bit0 = có mẫu bị tuột điện cực trong gói, bit1 = gói cuối của lần đo |
+| 3 | uint8 | n | số mẫu trong gói |
+| 4… | n × uint16 | mẫu | giá trị ADC 0–4095 |
+
+- App xin MTU 247 ngay khi kết nối. MTU ≥ 57 thì mỗi gói 25 mẫu (54 byte, 10 gói/giây); nếu không xin được thì
+  8 mẫu/gói (20 byte, vừa MTU mặc định 23).
+- Gói cuối có cờ bit1; có thể là gói rỗng (`n = 0`).
+- Đồng hồ có bộ đệm 512 mẫu (~2 giây). Bluetooth gửi không kịp thì mẫu mới bị bỏ, lần đo vẫn dài đúng 30 giây,
+  app thấy thiếu mẫu. Mất kết nối hoặc quá 45 giây chưa gửi xong thì đồng hồ tự dừng.
+- Trong lúc đo đồng hồ vẫn gửi Số đo mỗi giây và cảnh báo như bình thường (bỏ qua đọc pin).
+
+Ví dụ: `0C 00 01 02 D0 07 DA 07` → gói số 12, có tuột điện cực, 2 mẫu: 0x07D0 = 2000, 0x07DA = 2010.
+
+App tính nhịp tim từ sóng (`app/suc_khoe/lib/ecg.dart`, bản Python `algorithm/ecg/phan_tich_ecg.py`):
+lọc trung bình 5 mẫu (bỏ nhiễu 50 Hz), trừ trung bình 0,6 giây (bỏ trôi nền), rồi Pan-Tompkins rút gọn
+(đạo hàm, bình phương, tích phân 150 ms, ngưỡng 0,3 × phân vị 98 %) để tìm đỉnh R; nhịp = 60 / trung vị R-R.
 
 ## Việc app cần làm khi nhận cảnh báo
 
@@ -99,5 +127,6 @@ app SMS mặc định, nhưng cài file APK trực tiếp để demo thì không
 - **Điện thoại:** app nRF Connect → SCAN → CONNECT `DoAn-SucKhoe` → mở service `4b3a0001-…` → bấm biểu tượng
   3 mũi tên ở Số đo và Cảnh báo để bật notify. Giữ nút SOS (hoặc chạm dây D9 vào GND) 1 giây để thấy cảnh báo.
   Ghi `0101` (kiểu byte array) vào Lệnh để xác nhận cảnh báo số 1.
+  Thử ECG: bật notify ở đặc tính ECG rồi ghi `03` vào Lệnh, sẽ thấy gói ECG chạy liên tục trong 30 giây.
 - **Máy tính có Bluetooth:** `pip install bleak`, rồi `python app/thu_ble_tren_may_tinh.py`. Script in số đo,
   in cảnh báo và tự gửi xác nhận, giống việc app sẽ làm (chỉ thiếu bước gửi SMS).

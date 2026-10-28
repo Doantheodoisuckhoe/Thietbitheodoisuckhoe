@@ -7,6 +7,7 @@ const uuidDichVu = '4b3a0001-8f6e-4c2a-9d1b-3e5f7a9c0b1d';
 const uuidSoDo = '4b3a0002-8f6e-4c2a-9d1b-3e5f7a9c0b1d';
 const uuidCanhBao = '4b3a0003-8f6e-4c2a-9d1b-3e5f7a9c0b1d';
 const uuidLenh = '4b3a0004-8f6e-4c2a-9d1b-3e5f7a9c0b1d';
+const uuidEcg = '4b3a0005-8f6e-4c2a-9d1b-3e5f7a9c0b1d';
 
 /// Mot goi "So do" (10 byte, dong ho gui moi giay).
 class SoDo {
@@ -106,6 +107,35 @@ class CanhBao {
 
 List<int> lenhXacNhan(int soThuTu) => [1, soThuTu];
 const lenhTimDongHo = [2];
+const lenhBatDauEcg = [3];
+const lenhDungEcg = [4];
+
+/// ECG: dong ho lay mau 250 lan/giay trong 30 giay.
+const tanSoEcg = 250;
+const soGiayEcg = 30;
+const soMauEcg = tanSoEcg * soGiayEcg;
+
+/// Mot goi ECG: 4 byte dau (so goi uint16, co, so mau n) + n mau uint16 (ADC 12 bit).
+class GoiEcg {
+  final int soGoi;
+  final bool tuotDienCuc; // co it nhat 1 mau trong goi bi tuot dien cuc
+  final bool het; // goi cuoi cua lan do
+  final List<int> mau;
+
+  const GoiEcg(this.soGoi, this.tuotDienCuc, this.het, this.mau);
+
+  static GoiEcg? tuByte(List<int> b) {
+    if (b.length < 4) return null;
+    final n = b[3];
+    if (b.length != 4 + 2 * n) return null;
+    return GoiEcg(
+      b[0] | (b[1] << 8),
+      b[2] & 1 != 0,
+      b[2] & 2 != 0,
+      [for (var i = 0; i < n; i++) b[4 + 2 * i] | ((b[5 + 2 * i] & 0x0F) << 8)],
+    );
+  }
+}
 
 String _hai(int n) => n.toString().padLeft(2, '0');
 

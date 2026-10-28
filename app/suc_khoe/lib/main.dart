@@ -8,14 +8,17 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'dam_may.dart';
 import 'dich_vu_dien_thoai.dart' as dt;
+import 'do_ecg.dart';
 import 'dong_ho.dart';
 import 'giao_thuc.dart';
 import 'luu_tru.dart';
+import 'man_hinh_ecg.dart';
 import 'xu_ly_canh_bao.dart';
 
 final dongHo = DongHo();
 final luuTru = LuuTru();
 final damMay = DamMay();
+final doEcg = DoEcg(guiLenh: dongHo.guiLenh, luu: luuTru.luuEcg, coEcg: () => dongHo.coEcg);
 late final XuLyCanhBao xuLy;
 final _thongBao = GlobalKey<ScaffoldMessengerState>();
 final _dieuHuong = GlobalKey<NavigatorState>();
@@ -34,7 +37,11 @@ void main() async {
   dongHo.khiCoCanhBao = _khiCoCanhBao;
   damMay.cauHinh = luuTru.damMay;
   dongHo.khiCoSoDo = (s) => damMay.nhanSoDo(s, ketNoi: true);
-  dongHo.khiMatKetNoi = damMay.baoMatKetNoi;
+  dongHo.khiMatKetNoi = () {
+    damMay.baoMatKetNoi();
+    doEcg.matKetNoi();
+  };
+  dongHo.khiCoGoiEcg = doEcg.nhanGoi;
   runApp(const UngDung());
 }
 
@@ -231,6 +238,14 @@ class TrangSoDo extends StatelessWidget {
             onPressed: ketNoi ? () => dongHo.guiLenh(lenhTimDongHo) : null,
             icon: const Icon(Icons.vibration),
             label: const Text('Tìm đồng hồ (rung 2 giây)'),
+          ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => ManHinhEcg(doEcg: doEcg, dongHo: dongHo, luuTru: luuTru),
+            )),
+            icon: const Icon(Icons.monitor_heart),
+            label: const Text('Đo điện tim (ECG) 30 giây'),
           ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
