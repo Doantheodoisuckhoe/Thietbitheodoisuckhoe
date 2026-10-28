@@ -3,11 +3,9 @@
 Cắm XIAO và các module đã mua lên breadboard, nạp `test_breadboard.ino`, rồi xem trên Serial Monitor từng module có chạy không.
 Số chân giữ đúng như mạch in `hardware/pcb_module`, nên code test xong dùng lại được khi có mạch in.
 
-![Sơ đồ cắm breadboard 28/10: dây đánh số](so_do_breadboard_28-10.png)
+![Sơ đồ cắm breadboard 28/10](so_do_breadboard_28-10.png)
 
-Bản 28/10 thêm màn GC9A01 và bỏ dây LO− (D3 giờ là đèn nền màn hình). Ảnh vẽ bằng `ve_so_do/` (Python + Playwright).
-
-![Sơ đồ khối (bản cũ 21/10, LO− còn ở D3)](so_do_cam_breadboard.png)
+Bản 28/10 thêm màn GC9A01, mạch lái động cơ rung ở D2 (AO3400, R1 100 Ω, R2 100 kΩ, diode 1N5819) và bỏ dây LO− (D3 giờ là đèn nền màn hình). Ảnh vẽ bằng `ve_so_do/`. Ảnh `so_do_cam_breadboard.png` là bản cũ 21/10.
 
 ## 1. Chuẩn bị
 
@@ -68,7 +66,7 @@ Nên cắm và test **từng module một** theo thứ tự dưới đây, xong 
 | INT, IRD, RD | để trống |
 
 Module MAX30102 đen 2 hàng chân (HW-605) không cắm thẳng vào breadboard được (2 hàng chân sẽ bị chập).
-Dùng 4 dây đực–cái từ hàng chân có chữ VIN (VIN, SDA, SCL, GND) vào lỗ j25–j28 như hình 28/10; hàng GND RD IRD INT bỏ trống.
+Dùng 4 dây đực–cái từ hàng chân có chữ VIN (VIN, SDA, SCL, GND); hàng GND RD IRD INT bỏ trống.
 
 Trước khi cắm, lật module MAX30102 lên xem jumper điện trở kéo lên I2C (3 miếng đồng cạnh nhau, ghi 1.8V và 3.3V).
 Nếu đang hàn sang **1.8V** thì chuyển sang **3.3V**. Để 1.8V thì XIAO đọc không ổn định, nhất là khi cắm chung với MAX30205.
@@ -102,9 +100,19 @@ Khi có nút: một chân nút vào D9, chân chéo đối diện vào GND. Khô
 
 ### 2.5 Động cơ rung 1027
 
-**Không nối động cơ vào chân D nào.** Động cơ ăn khoảng 60-90 mA, chân D của XIAO chỉ chịu vài mA và có thể hỏng.
-Bây giờ chỉ thử động cơ còn sống: chạm dây đỏ vào 3V3, dây xanh/đen vào GND khoảng 1 giây, thấy rung là được.
-Điều khiển bằng D2 phải có MOSFET AO3400 và diode SS14 (đã có trong danh sách cần mua), cắm giống mạch in.
+**Không nối động cơ thẳng vào chân D2.** Động cơ ăn khoảng 60-90 mA, chân D của XIAO chỉ chịu vài mA và có thể hỏng.
+Lái qua MOSFET giống mạch in (xem khung "Mạch lái động cơ rung" trên hình):
+
+| Linh kiện | Nối |
+|---|---|
+| R1 100 Ω (nâu-đen-nâu) | D2 → chân G của AO3400 |
+| R2 100 kΩ (nâu-đen-vàng) | chân G → GND (giữ motor tắt khi XIAO khởi động) |
+| AO3400 trên đế SOT-23 | S → GND, D → dây đen motor |
+| Motor 1027 | dây đỏ → 3V3 |
+| Diode 1N5819 (hoặc 1N4148) | song song motor, đầu có vạch về 3V3 |
+
+Chưa có đế SOT-23 thì dùng transistor S8050: D2 qua 1 kΩ vào B, E → GND, C → dây đen motor.
+Firmware `ble_suc_khoe` rung khi té ngã (đếm ngược 15 giây), khi gửi cảnh báo, khi app xác nhận và khi bấm "Tìm đồng hồ" trên app.
 
 ### 2.6 Màn tròn GC9A01
 
