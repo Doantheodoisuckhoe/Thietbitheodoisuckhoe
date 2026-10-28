@@ -6,8 +6,12 @@
 // Noi day giong test_breadboard:
 //   MAX30102 + MAX30205: SDA -> D4, SCL -> D5, VCC -> 3V3   (khong co module nao thi phan do bo trong)
 //   Nut SOS: D9 -> GND.  Dong co rung: D2 qua MOSFET (tren breadboard de trong D2).
+//   Man GC9A01 (theo mach 1.2): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3, RES de trong.
+//   Chua cam man thi firmware van chay binh thuong (man chi nhan lenh, khong tra loi).
+//   Cach ve tung man va anh mo phong: man_hinh.h, xem_truoc/README.md
 //
 // Cach dung nut SOS:
+//   - Bam nhanh             -> bat man hinh 10 giay.
 //   - Giu nut 1 giay        -> canh bao SOS.
 //   - Khi dong ho phat hien te nga, no rung 15 giay de hoi "co sao khong?".
 //     Bam nut trong 15 giay do -> huy (khong bao). Khong bam -> gui canh bao te nga.
@@ -20,6 +24,10 @@
 #include <Wire.h>
 #include "MAX30105.h"
 #include "LSM6DS3.h"
+#include <SPI.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_GC9A01A.h>
+#include "man_hinh.h"
 
 // ---------------- Cau hinh ----------------
 const char* TEN_THIET_BI = "DoAn-SucKhoe";
@@ -27,6 +35,13 @@ const char* TEN_THIET_BI = "DoAn-SucKhoe";
 const uint8_t CHAN_SOS     = D9;
 const uint8_t CHAN_DONG_CO = D2;
 const bool    CO_DONG_CO   = true;   // breadboard chua co MOSFET: de true cung khong sao, D2 bo trong
+
+const bool     CO_MAN_HINH  = true;     // false = bo han phan man hinh
+const uint8_t  CHAN_TFT_CS  = D7;
+const uint8_t  CHAN_TFT_DC  = D6;
+const uint8_t  CHAN_TFT_BLK = D3;       // den nen: HIGH = sang
+const uint32_t SANG_MAN_HINH_MS = 10000;  // bam nhanh nut -> sang 10 giay roi tat de tiet kiem pin
+const uint32_t HIEN_DA_BAO_MS   = 5000;   // man "DA BAO nguoi than" sau khi app xac nhan
 
 const uint32_t NGUONG_CO_TAY = 50000;   // IR duoi muc nay = chua deo / chua dat ngon tay
 
@@ -110,6 +125,13 @@ uint32_t lucPhatHienTeNga = 0;
 
 uint32_t rungDenLuc = 0;  // millis() khi tat dong co
 
+// Man hinh
+Adafruit_GC9A01A tft(CHAN_TFT_CS, CHAN_TFT_DC, -1);   // RES khong noi: thu vien tu reset bang lenh
+BoVeManHinh boVe;
+bool     manHinhSang = false;
+uint32_t tatManHinhLuc = 0;
+volatile uint32_t lucAppXacNhan = 0;   // ghi trong callback BLE, chi doc o loop()
+
 // ============================================================
 // Dong co rung
 // ============================================================
@@ -165,6 +187,7 @@ void khiNhanLenh(uint16_t ketNoi, BLECharacteristic* dt, uint8_t* duLieu, uint16
     canhBaoCho = {0, 0, 0};
     dtCanhBao.write(&canhBaoCho, sizeof(canhBaoCho));
     rung(1000);   // rung dai 1 giay = "da bao cho nguoi than"
+    lucAppXacNhan = millis() | 1;
   } else if (duLieu[0] == LENH_TIM_DONG_HO) {
     rung(2000);
   }
@@ -200,6 +223,8 @@ void capNhatNutSos() {
   bool bam = digitalRead(CHAN_SOS) == LOW;
 
   if (bam && !dangBam) { lucBam = millis(); daXuLy = false; }
+  // Nha nut truoc 1 giay (bam nhanh) -> bat man hinh
+  if (!bam && dangBam && !daXuLy && millis() - lucBam >= 50) batManHinh();
   dangBam = bam;
   if (!bam || daXuLy || millis() - lucBam < 50) return;   // chong doi phim 50 ms
 
@@ -562,6 +587,77 @@ void guiSoDo() {
 }
 
 // ============================================================
+// Man hinh GC9A01 (ve trong man_hinh.h)
+// ============================================================
+void caiDatManHinh() {
+  if (!CO_MAN_HINH) return;
+  pinMode(CHAN_TFT_BLK, OUTPUT);
+  digitalWrite(CHAN_TFT_BLK, LOW);       // tat den nen trong luc khoi dong, tranh hien rac
+  tft.begin(8000000);                    // SPI 8 MHz; man tu reset bang lenh vi chan RES de trong
+  tft.setRotation(0);                    // anh bi xoay thi doi 0..3
+  // SPI.begin() vua cau hinh D9 (MISO mac dinh cua XIAO) thanh ngo vao keo xuong. D9 la nut SOS
+  // nen phai dat lai keo len, neu khong firmware tuong nut dang bi giu -> bao SOS gia.
+  pinMode(CHAN_SOS, INPUT_PULLUP);
+  boVe.veLaiHet();
+  Serial.println("# Man hinh GC9A01: da khoi dong (man chi nhan lenh nen khong biet co cam hay khong)");
+}
+
+void batManHinh() {
+  if (!CO_MAN_HINH) return;
+  tatManHinhLuc = millis() + SANG_MAN_HINH_MS;
+  if (manHinhSang) return;
+  tft.sendCommand(GC9A01A_SLPOUT);
+  delay(5);
+  tft.sendCommand(GC9A01A_DISPON);
+  boVe.veLaiHet();
+  manHinhSang = true;
+  // den nen bat sau khi ve xong o capNhatManHinh()
+}
+
+void tatManHinh() {
+  digitalWrite(CHAN_TFT_BLK, LOW);
+  tft.sendCommand(GC9A01A_DISPOFF);
+  tft.sendCommand(GC9A01A_SLPIN);        // ngu: man gan nhu khong ton dien
+  manHinhSang = false;
+}
+
+void capNhatManHinh() {
+  if (!CO_MAN_HINH) return;
+  static uint32_t lanVe = 0;
+  uint32_t bayGio = millis();
+  if (bayGio - lanVe < 200) return;       // ve toi da 5 lan/giay, chi ve phan thay doi
+  lanVe = bayGio;
+
+  TrangThaiManHinh s;
+  uint32_t xacNhan = lucAppXacNhan;
+  if (dangDemHuyTeNga) {
+    s.loai = MH_TE_NGA;
+    uint32_t daQua = bayGio - lucPhatHienTeNga;
+    s.giayConLai = daQua >= THOI_GIAN_HUY_TE_NGA_MS ? 0 : (THOI_GIAN_HUY_TE_NGA_MS - daQua + 999) / 1000;
+  } else if (canhBaoCho.ma != 0) {
+    s.loai = MH_CANH_BAO;
+    s.maCanhBao = canhBaoCho.ma;
+    s.giaTri = canhBaoCho.giaTri;
+  } else if (xacNhan && bayGio - xacNhan < HIEN_DA_BAO_MS) {
+    s.loai = MH_DA_BAO;
+  } else {
+    s.loai = MH_CHINH;
+  }
+  s.coTay = coTay; s.nhipTim = nhipTim; s.spo2 = spo2;
+  s.nhietDoHopLe = nhietDoHopLe; s.nhietDo = nhietDo;
+  s.pin = phanTramPin(pinMv);
+  s.ketNoi = Bluefruit.connected();
+
+  // Te nga, canh bao, "da bao": man luon sang. Man chinh: tat sau SANG_MAN_HINH_MS.
+  if (s.loai != MH_CHINH) batManHinh();
+  if (!manHinhSang) return;
+  if (s.loai == MH_CHINH && (int32_t)(bayGio - tatManHinhLuc) >= 0) { tatManHinh(); return; }
+
+  boVe.ve(tft, s);
+  digitalWrite(CHAN_TFT_BLK, HIGH);
+}
+
+// ============================================================
 void setup() {
   pinMode(CHAN_SOS, INPUT_PULLUP);
   if (CO_DONG_CO) { pinMode(CHAN_DONG_CO, OUTPUT); digitalWrite(CHAN_DONG_CO, LOW); }
@@ -591,6 +687,8 @@ void setup() {
   Serial.println(coImu ? "# IMU: OK" : "# IMU: LOI (bo qua te nga)");
 
   pinMv = docPinMv();
+  caiDatManHinh();
+  batManHinh();                          // vua bat nguon: sang 10 giay
   caiDatBle();
   Serial.println("# Dang quang ba BLE ten DoAn-SucKhoe");
 }
@@ -617,6 +715,7 @@ void loop() {
   capNhatTeNga();
   capNhatCanhBao();
   capNhatDongCo();
+  capNhatManHinh();
 
   static uint32_t lanGiay = 0;
   if (bayGio - lanGiay >= 1000) {
