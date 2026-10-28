@@ -1,6 +1,6 @@
 (footprint "DienCuc_ECG_9x16mm" (version 20241229) (generator "pcbnew") (generator_version "9.0") (layer "F.Cu")
  (descr "Điện cực ECG: pad đồng 9x16 mm lộ đồng (mở mask), đặt ở mặt da. Nên mạ ENIG hoặc HASL.") (tags "ECG electrode")
- (property "Reference" "REF**" (at 0 -9.5 0) (layer "F.SilkS") (uuid "a1728595-1b2a-53ee-bcdf-e81af2a7b994") (effects (font (size 1 1) (thickness 0.15))))
+ (property "Reference" "REF**" (at 0 -9.5 0) (layer "F.SilkS") (uuid "a1728595-1b2a-53ee-bcdf-e81af2a7b994") (effects (font (size 1 1) (thickness 0.2))))
  (property "Value" "DienCuc_ECG_9x16mm" (at 0 9.5 0) (layer "F.Fab") (uuid "dee56e42-6a84-5692-bab9-c749a7f85886") (effects (font (size 1 1) (thickness 0.15))))
  (property "Datasheet" "" (at 0 0 0) (layer "F.Fab") (hide yes) (uuid "2f4fc563-b844-5f4a-96e9-63cd3db980e1") (effects (font (size 1.27 1.27) (thickness 0.15))))
  (property "Description" "Điện cực ECG: pad đồng 9x16 mm lộ đồng (mở mask), đặt ở mặt da. Nên mạ ENIG hoặc HASL." (at 0 0 0) (layer "F.Fab") (hide yes) (uuid "3d4ea35d-0d05-59ea-9696-e1d7f0c28e8d") (effects (font (size 1.27 1.27) (thickness 0.15))))

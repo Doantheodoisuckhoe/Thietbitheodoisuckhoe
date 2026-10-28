@@ -1,10 +1,15 @@
 # Mạch in đồng hồ – bản ghép module (KiCad)
 
-Bản 1.1 (27/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
+Bản 1.2 (28/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
 (điện trở, tụ 0805; SOT-23; SOD-323; SMA; header 2,54 mm). Thay cho bản chip rời 40 × 40 mm
 trong [`../pcb/`](../pcb/README.md) (bản đó giữ lại làm hướng phát triển).
 
-Kiểm tra bằng KiCad 10.0.7: **ERC 0 lỗi, 0 cảnh báo; DRC 0 vi phạm, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+Kiểm tra bằng KiCad 10.0.7 (bản 1.2): **ERC 0 lỗi, 0 cảnh báo; DRC 0 lỗi, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+DRC còn 6 cảnh báo `lib_footprint_mismatch` (J1–J6 khác footprint chuẩn của KiCad vì đã nới pad theo xưởng, cố ý).
+
+Thay đổi bản 1.2: theo bảng tiêu chuẩn của xưởng mạch trong nước. Via lỗ 0,3 / pad 0,9 mm; pad xuyên lỗ = lỗ + 0,6 mm
+(header 1,0 / 1,6 mm, JST 0,8 / 1,4 mm); phủ đồng GND cách dây 0,65 mm (≥ 25 mil); chữ lụa nét 0,2 mm. Vị trí linh kiện và
+đường dây giữ như bản 1.1 (xem mục Quy tắc thiết kế).
 
 Thay đổi bản 1.1: footprint MAX30102 đổi sang module đen 2 × 4 chân (đo thật); D2/D3 đổi sang 1N4148WS SOD-323,
 D4 đổi sang TVS SMAJ5.0A SMA (đúng loại icdayroi bán).
@@ -86,16 +91,25 @@ Firmware khởi tạo màn với chân RST = -1.
 **Module AD8232 không gắn trên mạch:** nó nằm phía trên pin (36 × 30 mm vừa với pin 40 × 30 mm), lót
 băng keo cách điện, nối bằng 9 sợi dây ngắn vào lưới pad U4. Màn hình cũng nối bằng dây (8 sợi).
 
-## Quy tắc thiết kế (xưởng mạch trong nước làm được)
+## Quy tắc thiết kế (theo bảng tiêu chuẩn của xưởng mạch, bản 1.2)
 
-| Thông số | Giá trị |
-|---|---|
-| Số lớp, độ dày | 2 lớp, FR4 1,6 mm, đồng 1 oz |
-| Dây tín hiệu / dây nguồn | 0,3 mm / 0,5 mm |
-| Khoảng cách tối thiểu | 0,25 mm (đồng tới mép bảng 0,4 mm) |
-| Via | lỗ 0,4 mm, đường kính 0,8 mm |
-| Lỗ bắt vít | 4 × M2 (lỗ 2,2 mm) ở 4 góc, cách mép 3,5 mm |
-| Bề mặt | ENIG hoặc HASL (điện cực ECG lộ đồng, nên ENIG) |
+Bản 1.2 giữ nguyên vị trí linh kiện và đường dây của bản 1.1; script `cong_cu/ap_quy_tac_xuong.py`
+chỉ đổi lỗ khoan, pad, via, phủ đồng và chữ lụa cho khớp bảng tiêu chuẩn của xưởng.
+
+| Thông số | Bản 1.2 | Xưởng yêu cầu |
+|---|---|---|
+| Số lớp, độ dày | 2 lớp, FR4 1,6 mm, đồng 1 oz | |
+| Dây tín hiệu / dây nguồn | 0,3 mm / 0,5 mm | ≥ 0,2 mm |
+| Khoảng cách dây-dây, pad-pad, dây-pad, dây-via | ≥ 0,25 mm | ≥ 0,23 mm |
+| Phủ đồng GND cách dây/pad khác lưới | 0,65 mm (≥ 25 mil) | ≥ 0,5 mm |
+| Đồng tới mép bảng | 0,4 mm | ≥ 0,25 mm |
+| Via xuyên lỗ | lỗ 0,3 mm, pad 0,9 mm | lỗ có trong bảng mũi khoan, pad = lỗ + 0,6 |
+| Pad xuyên lỗ (header, module) | lỗ 1,0 mm, pad 1,6 mm | pad = lỗ + 0,6 |
+| Pad JST PH (J3) | lỗ 0,8 mm, pad 1,4 × 1,75 mm | |
+| Mũi khoan dùng | 0,3 / 0,8 / 1,0 mm (+ lỗ vít 2,2 mm không mạ) | 0,3 0,6 0,8 0,9 1,0 1,1 1,2 1,5 1,8 2,0… |
+| Chữ lụa | cao ≥ 0,8 mm, nét 0,2 mm | nét 0,2 mm |
+| Lỗ bắt vít | 4 × M2 (lỗ 2,2 mm) ở 4 góc, cách mép 3,5 mm | hỏi xưởng có mũi 2,2 không |
+| Bề mặt | ENIG hoặc HASL (điện cực ECG lộ đồng, nên ENIG) | |
 
 ## Cần kiểm tra trên module thật trước khi đặt mạch
 
@@ -121,7 +135,10 @@ kicad-cli sch erc dong_ho_module.kicad_sch
 kicad-cli pcb drc --schematic-parity --refill-zones --save-board dong_ho_module.kicad_pcb
 kicad-cli sch export pdf -o xuat/so_do_nguyen_ly.pdf dong_ho_module.kicad_sch
 kicad-cli sch export bom -o xuat/bom.csv --fields "Reference,Value,Footprint,${QUANTITY},Description" --group-by Value,Footprint dong_ho_module.kicad_sch
-kicad-cli pcb export gerbers -o xuat/gerber/ dong_ho_module.kicad_pcb
-kicad-cli pcb export drill -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb export gerbers -l "F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts" -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb export drill --excellon-separate-th --generate-map --map-format gerberx2 -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb render --side top --width 1568 --height 1176 -o xuat/pcb_mat_tren.png dong_ho_module.kicad_pcb
+kicad-cli pcb render --side bottom --width 1568 --height 1176 -o xuat/pcb_mat_duoi.png dong_ho_module.kicad_pcb
 ```
-Sau đó nén thư mục `xuat/gerber/` thành `gerber_dong_ho_module.zip`.
+Sau đó nén thư mục `xuat/gerber/` thành `xuat/gerber_dong_ho_module.zip`
+(PowerShell: `Compress-Archive -Path xuat\gerber\* -DestinationPath xuat\gerber_dong_ho_module.zip -Force`).
