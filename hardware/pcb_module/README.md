@@ -4,7 +4,8 @@ Bản 1.2 (28/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có s�
 (điện trở, tụ 0805; SOT-23; SOD-323; SMA; header 2,54 mm). Thay cho bản chip rời 40 × 40 mm
 trong [`../pcb/`](../pcb/README.md) (bản đó giữ lại làm hướng phát triển).
 
-Kiểm tra bằng KiCad 10.0.7: **ERC 0 lỗi, 0 cảnh báo; DRC 0 vi phạm, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+Kiểm tra bằng KiCad 10.0.7 (bản 1.2): **ERC 0 lỗi, 0 cảnh báo; DRC 0 lỗi, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+DRC còn 6 cảnh báo `lib_footprint_mismatch` (J1–J6 khác footprint chuẩn của KiCad vì đã nới pad theo xưởng, cố ý).
 
 Thay đổi bản 1.2: theo bảng tiêu chuẩn của xưởng mạch trong nước. Via lỗ 0,3 / pad 0,9 mm; pad xuyên lỗ = lỗ + 0,6 mm
 (header 1,0 / 1,6 mm, JST 0,8 / 1,4 mm); phủ đồng GND cách dây 0,65 mm (≥ 25 mil); chữ lụa nét 0,2 mm. Vị trí linh kiện và
@@ -134,7 +135,10 @@ kicad-cli sch erc dong_ho_module.kicad_sch
 kicad-cli pcb drc --schematic-parity --refill-zones --save-board dong_ho_module.kicad_pcb
 kicad-cli sch export pdf -o xuat/so_do_nguyen_ly.pdf dong_ho_module.kicad_sch
 kicad-cli sch export bom -o xuat/bom.csv --fields "Reference,Value,Footprint,${QUANTITY},Description" --group-by Value,Footprint dong_ho_module.kicad_sch
-kicad-cli pcb export gerbers -o xuat/gerber/ dong_ho_module.kicad_pcb
-kicad-cli pcb export drill -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb export gerbers -l "F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts" -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb export drill --excellon-separate-th --generate-map --map-format gerberx2 -o xuat/gerber/ dong_ho_module.kicad_pcb
+kicad-cli pcb render --side top --width 1568 --height 1176 -o xuat/pcb_mat_tren.png dong_ho_module.kicad_pcb
+kicad-cli pcb render --side bottom --width 1568 --height 1176 -o xuat/pcb_mat_duoi.png dong_ho_module.kicad_pcb
 ```
-Sau đó nén thư mục `xuat/gerber/` thành `gerber_dong_ho_module.zip`.
+Sau đó nén thư mục `xuat/gerber/` thành `xuat/gerber_dong_ho_module.zip`
+(PowerShell: `Compress-Archive -Path xuat\gerber\* -DestinationPath xuat\gerber_dong_ho_module.zip -Force`).

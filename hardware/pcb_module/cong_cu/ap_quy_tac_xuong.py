@@ -6,7 +6,8 @@ import os, pcbnew
 
 PRJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PCB = os.path.join(PRJ, 'dong_ho_module.kicad_pcb')
-MM, mm = pcbnew.FromMM, pcbnew.ToMM
+MM = lambda v: pcbnew.FromMM(round(v, 4))   # làm tròn: 0,3 + 0,6 = 0,8999… sẽ bị cắt còn 0,899999 mm
+mm = pcbnew.ToMM
 V = pcbnew.VECTOR2I
 
 MUI_KHOAN = [0.3, 0.6, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 1.8, 2.0]   # mũi khoan xưởng có (mm)
@@ -60,7 +61,8 @@ for fp in b.GetFootprints():
 for t in b.GetTracks():
     if t.Type() == pcbnew.PCB_VIA_T:
         t.SetDrill(MM(VIA_KHOAN))
-        t.SetWidth(MM(VIA_KHOAN + VIEN_PAD))
+        for lop in (pcbnew.F_Cu, pcbnew.B_Cu):   # KiCad 10: via đặt cỡ theo từng lớp
+            t.SetWidth(lop, MM(VIA_KHOAN + VIEN_PAD))
         dem['via'] += 1
 
 # 3) Phủ đồng GND (bỏ qua vùng cấm)
