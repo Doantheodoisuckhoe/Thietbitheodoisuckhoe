@@ -7,6 +7,7 @@ Các script đã dùng để tạo lần đầu sơ đồ, footprint và PCB c�
 | `gen_fp.py` | Ghi footprint riêng vào `../lib/DoAnModule.pretty/` |
 | `gen_sch.py` | Ghi `../lib/DoAnModule.kicad_sym` và sơ đồ `../dong_ho_module.kicad_sch` |
 | `gen_pcb.py <netlist>` | Đặt linh kiện, đi dây bằng bộ định tuyến lưới kiểu PathFinder (0,2 mm), đổ GND hai lớp |
+| `ap_quy_tac_xuong.py` | Áp tiêu chuẩn xưởng lên mạch đã đi dây (mũi khoan, pad = lỗ + 0,6, via 0,3/0,9, phủ đồng 0,65 mm, chữ lụa 0,2 mm). Không đi dây lại; chạy lại nhiều lần vẫn ra cùng kết quả |
 | `sexp.py` | Đọc/ghi s-expression của KiCad |
 
 ```

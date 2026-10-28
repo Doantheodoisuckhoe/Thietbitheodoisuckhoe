@@ -10,28 +10,37 @@ def u():
 def q(s):
     return '"' + s.replace('"', '\\"') + '"'
 
+# Tiêu chuẩn xưởng (bản 1.2): pad = lỗ + 0,6 mm; lụa: chữ >= 0,8 mm, nét chữ 0,2 mm, nét vẽ >= 0,15 mm
+def lua_w(layer, w):
+    return max(w, 0.15) if 'SilkS' in layer else w
+
 def line(x1, y1, x2, y2, layer, w):
+    w = lua_w(layer, w)
     return f'(fp_line (start {x1:.3f} {y1:.3f}) (end {x2:.3f} {y2:.3f}) (stroke (width {w}) (type solid)) (layer {q(layer)}) (uuid {q(u())}))'
 
 def rect(x1, y1, x2, y2, layer, w, fill=False):
+    w = lua_w(layer, w)
     f = 'yes' if fill else 'no'
     return f'(fp_rect (start {x1:.3f} {y1:.3f}) (end {x2:.3f} {y2:.3f}) (stroke (width {w}) (type solid)) (fill {f}) (layer {q(layer)}) (uuid {q(u())}))'
 
 def circle(cx, cy, r, layer, w):
+    w = lua_w(layer, w)
     return f'(fp_circle (center {cx:.3f} {cy:.3f}) (end {cx + r:.3f} {cy:.3f}) (stroke (width {w}) (type solid)) (fill no) (layer {q(layer)}) (uuid {q(u())}))'
 
 def text(s, x, y, layer, size=0.8, th=0.12, just=None, rot=0):
+    if 'SilkS' in layer:
+        size, th = max(size, 0.8), 0.2
     j = f' (justify {just})' if just else ''
     return f'(fp_text user {q(s)} (at {x:.3f} {y:.3f} {rot}) (layer {q(layer)}) (uuid {q(u())}) (effects (font (size {size} {size}) (thickness {th})){j}))'
 
-def tht(num, x, y, d=1.8, drill=1.0, square=False):
+def tht(num, x, y, d=1.6, drill=1.0, square=False):
     shp = 'rect' if square else 'circle'
     return f'(pad {q(num)} thru_hole {shp} (at {x:.3f} {y:.3f}) (size {d} {d}) (drill {drill}) (layers "*.Cu" "*.Mask") (remove_unused_layers no) (uuid {q(u())}))'
 
 def footprint(name, descr, tags, ref_xy, val_xy, body, attr='through_hole'):
     s = f'''(footprint {q(name)} (version 20241229) (generator "pcbnew") (generator_version "9.0") (layer "F.Cu")
  (descr {q(descr)}) (tags {q(tags)})
- (property "Reference" "REF**" (at {ref_xy[0]} {ref_xy[1]} 0) (layer "F.SilkS") (uuid {q(u())}) (effects (font (size 1 1) (thickness 0.15))))
+ (property "Reference" "REF**" (at {ref_xy[0]} {ref_xy[1]} 0) (layer "F.SilkS") (uuid {q(u())}) (effects (font (size 1 1) (thickness 0.2))))
  (property "Value" {q(name)} (at {val_xy[0]} {val_xy[1]} 0) (layer "F.Fab") (uuid {q(u())}) (effects (font (size 1 1) (thickness 0.15))))
  (property "Datasheet" "" (at 0 0 0) (layer "F.Fab") (hide yes) (uuid {q(u())}) (effects (font (size 1.27 1.27) (thickness 0.15))))
  (property "Description" {q(descr)} (at 0 0 0) (layer "F.Fab") (hide yes) (uuid {q(u())}) (effects (font (size 1.27 1.27) (thickness 0.15))))
@@ -47,8 +56,8 @@ P = 2.54
 # 1) Đế cắm XIAO: chân 1 (D0) ở đầu USB, chân 1-7 cột trái, 8-14 cột phải đi ngược lên
 b = []
 for i in range(7):
-    b.append(tht(str(i + 1), 0, i * P, 1.7, 1.0, square=(i == 0)))
-    b.append(tht(str(8 + i), 15.24, (6 - i) * P, 1.7, 1.0))
+    b.append(tht(str(i + 1), 0, i * P, 1.6, 1.0, square=(i == 0)))
+    b.append(tht(str(8 + i), 15.24, (6 - i) * P, 1.6, 1.0))
 x1, x2, y1, y2 = -1.28, 16.52, -2.93, 18.12
 b.append(rect(x1, y1, x2, y2, 'F.Fab', 0.1))
 b.append(rect(3.4, y1 - 1.5, 11.84, y1, 'F.Fab', 0.1))

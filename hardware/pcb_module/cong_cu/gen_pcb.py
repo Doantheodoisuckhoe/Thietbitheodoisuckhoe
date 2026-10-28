@@ -37,13 +37,13 @@ board = pcbnew.NewBoard(os.path.join(PRJ, NAME + '.kicad_pcb'))
 board.SetCopperLayerCount(2)
 ds = board.GetDesignSettings()
 ds.m_MinClearance = MM(0.25)
-ds.m_TrackMinWidth = MM(0.3)
-ds.m_ViasMinSize = MM(0.8)
-ds.m_MinThroughDrill = MM(0.4)
+ds.m_TrackMinWidth = MM(0.2)
+ds.m_ViasMinSize = MM(0.9)
+ds.m_MinThroughDrill = MM(0.3)
 ds.m_CopperEdgeClearance = MM(0.4)
 ds.m_HoleClearance = MM(0.25)
 ds.m_HoleToHoleMin = MM(0.5)
-ds.m_ViasMinAnnularWidth = MM(0.2)
+ds.m_ViasMinAnnularWidth = MM(0.3)
 
 netinfo = {}
 for nm in nets:
@@ -191,8 +191,8 @@ YS = np.arange(NY) * G
 CLR = 0.25
 EDGE = 0.4
 MARGIN = 0.08
-VIA_R = 0.4
-VIA_DRILL = 0.4
+VIA_R = 0.45       # via lỗ 0,3 / pad 0,9 mm (tiêu chuẩn xưởng)
+VIA_DRILL = 0.3
 
 def mm(v):
     return pcbnew.ToMM(v)
@@ -600,9 +600,9 @@ def gnd_zone(layer, prio):
     z.SetLayer(layer)
     z.SetNet(netinfo['GND'])
     z.SetAssignedPriority(prio)
-    z.SetLocalClearance(MM(0.3))
+    z.SetLocalClearance(MM(0.65))   # >= 25 mil
     z.SetMinThickness(MM(0.25))
-    z.SetThermalReliefGap(MM(0.3))
+    z.SetThermalReliefGap(MM(0.5))
     z.SetThermalReliefSpokeWidth(MM(0.5))
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
     z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
@@ -621,7 +621,8 @@ if '--nozone' not in sys.argv:
 def silk(s, x, y, size=0.8, layer=pcbnew.F_SilkS, rot=0, just=0):
     t = pcbnew.PCB_TEXT(board)
     t.SetText(s); t.SetPosition(V(x, y)); t.SetLayer(layer)
-    t.SetTextSize(pcbnew.VECTOR2I(MM(size), MM(size))); t.SetTextThickness(MM(0.15 if size >= 1 else 0.12))
+    size = max(size, 0.8)   # chữ lụa >= 0,8 mm, nét 0,2 mm
+    t.SetTextSize(pcbnew.VECTOR2I(MM(size), MM(size))); t.SetTextThickness(MM(0.2))
     if rot:
         t.SetTextAngleDegrees(rot)
     if layer in (pcbnew.B_SilkS, pcbnew.B_Fab):
@@ -644,7 +645,7 @@ silk('40 x 30 x 6 mm', 25, 40.2, 1.0)
 silk('(dán băng keo cách điện)', 25, 42.2, 0.8)
 silk('ANTEN', 25, 2.4, 0.8)
 silk('ĐỒNG HỒ SỨC KHỎE', 25, 46.5, 1.0)
-silk('v1.1  10/2026', 25, 48.5, 0.8)
+silk('v1.2  10/2026', 25, 48.5, 0.8)
 silk('MẶT DA', 25, 40.5, 1.2, pcbnew.B_SilkS)
 silk('LA', 41.0, 22.9, 1.0, pcbnew.B_SilkS)
 silk('RL', 9.0, 22.9, 1.0, pcbnew.B_SilkS)
