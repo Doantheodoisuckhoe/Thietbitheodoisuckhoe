@@ -6,6 +6,7 @@
 // Noi day giong test_breadboard:
 //   MAX30102 + MAX30205: SDA -> D4, SCL -> D5, VCC -> 3V3   (khong co module nao thi phan do bo trong)
 //   Nut SOS: D9 -> GND.  Dong co rung: D2 qua MOSFET (tren breadboard de trong D2).
+//   AD8232 (ECG): OUTPUT -> A0 (D0), LO+ va LO- gop vao D1 qua 2 diode (mach 1.2). Tren breadboard noi LO+ -> D1.
 //   Man GC9A01 (theo mach 1.2): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3, RES de trong.
 //   Chua cam man thi firmware van chay binh thuong (man chi nhan lenh, khong tra loi).
 //   Cach ve tung man va anh mo phong: man_hinh.h, xem_truoc/README.md
@@ -63,11 +64,17 @@ const uint32_t THOI_GIAN_HUY_TE_NGA_MS = 15000;
 const uint32_t GIU_NUT_SOS_MS = 1000;
 const uint32_t GUI_LAI_CANH_BAO_MS = 5000;   // gui lai cho den khi app xac nhan
 
+// ECG: app gui lenh 03 -> dong ho lay mau AD8232 250 mau/giay trong 30 giay va gui dan qua BLE.
+const uint8_t  CHAN_ECG      = A0;
+const uint8_t  CHAN_ECG_TUOT = D1;     // HIGH = tuot dien cuc (LO+ / LO-)
+const uint16_t TAN_SO_ECG    = 250;
+const uint16_t SO_MAU_ECG    = 30 * TAN_SO_ECG;   // 7500 mau = 30 giay
+
 // ---------------- Ma canh bao (giong docs/giao-thuc-ble.md) ----------------
 enum MaCanhBao : uint8_t {
   CB_SOS = 1, CB_TE_NGA = 2, CB_NHIP_CAO = 3, CB_NHIP_THAP = 4, CB_SPO2_THAP = 5, CB_SOT = 6
 };
-enum MaLenh : uint8_t { LENH_XAC_NHAN = 1, LENH_TIM_DONG_HO = 2 };
+enum MaLenh : uint8_t { LENH_XAC_NHAN = 1, LENH_TIM_DONG_HO = 2, LENH_BAT_DAU_ECG = 3, LENH_DUNG_ECG = 4 };
 
 // ---------------- BLE ----------------
 // UUID dang 4b3a000X-8f6e-4c2a-9d1b-3e5f7a9c0b1d, viet nguoc byte (little endian) theo yeu cau Bluefruit.
@@ -77,11 +84,13 @@ const uint8_t UUID_DICH_VU[16]  = UUID_RIENG(0x01);
 const uint8_t UUID_SO_DO[16]    = UUID_RIENG(0x02);
 const uint8_t UUID_CANH_BAO[16] = UUID_RIENG(0x03);
 const uint8_t UUID_LENH[16]     = UUID_RIENG(0x04);
+const uint8_t UUID_ECG[16]      = UUID_RIENG(0x05);
 
 BLEService        dichVu(UUID_DICH_VU);
 BLECharacteristic dtSoDo(UUID_SO_DO);
 BLECharacteristic dtCanhBao(UUID_CANH_BAO);
 BLECharacteristic dtLenh(UUID_LENH);
+BLECharacteristic dtEcg(UUID_ECG);
 BLEService        dvNhipTim(UUID16_SVC_HEART_RATE);   // service chuan, app/dong ho nao cung doc duoc
 BLECharacteristic dtNhipTim(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLEDis            thongTin;
@@ -103,6 +112,11 @@ struct __attribute__((packed)) GoiCanhBao {
   uint8_t  soThuTu;      // 1..255, tang moi canh bao moi
   uint16_t giaTri;       // nhip tim / SpO2 / nhiet do (0,01 C); 0 voi SOS, te nga
 };
+
+// Goi ECG: 4 byte dau + n mau (uint16, ADC 12 bit). Xem docs/giao-thuc-ble.md
+const uint8_t ECG_CO_TUOT = 1, ECG_CO_HET = 2;
+const uint8_t ECG_MAU_MOI_GOI_LON = 25;   // MTU >= 57 (app xin MTU 247)
+const uint8_t ECG_MAU_MOI_GOI_NHO = 8;    // MTU mac dinh 23: 4 + 16 = 20 byte
 
 // ---------------- Cam bien ----------------
 MAX30105 ppg;
@@ -131,6 +145,19 @@ BoVeManHinh boVe;
 bool     manHinhSang = false;
 uint32_t tatManHinhLuc = 0;
 volatile uint32_t lucAppXacNhan = 0;   // ghi trong callback BLE, chi doc o loop()
+
+// ECG
+volatile uint8_t  yeuCauEcg = 0;       // ghi trong callback BLE: 3 = bat dau, 4 = dung
+bool     ecgDangDo = false;
+const uint16_t KICH_THUOC_DEM_ECG = 512;   // ~2 giay, luy thua cua 2
+volatile uint16_t demEcg[KICH_THUOC_DEM_ECG];   // bit15 = tuot dien cuc, bit0-11 = ADC
+volatile uint16_t viTriGhiEcg = 0;
+volatile uint16_t soMauDaLayEcg = 0;
+volatile uint16_t soMauMatEcg = 0;
+volatile uint16_t viTriDocEcg = 0;     // loop() doc, ngat so sanh de biet bo dem day
+uint16_t soMauDaGuiEcg = 0;
+uint32_t lucBatDauEcg = 0;
+uint16_t soGoiEcg = 0;
 
 // ============================================================
 // Dong co rung
@@ -190,6 +217,8 @@ void khiNhanLenh(uint16_t ketNoi, BLECharacteristic* dt, uint8_t* duLieu, uint16
     lucAppXacNhan = millis() | 1;
   } else if (duLieu[0] == LENH_TIM_DONG_HO) {
     rung(2000);
+  } else if (duLieu[0] == LENH_BAT_DAU_ECG || duLieu[0] == LENH_DUNG_ECG) {
+    yeuCauEcg = duLieu[0];   // xu ly o loop(), khong lam viec nang trong callback BLE
   }
 }
 
@@ -476,6 +505,105 @@ void xuLyMauPpg(uint32_t doRaw, uint32_t irRaw) {
 }
 
 // ============================================================
+// ECG (AD8232) - TIMER4 ngat moi 4 ms, giong firmware/doc_ad8232
+// ============================================================
+extern "C" void TIMER4_IRQHandler(void) {
+  if (!NRF_TIMER4->EVENTS_COMPARE[0]) return;
+  NRF_TIMER4->EVENTS_COMPARE[0] = 0;
+  if (soMauDaLayEcg >= SO_MAU_ECG) return;
+  uint16_t ke = (viTriGhiEcg + 1) & (KICH_THUOC_DEM_ECG - 1);
+  if (ke == viTriDocEcg) {          // BLE gui khong kip, bo dem day: mat mau nay (app thay thieu mau)
+    soMauMatEcg++;
+    soMauDaLayEcg++;                 // van tinh thoi gian de ban do dung 30 giay
+    return;
+  }
+  uint16_t v = analogRead(CHAN_ECG) & 0x0FFF;
+  if (digitalRead(CHAN_ECG_TUOT)) v |= 0x8000;
+  demEcg[viTriGhiEcg] = v;
+  viTriGhiEcg = ke;
+  soMauDaLayEcg++;
+}
+
+void dungEcg() {
+  NRF_TIMER4->TASKS_STOP = 1;
+  NVIC_DisableIRQ(TIMER4_IRQn);
+  ecgDangDo = false;
+}
+
+void batDauEcg() {
+  dungEcg();
+  pinMode(CHAN_ECG_TUOT, INPUT_PULLDOWN);   // 2 diode gop LO+/LO- chi keo len, can keo xuong
+  analogReference(AR_DEFAULT);
+  analogReadResolution(12);
+  viTriGhiEcg = 0;
+  viTriDocEcg = 0;
+  soMauDaLayEcg = 0;
+  soMauMatEcg = 0;
+  soMauDaGuiEcg = 0;
+  soGoiEcg = 0;
+  lucBatDauEcg = millis();
+  ecgDangDo = true;
+  NRF_TIMER4->MODE      = TIMER_MODE_MODE_Timer;
+  NRF_TIMER4->BITMODE   = TIMER_BITMODE_BITMODE_32Bit;
+  NRF_TIMER4->PRESCALER = 4;                         // 1 MHz
+  NRF_TIMER4->CC[0]     = 1000000 / TAN_SO_ECG;      // 4000 us
+  NRF_TIMER4->SHORTS    = TIMER_SHORTS_COMPARE0_CLEAR_Msk;
+  NRF_TIMER4->INTENSET  = TIMER_INTENSET_COMPARE0_Msk;
+  NVIC_SetPriority(TIMER4_IRQn, 3);
+  NVIC_EnableIRQ(TIMER4_IRQn);
+  NRF_TIMER4->TASKS_CLEAR = 1;
+  NRF_TIMER4->TASKS_START = 1;
+  Serial.println("# Bat dau do ECG 30 giay");
+}
+
+// Gui cac mau da lay. Goi khong gui duoc (BLE ban) thi giu lai, lan sau gui tiep.
+void capNhatEcg() {
+  uint8_t yc = yeuCauEcg;
+  if (yc) {
+    yeuCauEcg = 0;
+    if (yc == LENH_BAT_DAU_ECG && Bluefruit.connected() && dtEcg.notifyEnabled()) batDauEcg();
+    else if (yc == LENH_DUNG_ECG && ecgDangDo) { dungEcg(); Serial.println("# App dung do ECG"); }
+  }
+  if (!ecgDangDo) return;
+  if (!Bluefruit.connected()) { dungEcg(); Serial.println("# Mat ket noi, dung do ECG"); return; }
+  if (millis() - lucBatDauEcg > 45000) { dungEcg(); Serial.println("# ECG qua 45 giay chua gui xong, dung"); return; }
+
+  BLEConnection* kn = Bluefruit.Connection(Bluefruit.connHandle());
+  uint8_t moiGoi = (kn && kn->getMtu() >= 3 + 4 + 2 * ECG_MAU_MOI_GOI_LON) ? ECG_MAU_MOI_GOI_LON : ECG_MAU_MOI_GOI_NHO;
+
+  for (uint8_t lan = 0; lan < 4; lan++) {                 // toi da 4 goi moi vong loop
+    bool layXong = soMauDaLayEcg >= SO_MAU_ECG;            // doc truoc coSan: lay xong thi ngat khong ghi them
+    uint16_t coSan = (viTriGhiEcg - viTriDocEcg) & (KICH_THUOC_DEM_ECG - 1);
+    if (coSan < moiGoi && !layXong) break;
+    uint8_t n = coSan < moiGoi ? coSan : moiGoi;     // lay xong ma bo dem rong: gui goi rong co co "het"
+    uint8_t goi[4 + 2 * ECG_MAU_MOI_GOI_LON];
+    uint8_t co = 0;
+    uint16_t vt = viTriDocEcg;
+    for (uint8_t i = 0; i < n; i++) {
+      uint16_t v = demEcg[vt];
+      if (v & 0x8000) co |= ECG_CO_TUOT;
+      goi[4 + 2 * i] = v & 0xFF;
+      goi[5 + 2 * i] = (v >> 8) & 0x0F;
+      vt = (vt + 1) & (KICH_THUOC_DEM_ECG - 1);
+    }
+    bool het = layXong && coSan == n;
+    if (n == 0 && !het) break;
+    if (het) co |= ECG_CO_HET;
+    goi[0] = soGoiEcg & 0xFF; goi[1] = soGoiEcg >> 8; goi[2] = co; goi[3] = n;
+    if (!dtEcg.notify(goi, 4 + 2 * n)) break;              // BLE ban: thu lai vong sau
+    viTriDocEcg = vt;
+    soMauDaGuiEcg += n;
+    soGoiEcg++;
+    if (het) {
+      dungEcg();
+      Serial.print("# Xong ECG: da gui "); Serial.print(soMauDaGuiEcg);
+      Serial.print(" mau, mat "); Serial.println(soMauMatEcg);
+      break;
+    }
+  }
+}
+
+// ============================================================
 // Nhiet do (MAX30205) va pin
 // ============================================================
 bool docNhietDo(int16_t& ketQua) {
@@ -509,6 +637,7 @@ uint8_t phanTramPin(uint16_t mv) {
 // BLE
 // ============================================================
 void caiDatBle() {
+  Bluefruit.configPrphBandwidth(BANDWIDTH_MAX);   // cho MTU 247 de gui ECG nhanh
   Bluefruit.begin();
   Bluefruit.setName(TEN_THIET_BI);
   Bluefruit.setTxPower(4);
@@ -542,6 +671,11 @@ void caiDatBle() {
   dtLenh.setMaxLen(4);
   dtLenh.setWriteCallback(khiNhanLenh);
   dtLenh.begin();
+
+  dtEcg.setProperties(CHR_PROPS_NOTIFY);
+  dtEcg.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  dtEcg.setMaxLen(4 + 2 * ECG_MAU_MOI_GOI_LON);
+  dtEcg.begin();
 
   dvNhipTim.begin();
   dtNhipTim.setProperties(CHR_PROPS_NOTIFY);
@@ -716,6 +850,7 @@ void loop() {
   capNhatCanhBao();
   capNhatDongCo();
   capNhatManHinh();
+  capNhatEcg();
 
   static uint32_t lanGiay = 0;
   if (bayGio - lanGiay >= 1000) {
@@ -723,7 +858,8 @@ void loop() {
     nhietDoHopLe = coNhietDo && docNhietDo(nhietDo);
     if (!nhietDoHopLe) nhietDo = 0;
     static uint8_t demPin = 0;
-    if (++demPin >= 30) { demPin = 0; pinMv = docPinMv(); }   // 30 giay doc pin 1 lan
+    // 30 giay doc pin 1 lan; khong doc luc dang do ECG vi ngat ECG cung dung ADC
+    if (++demPin >= 30 && !ecgDangDo) { demPin = 0; pinMv = docPinMv(); }
 
     if (coTay) {
       ndNhipCao.capNhat(nhipTim > NHIP_TIM_CAO, nhipTim);

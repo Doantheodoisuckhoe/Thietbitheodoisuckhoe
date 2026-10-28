@@ -16,6 +16,10 @@ thì tự gửi SMS kèm vị trí GPS cho người thân (phương án 1). Giao
 
 - **Số đo**: trạng thái kết nối, nhịp tim, SpO2, nhiệt độ da, pin đồng hồ. App tự tìm đồng hồ tên
   `DoAn-SucKhoe`, nhớ nó và tự kết nối lại khi đồng hồ vào lại tầm. Nút "Tìm đồng hồ" làm đồng hồ rung.
+- **Đo điện tim (ECG) 30 giây** (nút ở trang Số đo): bấm Đo, đồng hồ gửi sóng AD8232 250 mẫu/giây; app vẽ sóng
+  chạy 5 giây gần nhất, báo khi tuột điện cực, xong thì tính nhịp tim (trung bình, thấp nhất, cao nhất) và vẽ
+  6 dải sóng 5 giây trên nền giấy ECG có đánh dấu đỉnh R. App lưu 10 lần đo gần nhất trên điện thoại.
+  Cần nạp firmware `ble_suc_khoe` từ 28/10/2026 trở đi.
 - **Người thân**: nhập tên người đeo (ghi trong SMS) và số điện thoại người thân. Thêm số xong, bấm
   "Gửi thử SMS" ở trang Số đo để kiểm tra.
 - **Lịch sử**: các cảnh báo đã nhận, đã gửi SMS cho bao nhiêu người.
@@ -42,7 +46,7 @@ Cần Flutter 3.47.6 và Android Studio (để có Android SDK).
 ```
 cd app/suc_khoe
 flutter pub get
-flutter test          # 24 test cho phần đọc gói BLE và xử lý cảnh báo
+flutter test          # 41 test: đọc gói BLE, xử lý cảnh báo, Firebase, ECG
 flutter run           # cắm điện thoại bật USB debugging
 ```
 
@@ -53,7 +57,10 @@ flutter run           # cắm điện thoại bật USB debugging
 | `lib/dong_ho.dart` | Tìm, kết nối, tự kết nối lại, nhận dữ liệu BLE (flutter_blue_plus) |
 | `lib/dich_vu_dien_thoai.dart` | Gửi SMS, gọi điện, GPS, xin quyền |
 | `lib/dam_may.dart` | Gửi số đo (10 giây/lần, lịch sử 1 phút/lần) và cảnh báo lên Firebase qua REST |
-| `lib/luu_tru.dart` | Lưu danh bạ, tên người đeo, lịch sử trên điện thoại |
+| `lib/luu_tru.dart` | Lưu danh bạ, tên người đeo, lịch sử, các lần đo ECG trên điện thoại |
+| `lib/ecg.dart` | Lọc sóng ECG, tìm đỉnh R, tính nhịp tim (bản Python: `algorithm/ecg/phan_tich_ecg.py`) |
+| `lib/do_ecg.dart` | Một lần đo ECG: gửi lệnh, gom gói, bù gói mất, phân tích, lưu |
+| `lib/man_hinh_ecg.dart` | Màn hình ECG: hướng dẫn, sóng chạy, kết quả, dải sóng trên giấy ECG |
 | `lib/main.dart` | Giao diện 4 trang + màn hình cảnh báo, chạy nền (flutter_foreground_task) |
 | `android/app/src/main/kotlin/.../MainActivity.kt` | Code Android gửi SMS (SmsManager) và gọi điện |
 

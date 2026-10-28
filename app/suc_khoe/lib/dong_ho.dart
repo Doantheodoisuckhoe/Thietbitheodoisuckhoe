@@ -27,6 +27,7 @@ class DongHo extends ChangeNotifier {
   void Function(CanhBao)? khiCoCanhBao;
   void Function(SoDo)? khiCoSoDo;
   void Function()? khiMatKetNoi;
+  void Function(GoiEcg)? khiCoGoiEcg;
 
   TrangThai trangThai = TrangThai.dangTim;
   SoDo? soDo;
@@ -35,6 +36,10 @@ class DongHo extends ChangeNotifier {
 
   BluetoothDevice? _thietBi;
   BluetoothCharacteristic? _dtLenh;
+  BluetoothCharacteristic? _dtEcg;
+
+  /// Dong ho co dac tinh ECG (firmware tu 28/10/2026).
+  bool get coEcg => _dtEcg != null && trangThai == TrangThai.daKetNoi;
   final List<StreamSubscription> _dangNghe = [];
   StreamSubscription? _ngheTrangThai;
   bool _dangChay = false;
@@ -133,6 +138,7 @@ class DongHo extends ChangeNotifier {
       }
       _dangNghe.clear();
       _dtLenh = null;
+      _dtEcg = null;
       if (trangThai != TrangThai.tatBluetooth && trangThai != TrangThai.dangKetNoi) {
         _dat(TrangThai.matKetNoi);
       }
@@ -172,6 +178,22 @@ class DongHo extends ChangeNotifier {
       _dangNghe.addAll([s1, s2]);
       await dtSoDo.setNotifyValue(true);
       await dtCanhBao.setNotifyValue(true);
+
+      // ECG (firmware cu khong co): xin MTU lon de moi goi chua 25 mau thay vi 8.
+      final dtEcg = dv.characteristics.where((c) => c.uuid == Guid(uuidEcg)).firstOrNull;
+      if (dtEcg != null) {
+        try {
+          await tb.requestMtu(247);
+        } catch (_) {
+          // Khong xin duoc thi dong ho tu dung goi nho.
+        }
+        _dangNghe.add(dtEcg.onValueReceived.listen((b) {
+          final g = GoiEcg.tuByte(b);
+          if (g != null) khiCoGoiEcg?.call(g);
+        }));
+        await dtEcg.setNotifyValue(true);
+      }
+      _dtEcg = dtEcg;
       loi = null;
       _dat(TrangThai.daKetNoi);
 
