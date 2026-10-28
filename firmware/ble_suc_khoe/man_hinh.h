@@ -91,7 +91,7 @@ private:
 
   // "36.5 °C" can giua; font khong co dau do nen ve vong tron nho.
   static void nhietDoGiua(Adafruit_GFX& g, int16_t t100, int16_t cx, int16_t y, const GFXfont* f, uint16_t mau) {
-    char so[8];
+    char so[12];
     int16_t a = t100 < 0 ? -t100 : t100;
     int16_t le = (a % 100 + 5) / 10, nguyen = a / 100;
     if (le == 10) { nguyen++; le = 0; }
