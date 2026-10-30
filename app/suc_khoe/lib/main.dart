@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dam_may.dart';
 import 'dich_vu_dien_thoai.dart' as dt;
 import 'do_ecg.dart';
+import 'ecg.dart';
 import 'dong_ho.dart';
 import 'giao_thuc.dart';
 import 'luu_tru.dart';
@@ -18,7 +19,15 @@ import 'xu_ly_canh_bao.dart';
 final dongHo = DongHo();
 final luuTru = LuuTru();
 final damMay = DamMay();
-final doEcg = DoEcg(guiLenh: dongHo.guiLenh, luu: luuTru.luuEcg, coEcg: () => dongHo.coEcg);
+final doEcg = DoEcg(
+  guiLenh: dongHo.guiLenh,
+  luu: (e) async {
+    await luuTru.luuEcg(e);
+    // Tai len Firebase de nguoi than / bac si xem tren web (chua dang nhap thi bo qua).
+    await damMay.nhanEcg(e, phanTichEcg(e.mau));
+  },
+  coEcg: () => dongHo.coEcg,
+);
 late final XuLyCanhBao xuLy;
 final _thongBao = GlobalKey<ScaffoldMessengerState>();
 final _dieuHuong = GlobalKey<NavigatorState>();

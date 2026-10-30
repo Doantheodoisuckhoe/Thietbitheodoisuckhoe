@@ -6,7 +6,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'ecg.dart';
 import 'giao_thuc.dart';
+import 'luu_tru.dart' show BanGhiEcg;
 import 'xu_ly_canh_bao.dart';
 
 class CauHinhDamMay {
@@ -72,6 +74,8 @@ class DamMay {
   DateTime? _phutHienTai;
   DateTime _lanGuiHienTai = DateTime.fromMillisecondsSinceEpoch(0);
   final List<Map<String, Object?>> _canhBaoCho = [];
+  final List<(BanGhiEcg, KetQuaEcg)> _ecgCho = [];
+  static const soEcgChoToiDa = 5; // moi lan ~20 KB, mat mang lau thi bo lan cu nhat
 
   DamMay({http.Client? client, DateTime Function()? bayGio})
       : _http = client ?? http.Client(),
@@ -170,6 +174,7 @@ class DamMay {
       viec.add(() => _ghi('PUT', 'hienTai', hienTaiJson(s, ketNoi: ketNoi, luc: now)));
     }
     if (_canhBaoCho.isNotEmpty) viec.add(_guiCanhBaoCho);
+    if (_ecgCho.isNotEmpty) viec.add(_guiEcgCho);
     for (final v in viec) {
       await _thu(v);
     }
@@ -191,6 +196,27 @@ class DamMay {
       // Khoa co dinh theo thoi diem -> gui lai nhieu lan cung chi ghi de 1 muc.
       await _ghi('PUT', 'canhBao/${cb['luc']}_${cb['ma']}', cb);
       _canhBaoCho.removeAt(0);
+    }
+  }
+
+  /// Tai 1 lan do ECG len Firebase de nguoi than / bac si xem tren web. Mat mang thi gui lai sau.
+  Future<void> nhanEcg(BanGhiEcg e, KetQuaEcg k) async {
+    if (!batDuoc) return;
+    _ecgCho.add((e, k));
+    while (_ecgCho.length > soEcgChoToiDa) {
+      _ecgCho.removeAt(0);
+    }
+    await _thu(_guiEcgCho);
+  }
+
+  Future<void> _guiEcgCho() async {
+    while (_ecgCho.isNotEmpty) {
+      final (e, k) = _ecgCho.first;
+      final khoa = e.luc.millisecondsSinceEpoch;
+      // Ghi song truoc, tom tat sau: web chi liet ke lan do da co du song.
+      await _ghi('PUT', 'ecgSong/$khoa', ecgSongJson(e, k));
+      await _ghi('PUT', 'ecg/$khoa', ecgTomTatJson(e, k));
+      _ecgCho.removeAt(0);
     }
   }
 }
@@ -238,4 +264,24 @@ Map<String, Object?> canhBaoJson(KetQuaCanhBao kq) => {
       'viDo': kq.viTri?.$1,
       'kinhDo': kq.viTri?.$2,
       'luc': kq.luc.millisecondsSinceEpoch,
+    };
+
+/// Tom tat 1 lan do ECG (nhe) de web liet ke: /nguoiDung/{uid}/ecg/{luc}
+Map<String, Object?> ecgTomTatJson(BanGhiEcg e, KetQuaEcg k) => {
+      'luc': e.luc.millisecondsSinceEpoch,
+      'soGiay': (e.mau.length / tanSoEcg).round(),
+      'nhipTb': k.nhipTb,
+      'nhipThapNhat': k.nhipThapNhat,
+      'nhipCaoNhat': k.nhipCaoNhat,
+      'soNhip': k.dinhR.length,
+      'coTuotDienCuc': e.coTuotDienCuc,
+      'soMauThieu': e.soMauThieu,
+    };
+
+/// Song goc (ADC 12 bit, uint16 little-endian, base64) va vi tri dinh R: /nguoiDung/{uid}/ecgSong/{luc}
+Map<String, Object?> ecgSongJson(BanGhiEcg e, KetQuaEcg k) => {
+      'luc': e.luc.millisecondsSinceEpoch,
+      'tanSo': tanSoEcg,
+      'mau': e.toJson()['mau'],
+      'dinhR': k.dinhR,
     };

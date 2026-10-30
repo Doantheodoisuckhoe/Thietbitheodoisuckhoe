@@ -54,8 +54,19 @@ nguoiDung/{uid}/
   hienTai    { nhipTim, spo2, nhietDo, pinPhanTram, dangDeo, ketNoi, luc }   app ghi 10 giây/lần
   soDo/{yyyyMMddHHmm}   { nhipTim, spo2, nhietDo, luc }                      trung bình mỗi phút
   canhBao/{luc_ma}      { ma, ten, khanCap, giaTri, moTa, soTinDaGui, soNguoiThan, viDo, kinhDo, luc }
+  ecg/{luc}             { luc, soGiay, nhipTb, nhipThapNhat, nhipCaoNhat, soNhip, coTuotDienCuc, soMauThieu }
+  ecgSong/{luc}         { luc, tanSo: 250, mau, dinhR }   mau: ADC 12 bit, uint16 little-endian, base64 (~20 KB/lần)
 ```
 `luc` là mili giây tính từ 1/1/1970 (giờ chuẩn). Gói miễn phí Spark cho 1 GB lưu trữ, đủ khoảng vài năm số đo 1 phút/lần.
+Mỗi lần đo ECG tốn khoảng 20 KB, nên 1 GB chứa được hàng chục nghìn lần đo.
+
+**Điện tâm đồ:** mỗi lần người đeo đo ECG 30 giây trong app, app tải lên `ecgSong` (sóng) rồi `ecg` (tóm tắt);
+mất mạng thì app giữ tối đa 5 lần đo và gửi lại khi có mạng. Web liệt kê 20 lần đo gần nhất, bấm vào một lần để
+xem 6 dải sóng 5 giây trên nền giấy ECG (ô nhỏ 0,04 giây, ô lớn 0,2 giây) có chấm đỉnh R, và nút **Tải CSV cho bác sĩ**
+(cột `t_ms,adc`, giá trị ADC gốc chưa lọc). Đây là 1 chuyển đạo đo ở hai tay, chưa hiệu chuẩn theo mV, chỉ để tham khảo.
+
+> **Nếu đã dán luật ở bước 2.4 trước ngày 30/10/2026:** dán lại nội dung mới của `database.rules.json` (có thêm dòng `"ecg"`)
+> rồi bấm **Publish**, để web lọc nhanh danh sách ECG.
 
 Web coi là **mất liên lạc** khi `hienTai` không được cập nhật quá 5 phút, và hiện cảnh báo ở đầu trang trong 1 giờ.
 
@@ -67,13 +78,14 @@ Cần Node.js 24.
 cd web
 npm install
 npm run dev     # mở http://localhost:5173 (chưa có cấu hình thì chạy dữ liệu mẫu)
-npm test        # test phần tính trạng thái
+npm test        # test phần tính trạng thái và xử lý sóng ECG
 npm run build
 ```
 
 | File | Nội dung |
 |---|---|
-| `src/App.jsx` | Giao diện: đăng nhập, dải trạng thái, số đo, biểu đồ (recharts), danh sách cảnh báo |
+| `src/App.jsx` | Giao diện: đăng nhập, dải trạng thái, số đo, biểu đồ (recharts), danh sách cảnh báo, điện tâm đồ |
+| `src/ecg.js` | Giải mã, lọc, chia dải sóng ECG, xuất CSV (có test `ecg.test.js`) |
 | `src/tinhTrang.js` | Tính dòng trạng thái ở đầu trang (có test `tinhTrang.test.js`) |
 | `src/duLieu.js` | Đăng nhập Firebase, nghe dữ liệu thời gian thực, dữ liệu mẫu |
 | `src/cauHinhFirebase.js` | Cấu hình Firebase của nhóm |

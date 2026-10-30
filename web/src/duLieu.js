@@ -1,9 +1,10 @@
 // Lay du lieu tu Firebase Realtime Database, hoac du lieu gia khi chua cau hinh (che do demo).
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { getDatabase, limitToLast, onValue, orderByChild, query, ref, startAt } from 'firebase/database'
+import { get, getDatabase, limitToLast, onValue, orderByChild, query, ref, startAt } from 'firebase/database'
 import { cauHinhFirebase } from './cauHinhFirebase.js'
 import { thanhMang, PHUT } from './tinhTrang.js'
+import { dinhRGia, maHoaMau, taoSongGia, TAN_SO_ECG } from './ecg.js'
 
 export const cheDoDemo = !cauHinhFirebase.apiKey || new URLSearchParams(location.search).has('demo')
 
@@ -43,12 +44,13 @@ export async function dangNhap(email, matKhau) {
 export const dangXuat = () => (cheDoDemo ? Promise.resolve() : signOut(auth))
 
 /**
- * Nghe du lieu cua mot tai khoan. Goi capNhat({thongTin, hienTai, soDo, canhBao, loi}) moi khi doi.
+ * Nghe du lieu cua mot tai khoan. Goi capNhat({thongTin, hienTai, soDo, canhBao, ecg, loi}) moi khi doi.
  * soDo: 24 gio gan nhat, cu truoc. canhBao: 50 canh bao gan nhat, moi truoc.
+ * ecg: tom tat 20 lan do ECG gan nhat, moi truoc (song tai rieng bang taiSongEcg khi bam xem).
  */
 export function theoDoiDuLieu(uid, capNhat) {
   if (cheDoDemo) return theoDoiDemo(capNhat)
-  const trangThai = { thongTin: null, hienTai: null, soDo: [], canhBao: [], loi: null, daTai: false }
+  const trangThai = { thongTin: null, hienTai: null, soDo: [], canhBao: [], ecg: [], loi: null, daTai: false }
   const goc = `nguoiDung/${uid}`
   const loi = (e) => capNhat({ ...Object.assign(trangThai, { loi: `Không đọc được dữ liệu: ${e.message}` }) })
   const nghe = (q, gan) =>
@@ -65,11 +67,31 @@ export function theoDoiDuLieu(uid, capNhat) {
       (v) => (trangThai.soDo = thanhMang(v))),
     nghe(query(ref(db, `${goc}/canhBao`), orderByChild('luc'), limitToLast(50)),
       (v) => (trangThai.canhBao = thanhMang(v, true))),
+    nghe(query(ref(db, `${goc}/ecg`), orderByChild('luc'), limitToLast(20)),
+      (v) => (trangThai.ecg = thanhMang(v, true))),
   ]
   return () => huy.forEach((h) => h())
 }
 
+/** Tai song cua 1 lan do ECG: {luc, tanSo, mau (base64 uint16 LE), dinhR}. Tra null neu khong co. */
+export async function taiSongEcg(uid, luc) {
+  if (cheDoDemo) {
+    const e = ECG_DEMO.find((x) => x.luc === luc) || ECG_DEMO[0]
+    return { luc, tanSo: TAN_SO_ECG, mau: maHoaMau(taoSongGia(e.nhipTb, e.soGiay)), dinhR: dinhRGia(e.nhipTb, e.soGiay) }
+  }
+  const s = await get(ref(db, `nguoiDung/${uid}/ecgSong/${luc}`))
+  return s.val()
+}
+
 // ---------- Che do demo ----------
+// Moc demo co dinh (khong doi moi 10 giay) de khi bam xem 1 lan do thi danh sach khong nhay.
+const MOC_DEMO = Date.now()
+const ECG_DEMO = [
+  { luc: MOC_DEMO - 2 * 60 * PHUT, soGiay: 30, nhipTb: 76, nhipThapNhat: 72, nhipCaoNhat: 81, soNhip: 38, coTuotDienCuc: false, soMauThieu: 0 },
+  { luc: MOC_DEMO - 27 * 60 * PHUT, soGiay: 30, nhipTb: 64, nhipThapNhat: 60, nhipCaoNhat: 69, soNhip: 32, coTuotDienCuc: false, soMauThieu: 0 },
+  { luc: MOC_DEMO - 3 * 24 * 60 * PHUT, soGiay: 30, nhipTb: 88, nhipThapNhat: 82, nhipCaoNhat: 95, soNhip: 44, coTuotDienCuc: true, soMauThieu: 12 },
+]
+
 function taoDemo(bayGio) {
   const soDo = []
   const batDau = bayGio - 24 * 60 * PHUT
@@ -99,6 +121,7 @@ function taoDemo(bayGio) {
       { luc: bayGio - 30 * 60 * PHUT, ma: 3, ten: 'Nhịp tim cao', khanCap: false, moTa: '128 lan/phut', soTinDaGui: 2, soNguoiThan: 2, viDo: 21.02851, kinhDo: 105.85423 },
       { luc: bayGio - 3 * 24 * 60 * PHUT, ma: 1, ten: 'SOS', khanCap: true, moTa: '', soTinDaGui: 2, soNguoiThan: 2, viDo: null, kinhDo: null },
     ],
+    ecg: ECG_DEMO,
     loi: null,
     daTai: true,
   }
