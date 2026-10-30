@@ -1,11 +1,17 @@
 # Mạch in đồng hồ – bản ghép module (KiCad)
 
-Bản 1.2 (28/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
+Bản 1.3 (30/10/2026). Mạch 2 lớp **50 × 62 mm** ghép các module có sẵn, toàn bộ linh kiện hàn tay được
 (điện trở, tụ 0805; SOT-23; SOD-323; SMA; header 2,54 mm). Thay cho bản chip rời 40 × 40 mm
 trong [`../pcb/`](../pcb/README.md) (bản đó giữ lại làm hướng phát triển).
 
-Kiểm tra bằng KiCad 10.0.7 (bản 1.2): **ERC 0 lỗi, 0 cảnh báo; DRC 0 lỗi, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
+Kiểm tra bằng KiCad 10.0.7 (bản 1.3): **ERC 0 lỗi, 0 cảnh báo; DRC 0 lỗi, 0 chỗ chưa nối, khớp sơ đồ (schematic parity) 0 lỗi.**
 DRC còn 6 cảnh báo `lib_footprint_mismatch` (J1–J6 khác footprint chuẩn của KiCad vì đã nới pad theo xưởng, cố ý).
+
+Thay đổi bản 1.3: pin thật đo được **45 × 30 × 5,5 mm** (LKNW 603040, 600 mAh, tính cả mạch bảo vệ PCM), dài hơn
+vùng 40 mm của bản 1.2. Vùng pin mặt trên nới ra mép phải (x 5–50 mm). Bốn linh kiện dán ở dải mép phải
+(D1 SS14, Q1 AO3400A, R1 100 Ω, R2 100k) chuyển xuống **mặt dưới**, vào khoảng trống dưới điện cực E1, cạnh J1.
+Sơ đồ nguyên lý và lưới nối không đổi; J1 (motor) và J6 giữ nguyên chỗ. Script: `cong_cu/v13_doi_day_phai.py`
+(chạy 1 lần trên bản 1.2) rồi `cong_cu/ap_quy_tac_xuong.py`.
 
 Thay đổi bản 1.2: theo bảng tiêu chuẩn của xưởng mạch trong nước. Via lỗ 0,3 / pad 0,9 mm; pad xuyên lỗ = lỗ + 0,6 mm
 (header 1,0 / 1,6 mm, JST 0,8 / 1,4 mm); phủ đồng GND cách dây 0,65 mm (≥ 25 mil); chữ lụa nét 0,2 mm. Vị trí linh kiện và
@@ -58,9 +64,9 @@ Firmware khởi tạo màn với chân RST = -1.
 |---|---|---|
 | U4 – AD8232 (lưới 3 × 3, bước 3 mm) | 1 GND, 2 3V3, 3 OUT / 4 LO-, 5 LO+, 6 SDN / 7 RA, 8 LA, 9 RL | SDN bỏ trống (module tự kéo lên). RA/LA/RL: hàn dây từ pad điện cực trên module, tháo giắc 3,5 mm |
 | U5 – GC9A01 (lưới 2 × 4, bước 3 mm) | 1 VCC, 2 GND / 3 SCL, 4 SDA / 5 RES, 6 DC / 7 CS, 8 BLK | Chữ in cạnh pad |
-| J1 – motor 1027 | 1 VBAT+ (dây đỏ), 2 MOTOR_N | Diode SS14 dập xung ngược nằm ngay cạnh |
+| J1 – motor 1027 | 1 VBAT+ (dây đỏ), 2 MOTOR_N | Diode SS14 dập xung ngược nằm ngay cạnh (mặt dưới). J1 nằm dưới pin: hàn dây motor từ mặt dưới, cắt sát chân ở mặt trên và dán Kapton |
 | J2 – chân sạc pogo (cái, nam châm) | 1 +5V vào, 2 GND | Qua TVS SMAJ5.0A rồi SS14 tới chân 5V của XIAO |
-| J3 – JST PH2.0 | 1 VBAT+, 2 VBAT- | Pin 603040 có mạch bảo vệ |
+| J3 – pin LiPo (chỗ JST PH2.0) | 1 VBAT+, 2 VBAT- | Pin 603040 45 × 30 × 5,5 mm có mạch bảo vệ, 2 dây trần: hàn thẳng dây vào lỗ J3 (đỏ chân 1 VBAT+, đen chân 2), không cần header JST |
 | J4 – dây sang XIAO | 1 VBAT+, 2 VBAT- | Hàn 2 dây ngắn lên pad BAT+ / BAT- ở mặt dưới XIAO |
 | J5 – nút SOS | 1 SOS_BTN, 2 GND | |
 | J6 – RA | 1 pad | Dây tới vít thép ở mép vỏ (ngón tay phải chạm) |
@@ -71,12 +77,13 @@ Firmware khởi tạo màn với chân RST = -1.
 **Mặt trên** (nhìn từ trên, gốc ở góc trên-trái):
 - XIAO cắm trên 2 hàng header cái 1x7 ở giữa mép trên, **đầu anten sát mép trên**, cổng USB-C quay vào
   trong. Vùng dưới anten (18,6–31,4 × 0–4,6 mm) cấm đồng và via cả hai lớp.
-- Vùng pin LiPo 40 × 30 mm (x 5–45, y 24,5–54,5) không đặt linh kiện; có dây mạch và đồng GND, phủ
-  mask. Dán băng keo Kapton trước khi đặt pin.
+- Vùng pin LiPo 45 × 30 mm (x 5–50, y 24,5–54,5) không đặt linh kiện dán; có dây mạch, đồng GND và pad xuyên lỗ
+  J1, tất cả phủ mask. Đặt pin với **đầu mạch bảo vệ (PCM) quay về mép phải** (chữ "PCM →" trên lụa), dây pin vòng
+  xuống J3. Dán băng keo Kapton trước khi đặt pin.
 - Góc trái trên: pad màn hình, R4/C9/C7/C8, nút SOS. Góc phải trên: pad AD8232, D2/D3/R3, C5/C6, pad RA.
 - Dưới thân XIAO (giữa 2 hàng header): pad J4 và C1/C2 của MAX30102 (linh kiện thấp; XIAO cắm trên header
   cái cao ~8,5 mm nên không vướng).
-- Dải trái cạnh pin: SS14 (D5), TVS (D4), pad sạc J2. Dải phải: SS14 (D1), AO3400A (Q1), R2, pad motor J1, R1.
+- Dải trái cạnh pin: SS14 (D5), TVS (D4), pad sạc J2. Mép phải: chỉ còn pad motor J1 (xuyên lỗ, nằm dưới pin) và J6.
 - Mép dưới: JST pin J3, tụ C3/C4 của MAX30205.
 
 **Mặt dưới (mặt da):**
@@ -85,10 +92,13 @@ Firmware khởi tạo màn với chân RST = -1.
   pad vuông = VIN (có chữ VIN ở mặt trên). 8 mối hàn của module nằm trong vùng pin: cắt sát chân, dán Kapton
   và 1 lớp mút mỏng trước khi đặt pin.
 - Module CJMCU-30205 phía dưới (tâm ~ (25; 50,5) mm), cách LED MAX30102 khoảng 21 mm.
+- Mạch lái motor (từ bản 1.3): D1 SS14, Q1 AO3400A, R1 100 Ω, R2 100k nằm ở góc dưới điện cực E1, cạnh J1
+  (x 43–49, y 41–55 mm). **Hàn 4 linh kiện này trước**, rồi mới hàn header XIAO, module cảm biến và J1.
+  Linh kiện cao ≤ 2,3 mm (SMA), nằm ngoài vùng điện cực nên không chạm da.
 - Hai điện cực E2 (RL) và E1 (LA) hai bên MAX30102, mỗi cái 9 × 16 mm, mở mask lộ đồng.
 - Lớp dưới gần như là mặt GND liền; mọi chân GND còn được nối bằng dây 0,5 mm nên không phụ thuộc vào đổ đồng.
 
-**Module AD8232 không gắn trên mạch:** nó nằm phía trên pin (36 × 30 mm vừa với pin 40 × 30 mm), lót
+**Module AD8232 không gắn trên mạch:** nó nằm phía trên pin (36 × 30 mm vừa với pin 45 × 30 mm), lót
 băng keo cách điện, nối bằng 9 sợi dây ngắn vào lưới pad U4. Màn hình cũng nối bằng dây (8 sợi).
 
 ## Quy tắc thiết kế (theo bảng tiêu chuẩn của xưởng mạch, bản 1.2)
