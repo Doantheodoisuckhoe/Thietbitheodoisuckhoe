@@ -3,7 +3,7 @@
 // (firmware/ble_suc_khoe/xem_truoc/). Chu khong dau vi font cua Adafruit GFX chi co ky tu ASCII.
 //
 // Cac man:
-//   MH_CHINH    : nhip tim, SpO2, nhiet do, pin, ket noi dien thoai
+//   MH_CHINH    : gio, nhip tim, SpO2, nhiet do, pin, ket noi dien thoai
 //   MH_TE_NGA   : nen do, dem nguoc 15 giay, bam nut de huy
 //   MH_CANH_BAO : canh bao dang cho app xac nhan (SOS, te nga, nhip tim, SpO2, sot)
 //   MH_DA_BAO   : nen xanh "DA BAO nguoi than" (app da xac nhan)
@@ -27,6 +27,7 @@ struct TrangThaiManHinh {
   int16_t  nhietDo = 0;          // 0,01 do C
   uint8_t  pin = 0;              // %
   bool     ketNoi = false;       // dien thoai dang ket noi BLE
+  int16_t  phutTrongNgay = -1;   // gio x 60 + phut; -1 = chua co gio (app chua ket noi lan nao)
   // Man te nga
   uint8_t  giayConLai = 0;
   // Man canh bao (ma giong MaCanhBao trong ble_suc_khoe.ino)
@@ -148,14 +149,22 @@ private:
       chuGiua(g, "SpO2", 80, 170, &FreeSans9pt7b, MH_XAM);
       chuGiua(g, "Nhiet do", 162, 170, &FreeSans9pt7b, MH_XAM);
     }
-    // Hang tren: ket noi + pin
+    // Gio tren cung
+    if (het || s.phutTrongNgay != cu.phutTrongNgay) {
+      g.fillRect(56, 14, 128, 40, MH_DEN);
+      char gio[12];
+      if (s.phutTrongNgay >= 0) snprintf(gio, sizeof gio, "%02d:%02d", s.phutTrongNgay / 60, s.phutTrongNgay % 60);
+      else strcpy(gio, "--:--");
+      chuGiua(g, gio, 120, 48, &FreeSansBold18pt7b, s.phutTrongNgay >= 0 ? MH_TRANG : MH_XAM);
+    }
+    // Hang thu hai: ket noi + pin
     if (het || s.ketNoi != cu.ketNoi || s.pin != cu.pin) {
-      g.fillRect(70, 24, 100, 26, MH_DEN);
-      veBle(g, 82, 30, s.ketNoi ? MH_XANH_DUONG : MH_XAM_TOI);
-      vePin(g, 100, 33, s.pin);
+      g.fillRect(70, 54, 100, 21, MH_DEN);
+      veBle(g, 82, 57, s.ketNoi ? MH_XANH_DUONG : MH_XAM_TOI);
+      vePin(g, 100, 60, s.pin);
       char pt[6]; snprintf(pt, sizeof pt, "%u%%", s.pin);
       g.setFont(&FreeSans9pt7b); g.setTextSize(1); g.setTextColor(MH_TRANG);
-      g.setCursor(129, 45); g.print(pt);
+      g.setCursor(129, 72); g.print(pt);
     }
     // Nhip tim
     if (het || s.nhipTim != cu.nhipTim || s.coTay != cu.coTay) {

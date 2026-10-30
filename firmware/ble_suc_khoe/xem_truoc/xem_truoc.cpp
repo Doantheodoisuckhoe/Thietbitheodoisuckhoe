@@ -26,14 +26,16 @@ int main() {
   // 1. Dang deo, so do binh thuong, co ket noi
   s.loai = MH_CHINH; s.coTay = true; s.nhipTim = 78; s.spo2 = 98;
   s.nhietDoHopLe = true; s.nhietDo = 3462; s.pin = 85; s.ketNoi = true;
+  s.phutTrongNgay = 9 * 60 + 41;
   bv.ve(c, s); luuAnh(c, "1_man_chinh.ppm");
 
   // 2. Cap nhat tung phan (khong ve lai het): nhip tim doi, mat ket noi, pin yeu
-  s.nhipTim = 102; s.ketNoi = false; s.pin = 12; s.nhietDo = 3471;
+  s.nhipTim = 102; s.ketNoi = false; s.pin = 12; s.nhietDo = 3471; s.phutTrongNgay = 9 * 60 + 42;
   bv.ve(c, s); luuAnh(c, "2_man_chinh_mat_ket_noi.ppm");
 
   // 3. Chua deo
   s.coTay = false; s.nhipTim = 0; s.spo2 = 0; s.ketNoi = true; s.pin = 60;
+  s.phutTrongNgay = -1;   // vua bat nguon, app chua gui gio
   bv.ve(c, s); luuAnh(c, "3_chua_deo.ppm");
 
   // 4. Te nga: dem nguoc
