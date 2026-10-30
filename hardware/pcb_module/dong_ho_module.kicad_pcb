@@ -7523,7 +7523,7 @@
 			)
 		)
 	)
-	(gr_text "45 x 30 x 5.5 mm  (PCM →)"
+	(gr_text "45 x 30 x 5.5 mm  (← PCM)"
 		(at 125 140.2 0)
 		(layer "F.SilkS")
 		(uuid "5fdfbc11-157f-4fb1-833b-b01c729edfaa")
