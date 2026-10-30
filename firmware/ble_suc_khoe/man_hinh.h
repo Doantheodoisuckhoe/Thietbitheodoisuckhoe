@@ -152,7 +152,7 @@ private:
     // Gio tren cung
     if (het || s.phutTrongNgay != cu.phutTrongNgay) {
       g.fillRect(56, 14, 128, 40, MH_DEN);
-      char gio[6];
+      char gio[12];
       if (s.phutTrongNgay >= 0) snprintf(gio, sizeof gio, "%02d:%02d", s.phutTrongNgay / 60, s.phutTrongNgay % 60);
       else strcpy(gio, "--:--");
       chuGiua(g, gio, 120, 48, &FreeSansBold18pt7b, s.phutTrongNgay >= 0 ? MH_TRANG : MH_XAM);
