@@ -110,6 +110,15 @@ const lenhTimDongHo = [2];
 const lenhBatDauEcg = [3];
 const lenhDungEcg = [4];
 
+/// Dat gio cho dong ho: 05 + so giay tu 1/1/2000 00:00 theo gio dia phuong (uint32 little-endian).
+/// App gui moi lan ket noi; dong ho khong co pin RTC rieng nen mat nguon thi cho lan ket noi sau.
+List<int> lenhDatGio(DateTime luc) {
+  final giay = DateTime.utc(luc.year, luc.month, luc.day, luc.hour, luc.minute, luc.second)
+      .difference(DateTime.utc(2000))
+      .inSeconds;
+  return [5, giay & 0xFF, (giay >> 8) & 0xFF, (giay >> 16) & 0xFF, (giay >> 24) & 0xFF];
+}
+
 /// ECG: dong ho lay mau 250 lan/giay trong 30 giay.
 const tanSoEcg = 250;
 const soGiayEcg = 30;

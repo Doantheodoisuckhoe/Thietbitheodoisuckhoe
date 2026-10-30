@@ -197,6 +197,9 @@ class DongHo extends ChangeNotifier {
       loi = null;
       _dat(TrangThai.daKetNoi);
 
+      // Dong bo gio cho man hinh dong ho (firmware cu bo qua lenh nay).
+      await guiLenh(lenhDatGio(DateTime.now()));
+
       // Canh bao xay ra luc chua ket noi: doc gia tri dang cho tren dong ho.
       final c = CanhBao.tuByte(await dtCanhBao.read());
       if (c != null) khiCoCanhBao?.call(c);

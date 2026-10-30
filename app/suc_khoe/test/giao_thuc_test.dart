@@ -63,6 +63,12 @@ void main() {
     expect(lenhTimDongHo, [2]);
   });
 
+  test('lenh dat gio: giay tu 1/1/2000 theo gio dia phuong', () {
+    expect(lenhDatGio(DateTime(2000, 1, 1, 0, 1, 5)), [5, 65, 0, 0, 0]);
+    // 30/10/2026 12:34:56 = 846 678 896 giay = 0x3277_4B70
+    expect(lenhDatGio(DateTime(2026, 10, 30, 12, 34, 56)), [5, 0x70, 0x4B, 0x77, 0x32]);
+  });
+
   group('Noi dung SMS', () {
     final luc = DateTime(2026, 10, 21, 14, 32);
     test('te nga co vi tri, bo dau ten', () {

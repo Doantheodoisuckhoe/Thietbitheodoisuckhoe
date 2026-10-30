@@ -26,7 +26,7 @@ Tài liệu cho người làm app (SV2). Firmware tương ứng: `firmware/ble_s
 |---|---|---|---|---|
 | Riêng `4b3a0001-…` | **Số đo** | `4b3a0002-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Read, Notify | 10 byte, mỗi giây 1 lần |
 | | **Cảnh báo** | `4b3a0003-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Read, Notify | 4 byte, khi có cảnh báo (gửi lại mỗi 5 giây đến khi xác nhận) |
-| | **Lệnh** | `4b3a0004-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Write, Write without response | 1–2 byte, app gửi xuống |
+| | **Lệnh** | `4b3a0004-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Write, Write without response | 1–5 byte, app gửi xuống |
 | | **ECG** | `4b3a0005-8f6e-4c2a-9d1b-3e5f7a9c0b1d` | Notify | gói sóng điện tim khi đang đo 30 giây (từ 28/10/2026) |
 | Heart Rate chuẩn `0x180D` | Heart Rate Measurement `0x2A37` | | Notify | nhịp tim, để thử bằng nRF Connect |
 | Battery chuẩn `0x180F` | Battery Level `0x2A19` | | Read, Notify | % pin |
@@ -81,6 +81,9 @@ SOS/té ngã được ghi đè lên cảnh báo chỉ số đang chờ, ngược
 | `02` | Tìm đồng hồ: rung 2 giây |
 | `03` | Bắt đầu đo ECG 30 giây (chỉ chạy khi app đã bật notify ở đặc tính ECG) |
 | `04` | Dừng đo ECG giữa chừng |
+| `05 t0 t1 t2 t3` | Đặt giờ: số giây từ 01/01/2000 00:00 **theo giờ địa phương** (uint32 little-endian). App gửi mỗi lần kết nối. Đồng hồ không có pin RTC riêng: mất nguồn thì hiện `--:--` cho tới lần kết nối sau |
+
+Ví dụ đặt giờ 30/10/2026 12:34:56: 846 678 896 giây = 0x32774B70 → ghi `05 70 4B 77 32`.
 
 ### ECG (gói sóng điện tim)
 

@@ -16,6 +16,7 @@ thì tự gửi SMS kèm vị trí GPS cho người thân (phương án 1). Giao
 
 - **Số đo**: trạng thái kết nối, nhịp tim, SpO2, nhiệt độ da, pin đồng hồ. App tự tìm đồng hồ tên
   `DoAn-SucKhoe`, nhớ nó và tự kết nối lại khi đồng hồ vào lại tầm. Nút "Tìm đồng hồ" làm đồng hồ rung.
+- **Đồng bộ giờ:** mỗi lần kết nối, app gửi giờ điện thoại xuống để màn đồng hồ hiện giờ.
 - **Đo điện tim (ECG) 30 giây** (nút ở trang Số đo): bấm Đo, đồng hồ gửi sóng AD8232 250 mẫu/giây; app vẽ sóng
   chạy 5 giây gần nhất, báo khi tuột điện cực, xong thì tính nhịp tim (trung bình, thấp nhất, cao nhất) và vẽ
   6 dải sóng 5 giây trên nền giấy ECG có đánh dấu đỉnh R. App lưu 10 lần đo gần nhất trên điện thoại.
@@ -46,7 +47,7 @@ Cần Flutter 3.47.6 và Android Studio (để có Android SDK).
 ```
 cd app/suc_khoe
 flutter pub get
-flutter test          # 41 test: đọc gói BLE, xử lý cảnh báo, Firebase, ECG
+flutter test          # 42 test: đọc gói BLE, xử lý cảnh báo, Firebase, ECG
 flutter run           # cắm điện thoại bật USB debugging
 ```
 

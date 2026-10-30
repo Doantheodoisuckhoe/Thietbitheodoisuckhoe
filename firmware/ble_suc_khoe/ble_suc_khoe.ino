@@ -5,14 +5,15 @@
 //
 // Noi day giong test_breadboard:
 //   MAX30102 + MAX30205: SDA -> D4, SCL -> D5, VCC -> 3V3   (khong co module nao thi phan do bo trong)
-//   Nut SOS: D9 -> GND.  Dong co rung: D2 qua MOSFET (tren breadboard de trong D2).
-//   AD8232 (ECG): OUTPUT -> A0 (D0), LO+ va LO- gop vao D1 qua 2 diode (mach 1.2). Tren breadboard noi LO+ -> D1.
-//   Man GC9A01 (theo mach 1.2): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3, RES de trong.
+//   Nut SOS: D9 -> GND.  Dong co rung: D2 qua MOSFET AO3400 (so do breadboard 28-10 co mach nay).
+//   AD8232 (ECG): OUTPUT -> A0 (D0), LO+ va LO- gop vao D1 qua 2 diode (mach 1.3). Tren breadboard noi LO+ -> D1.
+//   Man GC9A01 (theo mach 1.3): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3.
+//   RES: tren mach co R4 10k keo len 3V3 + C9 100 nF; tren breadboard noi RES -> 3V3.
 //   Chua cam man thi firmware van chay binh thuong (man chi nhan lenh, khong tra loi).
 //   Cach ve tung man va anh mo phong: man_hinh.h, xem_truoc/README.md
 //
 // Cach dung nut SOS:
-//   - Bam nhanh             -> bat man hinh 10 giay.
+//   - Bam nhanh             -> bat man hinh 10 giay (hien gio, nhip tim, SpO2, nhiet do).
 //   - Giu nut 1 giay        -> canh bao SOS.
 //   - Khi dong ho phat hien te nga, no rung 15 giay de hoi "co sao khong?".
 //     Bam nut trong 15 giay do -> huy (khong bao). Khong bam -> gui canh bao te nga.
@@ -74,7 +75,8 @@ const uint16_t SO_MAU_ECG    = 30 * TAN_SO_ECG;   // 7500 mau = 30 giay
 enum MaCanhBao : uint8_t {
   CB_SOS = 1, CB_TE_NGA = 2, CB_NHIP_CAO = 3, CB_NHIP_THAP = 4, CB_SPO2_THAP = 5, CB_SOT = 6
 };
-enum MaLenh : uint8_t { LENH_XAC_NHAN = 1, LENH_TIM_DONG_HO = 2, LENH_BAT_DAU_ECG = 3, LENH_DUNG_ECG = 4 };
+enum MaLenh : uint8_t { LENH_XAC_NHAN = 1, LENH_TIM_DONG_HO = 2, LENH_BAT_DAU_ECG = 3, LENH_DUNG_ECG = 4,
+                        LENH_DAT_GIO = 5 };
 
 // ---------------- BLE ----------------
 // UUID dang 4b3a000X-8f6e-4c2a-9d1b-3e5f7a9c0b1d, viet nguoc byte (little endian) theo yeu cau Bluefruit.
@@ -140,11 +142,19 @@ uint32_t lucPhatHienTeNga = 0;
 uint32_t rungDenLuc = 0;  // millis() khi tat dong co
 
 // Man hinh
-Adafruit_GC9A01A tft(CHAN_TFT_CS, CHAN_TFT_DC, -1);   // RES khong noi: thu vien tu reset bang lenh
+Adafruit_GC9A01A tft(CHAN_TFT_CS, CHAN_TFT_DC, -1);   // RES khong co chan GPIO: thu vien tu reset bang lenh
 BoVeManHinh boVe;
 bool     manHinhSang = false;
 uint32_t tatManHinhLuc = 0;
 volatile uint32_t lucAppXacNhan = 0;   // ghi trong callback BLE, chi doc o loop()
+
+// Gio: app gui gio dia phuong moi khi ket noi (lenh 05). Dong ho khong co pin RTC rieng nen mat nguon
+// thi mat gio, cho den lan ket noi sau. Dem bang millis() (thach anh 32,768 kHz, lech vai giay/ngay).
+uint32_t giayGoc = 0;                  // so giay tu 1/1/2000 00:00 (gio dia phuong) tai lucGoc
+uint32_t lucGoc = 0;                   // millis() ung voi giayGoc
+bool     coGio = false;
+volatile uint32_t gioTuApp = 0;        // ghi trong callback BLE, loop() moi ap dung
+volatile bool     coGioTuApp = false;
 
 // ECG
 volatile uint8_t  yeuCauEcg = 0;       // ghi trong callback BLE: 3 = bat dau, 4 = dung
@@ -219,6 +229,10 @@ void khiNhanLenh(uint16_t ketNoi, BLECharacteristic* dt, uint8_t* duLieu, uint16
     rung(2000);
   } else if (duLieu[0] == LENH_BAT_DAU_ECG || duLieu[0] == LENH_DUNG_ECG) {
     yeuCauEcg = duLieu[0];   // xu ly o loop(), khong lam viec nang trong callback BLE
+  } else if (duLieu[0] == LENH_DAT_GIO && doDai >= 5) {
+    gioTuApp = (uint32_t)duLieu[1] | ((uint32_t)duLieu[2] << 8) | ((uint32_t)duLieu[3] << 16) |
+               ((uint32_t)duLieu[4] << 24);
+    coGioTuApp = true;
   }
 }
 
@@ -668,7 +682,7 @@ void caiDatBle() {
 
   dtLenh.setProperties(CHR_PROPS_WRITE | CHR_PROPS_WRITE_WO_RESP);
   dtLenh.setPermission(SECMODE_NO_ACCESS, SECMODE_OPEN);
-  dtLenh.setMaxLen(4);
+  dtLenh.setMaxLen(8);   // dai nhat: lenh dat gio 5 byte
   dtLenh.setWriteCallback(khiNhanLenh);
   dtLenh.begin();
 
@@ -755,6 +769,26 @@ void tatManHinh() {
   manHinhSang = false;
 }
 
+void capNhatGio() {
+  if (coGioTuApp) {
+    coGioTuApp = false;
+    giayGoc = gioTuApp;
+    lucGoc = millis();
+    coGio = true;
+    Serial.print("# Da dat gio tu app: ");
+    Serial.print((giayGoc / 3600) % 24); Serial.print(':'); Serial.println((giayGoc / 60) % 60);
+  }
+  // Don millis() vao giayGoc moi gio de khong bi tran sau 49 ngay
+  while (coGio && millis() - lucGoc >= 3600000UL) { giayGoc += 3600; lucGoc += 3600000UL; }
+}
+
+// So phut tu 0:00 hom nay, -1 = chua co gio
+int16_t phutTrongNgay() {
+  if (!coGio) return -1;
+  uint32_t giay = giayGoc + (millis() - lucGoc) / 1000;
+  return (int16_t)((giay / 60) % 1440);
+}
+
 void capNhatManHinh() {
   if (!CO_MAN_HINH) return;
   static uint32_t lanVe = 0;
@@ -781,6 +815,7 @@ void capNhatManHinh() {
   s.nhietDoHopLe = nhietDoHopLe; s.nhietDo = nhietDo;
   s.pin = phanTramPin(pinMv);
   s.ketNoi = Bluefruit.connected();
+  s.phutTrongNgay = phutTrongNgay();
 
   // Te nga, canh bao, "da bao": man luon sang. Man chinh: tat sau SANG_MAN_HINH_MS.
   if (s.loai != MH_CHINH) batManHinh();
@@ -849,6 +884,7 @@ void loop() {
   capNhatTeNga();
   capNhatCanhBao();
   capNhatDongCo();
+  capNhatGio();
   capNhatManHinh();
   capNhatEcg();
 
