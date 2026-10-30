@@ -2,11 +2,12 @@
 // Board: "Seeed XIAO nRF52840 Sense" (goi "Seeed nRF52 Boards"), Serial Monitor 115200.
 // Huong dan cam day: firmware/test_breadboard/README.md
 //
-// Noi day (giu dung so chan cua mach in hardware/pcb_module, tru LO- tam dung D3):
+// Noi day (giu dung so chan cua mach in hardware/pcb_module):
 //   Tat ca VCC/VIN/3.3V -> 3V3 cua XIAO, tat ca GND -> GND (KHONG noi vao 5V)
 //   MAX30102 : SDA -> D4, SCL -> D5                    (I2C 0x57)
 //   MAX30205 : SDA -> D4, SCL -> D5, A0/A1/A2 -> GND   (I2C 0x48), OS de trong
-//   AD8232   : OUTPUT -> D0 (A0), LO+ -> D1, LO- -> D3, SDN de trong
+//   AD8232   : OUTPUT -> D0 (A0), LO+ -> D1, LO- va SDN de trong (D3 la den nen man hinh)
+//   Man GC9A01: SCL -> D8, SDA -> D10, CS -> D7, DC -> D6, BLK -> D3, RES -> 3V3 (sketch nay khong ve man hinh)
 //   Nut SOS  : D9 -> GND (chua co nut thi cham dau day tu D9 vao GND)
 //   Dong co rung: KHONG noi vao chan D nao (dong qua lon), chi thu bang 3V3/GND, xem README.
 //
@@ -18,8 +19,7 @@
 #include "LSM6DS3.h"            // Seeed Arduino LSM6DS3 (IMU tren XIAO Sense)
 
 const uint8_t CHAN_ECG   = A0;  // D0
-const uint8_t CHAN_LO_DUONG = D1;
-const uint8_t CHAN_LO_AM = D3;  // mach in: LO+ va LO- gop vao D1 qua 2 diode, D3 cho den nen man hinh
+const uint8_t CHAN_LO_DUONG = D1;  // mach in: LO+ va LO- gop vao D1 qua 2 diode
 const uint8_t CHAN_SOS   = D9;
 
 const uint8_t DIA_CHI_MAX30102 = 0x57;
@@ -65,7 +65,6 @@ bool docNhietDo(float &doC) {
 
 void setup() {
   pinMode(CHAN_LO_DUONG, INPUT);
-  pinMode(CHAN_LO_AM, INPUT);
   pinMode(CHAN_SOS, INPUT_PULLUP);
   analogReadResolution(12);
 
@@ -139,7 +138,7 @@ void loop() {
 
   Serial.print(" | ECG=");
   Serial.print(analogRead(CHAN_ECG));
-  bool tuot = digitalRead(CHAN_LO_DUONG) || digitalRead(CHAN_LO_AM);
+  bool tuot = digitalRead(CHAN_LO_DUONG);
   Serial.print(tuot ? " | dien cuc: TUOT" : " | dien cuc: OK");
 
   Serial.println(digitalRead(CHAN_SOS) == LOW ? " | SOS: BAM" : " | SOS: nha");

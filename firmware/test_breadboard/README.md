@@ -3,7 +3,9 @@
 Cắm XIAO và các module đã mua lên breadboard, nạp `test_breadboard.ino`, rồi xem trên Serial Monitor từng module có chạy không.
 Số chân giữ đúng như mạch in `hardware/pcb_module`, nên code test xong dùng lại được khi có mạch in.
 
-![Sơ đồ cắm breadboard](so_do_cam_breadboard.png)
+![Sơ đồ cắm breadboard 28/10](so_do_breadboard_28-10.png)
+
+Bản 28/10 thêm màn GC9A01, mạch lái động cơ rung ở D2 (AO3400, R1 100 Ω, R2 100 kΩ, diode 1N5819) và bỏ dây LO− (D3 giờ là đèn nền màn hình). Ảnh vẽ bằng `ve_so_do/`. Ảnh `so_do_cam_breadboard.png` là bản cũ 21/10.
 
 ## 1. Chuẩn bị
 
@@ -63,6 +65,9 @@ Nên cắm và test **từng module một** theo thứ tự dưới đây, xong 
 | SCL | D5 (chung hàng với SCL của MAX30205) |
 | INT, IRD, RD | để trống |
 
+Module MAX30102 đen 2 hàng chân (HW-605) không cắm thẳng vào breadboard được (2 hàng chân sẽ bị chập).
+Dùng 4 dây đực–cái từ hàng chân có chữ VIN (VIN, SDA, SCL, GND); hàng GND RD IRD INT bỏ trống.
+
 Trước khi cắm, lật module MAX30102 lên xem jumper điện trở kéo lên I2C (3 miếng đồng cạnh nhau, ghi 1.8V và 3.3V).
 Nếu đang hàn sang **1.8V** thì chuyển sang **3.3V**. Để 1.8V thì XIAO đọc không ổn định, nhất là khi cắm chung với MAX30205.
 
@@ -74,15 +79,17 @@ Nếu đang hàn sang **1.8V** thì chuyển sang **3.3V**. Để 1.8V thì XIAO
 | GND | GND |
 | OUTPUT | D0 (A0) |
 | LO+ | D1 |
-| LO− | D3 |
+| LO− | **để trống** |
 | SDN | để trống |
 
-Trên breadboard tạm dùng D3 cho LO−. Trên mạch in, LO+ và LO− được gộp vào D1 qua 2 diode, còn D3 dành cho đèn nền màn hình.
+Từ 28/10 LO− để trống vì D3 là đèn nền màn hình; chỉ LO+ báo tuột điện cực ở D1. Trên mạch in, LO+ và LO− được gộp vào D1 qua 2 diode.
 
 Cắm dây điện cực vào jack 3,5 mm của module. Dán điện cực (thử nhanh):
 - **Đỏ (RA)**: dưới xương đòn phải, hoặc cổ tay phải.
-- **Vàng (LA)**: dưới xương đòn trái, hoặc cổ tay trái.
-- **Xanh (RL)**: bụng dưới bên phải, hoặc mắt cá chân phải.
+- **Xanh lá (LA)**: dưới xương đòn trái, hoặc cổ tay trái.
+- **Vàng (RL)**: bụng dưới bên phải, hoặc mắt cá chân phải.
+
+Màu trên là của bộ cáp nhóm đang dùng (đã thử 24/10); cáp khác có thể khác màu.
 
 Nếu đầu dây có in chữ R/L/F thì làm theo chữ in. Chỉ đo khi laptop **đã rút sạc**: cắm điện lưới thì nhiễu 50 Hz rất lớn, và an toàn hơn.
 
@@ -93,9 +100,34 @@ Khi có nút: một chân nút vào D9, chân chéo đối diện vào GND. Khô
 
 ### 2.5 Động cơ rung 1027
 
-**Không nối động cơ vào chân D nào.** Động cơ ăn khoảng 60-90 mA, chân D của XIAO chỉ chịu vài mA và có thể hỏng.
-Bây giờ chỉ thử động cơ còn sống: chạm dây đỏ vào 3V3, dây xanh/đen vào GND khoảng 1 giây, thấy rung là được.
-Điều khiển bằng D2 phải có MOSFET AO3400 và diode SS14 (đã có trong danh sách cần mua), cắm giống mạch in.
+**Không nối động cơ thẳng vào chân D2.** Động cơ ăn khoảng 60-90 mA, chân D của XIAO chỉ chịu vài mA và có thể hỏng.
+Lái qua MOSFET giống mạch in (xem khung "Mạch lái động cơ rung" trên hình):
+
+| Linh kiện | Nối |
+|---|---|
+| R1 100 Ω (nâu-đen-nâu) | D2 → chân G của AO3400 |
+| R2 100 kΩ (nâu-đen-vàng) | chân G → GND (giữ motor tắt khi XIAO khởi động) |
+| AO3400 trên đế SOT-23 | S → GND, D → dây đen motor |
+| Motor 1027 | dây đỏ → 3V3 |
+| Diode 1N5819 (hoặc 1N4148) | song song motor, đầu có vạch về 3V3 |
+
+Chưa có đế SOT-23 thì dùng transistor S8050: D2 qua 1 kΩ vào B, E → GND, C → dây đen motor.
+Firmware `ble_suc_khoe` rung khi té ngã (đếm ngược 15 giây), khi gửi cảnh báo, khi app xác nhận và khi bấm "Tìm đồng hồ" trên app.
+
+### 2.6 Màn tròn GC9A01
+
+| Chân module | Nối vào |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SCL | D8 |
+| SDA | D10 |
+| RES | 3V3 |
+| DC | D6 |
+| CS | D7 |
+| BLK | D3 |
+
+Sketch `test_breadboard` không vẽ gì lên màn; muốn thấy màn chạy thì nạp `ble_suc_khoe`.
 
 ## 3. Cài phần mềm và nạp code
 
