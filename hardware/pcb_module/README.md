@@ -78,8 +78,10 @@ Firmware khởi tạo màn với chân RST = -1.
 - XIAO cắm trên 2 hàng header cái 1x7 ở giữa mép trên, **đầu anten sát mép trên**, cổng USB-C quay vào
   trong. Vùng dưới anten (18,6–31,4 × 0–4,6 mm) cấm đồng và via cả hai lớp.
 - Vùng pin LiPo 45 × 30 mm (x 5–50, y 24,5–54,5) không đặt linh kiện dán; có dây mạch, đồng GND và pad xuyên lỗ
-  J1, tất cả phủ mask. Đặt pin với **đầu mạch bảo vệ (PCM) quay về mép phải** (chữ "PCM →" trên lụa), dây pin vòng
-  xuống J3. Dán băng keo Kapton trước khi đặt pin.
+  J1, tất cả phủ mask. Đặt pin với **đầu mạch bảo vệ (PCM) quay về mép TRÁI** (chữ "← PCM" trên lụa), sát J3:
+  dây pin chỉ cần ~5 mm tới J3. Không quay PCM sang phải: mạch PCM có pad đồng hở sẽ nằm đè lên mối hàn J1.
+- Trước khi đặt pin: cắt sát chân ở mặt trên của U2 (8 chân MAX30102) và J1 (2 dây motor), mối hàn còn nhô
+  ~0,5–1 mm; dán Kapton phủ hết các mối hàn đó, rồi lót mút ~1 mm dưới pin để pin không tì vào mối hàn.
 - Góc trái trên: pad màn hình, R4/C9/C7/C8, nút SOS. Góc phải trên: pad AD8232, D2/D3/R3, C5/C6, pad RA.
 - Dưới thân XIAO (giữa 2 hàng header): pad J4 và C1/C2 của MAX30102 (linh kiện thấp; XIAO cắm trên header
   cái cao ~8,5 mm nên không vướng).
