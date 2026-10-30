@@ -17,6 +17,10 @@
   --dai-chu-y-chu: #5a3a06;
   --dai-xam: #e2e6e5;
   --dai-xam-chu: #2e3a39;
+  --ecg-nen: #fffafa;
+  --ecg-nho: #f6d9d9;
+  --ecg-lon: #e8a9a9;
+  --ecg-vet: #1c2b2a;
   color-scheme: light;
 }
 
@@ -39,6 +43,10 @@
     --dai-chu-y-chu: #fbe7c4;
     --dai-xam: #222d2c;
     --dai-xam-chu: #d5dedc;
+    --ecg-nen: #1a1f1f;
+    --ecg-nho: #2c2a2b;
+    --ecg-lon: #563c3e;
+    --ecg-vet: #e3ecea;
     color-scheme: dark;
   }
 }
@@ -144,6 +152,44 @@ button { font: inherit; cursor: pointer; }
 .loi { color: var(--canh-bao); font-weight: 500; }
 .ghi-chu { margin-top: 40px; font-size: 0.85rem; color: var(--chu-nhat); max-width: 70ch; }
 
+/* ---------- Dien tam do ---------- */
+.ecg { display: grid; grid-template-columns: 13rem 1fr; gap: 20px; margin-top: 16px; align-items: start; }
+.ds-ecg { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ds-ecg button {
+  width: 100%; text-align: left; display: grid; gap: 2px; padding: 10px 14px; border-radius: 10px;
+  border: 1px solid var(--vien); background: var(--nen-khoi); color: var(--chu);
+}
+.ds-ecg button.dang-chon { border-color: var(--chinh); box-shadow: inset 3px 0 0 var(--chinh); }
+.ds-ecg .thoi-diem { font-size: 0.85rem; }
+.nhip-ecg { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tuot { font-size: 0.82rem; color: var(--chu-y); }
+
+.xem-ecg { min-width: 0; background: var(--nen-khoi); border: 1px solid var(--vien); border-radius: 14px; padding: 16px; }
+.tieu-de-do { color: var(--chu-nhat); font-size: 0.9rem; }
+.so-ecg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-variant-numeric: tabular-nums; }
+.so-ecg strong { font-size: 1.6rem; }
+.so-ecg span:not(:first-child) { color: var(--chu-nhat); font-size: 0.92rem; align-self: flex-end; padding-bottom: 4px; }
+.nut-tai {
+  padding: 8px 14px; border: 1px solid var(--chinh); border-radius: 10px; background: transparent; color: var(--chinh);
+  font-weight: 600; font-size: 0.92rem;
+}
+.nut-tai:disabled { opacity: 0.5; cursor: default; }
+.bao-ecg { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--dai-chu-y); color: var(--dai-chu-y-chu); font-size: 0.92rem; }
+
+.giay-ecg { margin-top: 14px; background: var(--ecg-nen); border: 1px solid var(--ecg-lon); border-radius: 6px; overflow: hidden; }
+.dai-ecg { position: relative; }
+.dai-ecg + .dai-ecg { border-top: 1px solid var(--ecg-lon); }
+.dai-ecg svg { display: block; width: 100%; height: auto; }
+.dai-ecg line { stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.dai-ecg line.nho { stroke: var(--ecg-nho); }
+.dai-ecg line.lon { stroke: var(--ecg-lon); stroke-width: 1; }
+.dai-ecg .vet { fill: none; stroke: var(--ecg-vet); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dai-ecg .dinh { fill: var(--chinh); }
+.nhan-dai {
+  position: absolute; left: 6px; top: 4px; font-size: 0.75rem; color: var(--chu-nhat); background: var(--ecg-nen);
+  padding: 0 4px; border-radius: 4px; font-variant-numeric: tabular-nums;
+}
+
 /* ---------- Dang nhap ---------- */
 .dang-nhap { max-width: 420px; margin: 0 auto; padding: 72px 16px; }
 .dang-nhap h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
@@ -166,4 +212,7 @@ button { font: inherit; cursor: pointer; }
   .o-chi-so:nth-child(n + 3) { border-top: 1px solid var(--vien); }
   .gia-tri { font-size: 2rem; }
   .dong-thoi-gian li { grid-template-columns: 1fr; gap: 2px; }
+  .ecg { grid-template-columns: 1fr; }
+  .ds-ecg { grid-auto-flow: column; grid-auto-columns: minmax(10rem, 1fr); overflow-x: auto; padding-bottom: 4px; }
+  .xem-ecg { padding: 12px; }
 }

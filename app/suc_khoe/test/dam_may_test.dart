@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:suc_khoe/dam_may.dart';
+import 'package:suc_khoe/ecg.dart';
 import 'package:suc_khoe/giao_thuc.dart';
+import 'package:suc_khoe/luu_tru.dart';
 import 'package:suc_khoe/xu_ly_canh_bao.dart';
 
 SoDo soDo(int nhip, {bool deo = true}) => SoDo(
@@ -101,6 +103,34 @@ void main() {
     expect(j['viDo'], 21.0);
     expect(j['soTinDaGui'], 2);
     expect(dm.loi, isNull);
+  });
+
+  test('ECG: ghi song roi tom tat, mat mang thi gui lai', () async {
+    await dm.dangNhap('KEY', 'https://abc', 'a@b.vn', 'dung');
+    final e = BanGhiEcg(DateTime(2026, 10, 30, 9, 5), [0, 1, 256, 4095], true, 3);
+    const k = KetQuaEcg([], [1, 3], 72, 65, 80);
+    maDb = 500;
+    await dm.nhanEcg(e, k);
+    expect(dm.loi, isNotNull);
+    maDb = 200;
+    yeuCau.clear();
+    await dm.nhanSoDo(soDo(70), ketNoi: true);
+    final khoa = e.luc.millisecondsSinceEpoch;
+    final ecg = yeuCau.where((r) => r.url.path.contains('/ecg')).toList();
+    expect(ecg.map((r) => r.url.path),
+        ['/nguoiDung/uid1/ecgSong/$khoa.json', '/nguoiDung/uid1/ecg/$khoa.json']);
+    final song = jsonDecode(ecg[0].body);
+    expect(base64Decode(song['mau']), [0, 0, 1, 0, 0, 1, 0xFF, 0x0F]);
+    expect(song['dinhR'], [1, 3]);
+    expect(song['tanSo'], 250);
+    final tt = jsonDecode(ecg[1].body);
+    expect(tt['nhipTb'], 72);
+    expect(tt['coTuotDienCuc'], isTrue);
+    expect(tt['soMauThieu'], 3);
+    // Da gui xong thi khong gui lai
+    yeuCau.clear();
+    await dm.nhanSoDo(soDo(70), ketNoi: true);
+    expect(yeuCau.where((r) => r.url.path.contains('/ecg')), isEmpty);
   });
 
   test('het han token thi lam moi bang refresh token', () async {

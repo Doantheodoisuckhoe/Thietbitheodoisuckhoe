@@ -20,6 +20,7 @@ thì tự gửi SMS kèm vị trí GPS cho người thân (phương án 1). Giao
 - **Đo điện tim (ECG) 30 giây** (nút ở trang Số đo): bấm Đo, đồng hồ gửi sóng AD8232 250 mẫu/giây; app vẽ sóng
   chạy 5 giây gần nhất, báo khi tuột điện cực, xong thì tính nhịp tim (trung bình, thấp nhất, cao nhất) và vẽ
   6 dải sóng 5 giây trên nền giấy ECG có đánh dấu đỉnh R. App lưu 10 lần đo gần nhất trên điện thoại.
+  Nếu đã đăng nhập ở tab Web, mỗi lần đo còn được tải lên Firebase để người thân, bác sĩ xem trên web.
   Cần nạp firmware `ble_suc_khoe` từ 28/10/2026 trở đi.
 - **Người thân**: nhập tên người đeo (ghi trong SMS) và số điện thoại người thân. Thêm số xong, bấm
   "Gửi thử SMS" ở trang Số đo để kiểm tra.
@@ -47,7 +48,7 @@ Cần Flutter 3.47.6 và Android Studio (để có Android SDK).
 ```
 cd app/suc_khoe
 flutter pub get
-flutter test          # 42 test: đọc gói BLE, xử lý cảnh báo, Firebase, ECG
+flutter test          # 43 test: đọc gói BLE, xử lý cảnh báo, Firebase, ECG
 flutter run           # cắm điện thoại bật USB debugging
 ```
 
