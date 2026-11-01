@@ -8,6 +8,7 @@
 // Cach dung: Serial Monitor 115200, hoac luu thanh file CSV bang Serial Plotter / script Python.
 // Cot t_ms tinh theo so thu tu mau (moi mau 10 ms), khong dung millis() vi mau doc ra theo tung dot.
 
+#include <Adafruit_TinyUSB.h>   // can cho Serial qua cong USB (thieu dong nay Serial Monitor trong tron)
 #include <Wire.h>
 #include "MAX30105.h"   // SparkFun MAX3010x (dung chung cho MAX30102 va MAX30101)
 // I2C 100 kHz giong ble_suc_khoe: module chua co dien tro keo len ngoai, 400 kHz se khong tra loi.
