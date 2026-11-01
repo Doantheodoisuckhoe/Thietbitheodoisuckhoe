@@ -8,8 +8,10 @@
 // Cach dung: Serial Monitor 115200, hoac luu thanh file CSV bang Serial Plotter / script Python.
 // Cot t_ms tinh theo so thu tu mau (moi mau 10 ms), khong dung millis() vi mau doc ra theo tung dot.
 
+#include <Adafruit_TinyUSB.h>   // can cho Serial qua cong USB (thieu dong nay Serial Monitor trong tron)
 #include <Wire.h>
 #include "MAX30105.h"   // SparkFun MAX3010x (dung chung cho MAX30102 va MAX30101)
+// I2C 100 kHz giong ble_suc_khoe: module chua co dien tro keo len ngoai, 400 kHz se khong tra loi.
 
 const uint8_t  DO_SANG_LED   = 0x1F;  // khoang 6,4 mA; tang len 0x3F neu tin hieu yeu
 const uint8_t  TRUNG_BINH    = 4;     // cam bien lay trung binh 4 mau -> 400 / 4 = 100 mau/giay
@@ -22,11 +24,28 @@ const uint32_t CHU_KY_MAU_MS = 1000UL * TRUNG_BINH / TAN_SO_LAY;  // 10 ms
 MAX30105 ppg;
 uint32_t soMau = 0;
 
+// XIAO reset dung luc dang doc I2C (vd. khi nap code) -> cam bien giu SDA o muc thap, moi lenh I2C treo
+// va Serial khong in gi. Phat toi da 9 xung SCL de cam bien nha SDA ra (giong ble_suc_khoe).
+bool giaiPhongI2C() {
+  pinMode(PIN_WIRE_SDA, INPUT_PULLUP);
+  pinMode(PIN_WIRE_SCL, INPUT_PULLUP);
+  delayMicroseconds(10);
+  if (digitalRead(PIN_WIRE_SDA)) return false;
+  pinMode(PIN_WIRE_SCL, OUTPUT);
+  for (uint8_t i = 0; i < 9 && !digitalRead(PIN_WIRE_SDA); i++) {
+    digitalWrite(PIN_WIRE_SCL, LOW);  delayMicroseconds(5);
+    digitalWrite(PIN_WIRE_SCL, HIGH); delayMicroseconds(5);
+  }
+  pinMode(PIN_WIRE_SCL, INPUT_PULLUP);
+  return true;
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 3000) {}
+  if (giaiPhongI2C()) Serial.println("# I2C bi treo (SDA thap), da phat 9 xung SCL de giai phong");
 
-  if (!ppg.begin(Wire, I2C_SPEED_FAST)) {
+  if (!ppg.begin(Wire, I2C_SPEED_STANDARD)) {
     Serial.println("# Khong thay MAX30102: kiem tra day noi va dien tro keo len I2C");
     while (true) delay(1000);
   }

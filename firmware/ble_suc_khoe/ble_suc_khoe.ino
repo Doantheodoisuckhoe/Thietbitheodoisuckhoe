@@ -856,6 +856,23 @@ void capNhatManHinh() {
 }
 
 // ============================================================
+// Neu XIAO reset dung luc dang doc I2C (vd. khi nap code), cam bien bi treo giua chung va giu SDA o muc thap:
+// moi lenh I2C sau do treo luon, Serial khong in gi. Phat toi da 9 xung SCL de cam bien nha SDA ra.
+// (Do that 01/11/2026: SDA=0 SCL=1 sau khi nap, 9 xung xong thay lai 0x48 va 0x57.)
+bool giaiPhongI2C() {
+  pinMode(PIN_WIRE_SDA, INPUT_PULLUP);
+  pinMode(PIN_WIRE_SCL, INPUT_PULLUP);
+  delayMicroseconds(10);
+  if (digitalRead(PIN_WIRE_SDA)) return false;   // bus binh thuong
+  pinMode(PIN_WIRE_SCL, OUTPUT);
+  for (uint8_t i = 0; i < 9 && !digitalRead(PIN_WIRE_SDA); i++) {
+    digitalWrite(PIN_WIRE_SCL, LOW);  delayMicroseconds(5);
+    digitalWrite(PIN_WIRE_SCL, HIGH); delayMicroseconds(5);
+  }
+  pinMode(PIN_WIRE_SCL, INPUT_PULLUP);
+  return true;
+}
+
 void setup() {
   pinMode(CHAN_SOS, INPUT_PULLUP);
   if (CO_DONG_CO) { pinMode(CHAN_DONG_CO, OUTPUT); digitalWrite(CHAN_DONG_CO, LOW); }
@@ -866,6 +883,7 @@ void setup() {
   while (!Serial && millis() < 3000) {}
   Serial.println("# ===== Dong ho suc khoe - BLE =====");
 
+  if (giaiPhongI2C()) Serial.println("# I2C bi treo (SDA thap), da phat 9 xung SCL de giai phong");
   Wire.begin();
   Wire.setClock(100000);
   coPpg = ppg.begin(Wire, I2C_SPEED_STANDARD);
