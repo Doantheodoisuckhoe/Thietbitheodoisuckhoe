@@ -20,13 +20,22 @@ CHAN = 3.5                             # cot do mach (khoang cho MAX30102, MAX30
 Z_PCB = DAY + CHAN                     # mat duoi mach
 Z_PCB_TREN = Z_PCB + 1.6
 Z_CHIA = Z_PCB_TREN + 1.0              # mat ghep vo day / nap
-CAO_XIAO = 12.2                        # header cai 8,5 + XIAO ~3,7
-Z_MAN = Z_PCB_TREN + CAO_XIAO + 0.7    # mat duoi module man hinh
-MAN_D, MAN_DAY = 38.6, 3.6             # module GC9A01 (do lai thuc te!)
+# So do that 01/11/2026 (MINH):
+#   XIAO: tu dinh USB-C xuong toi header cai 8 mm, header cai 8,5 mm -> cao 16,5 mm tren mat mach
+#   AD8232 con jack 3,5 mm: 8 mm (dat chong tren pin 5,5 mm + mut 1 mm)
+#   Man GC9A01 7 chan: tron D 35 mm, day 3 mm, them tai chan 7 x 23 mm o 1 ben
+CAO_XIAO = 16.5
+CAO_PIN_AD8232 = 1.0 + 5.5 + 8.0
+MAN_D, MAN_DAY = 35.0, 3.0
+TAI_MAN_RONG, TAI_MAN_DAI = 8.0, 23.0  # tai chan man (de du 1 mm)
 KINH_D = 33.0                          # o nhin (vung hien thi ~32,4 mm)
 NAP = 1.5
-Z_TREN = Z_MAN + MAN_DAY + NAP
-MAN_CX, MAN_CY = CX, CY
+# Man dat phia duoi XIAO (tren vung pin) de khong phai nam tren XIAO -> vo mong hon ~3 mm.
+Z_LONG_NAP = max(Z_PCB_TREN + CAO_XIAO + 0.5,                 # tren dinh XIAO
+                 Z_PCB_TREN + CAO_PIN_AD8232 + 0.5 + MAN_DAY)  # man nam tren pin + AD8232
+Z_MAN = Z_LONG_NAP - MAN_DAY           # mat duoi module man
+Z_TREN = Z_LONG_NAP + NAP
+MAN_CX, MAN_CY = CX, 20.6              # tam man: giua theo ngang, lech xuong (vung pin y 7,6-37,6)
 
 def yk(y_kicad):                        # doi toa do y KiCad (huong xuong) sang y len
     return BH - y_kicad
@@ -86,8 +95,10 @@ except Exception:
 nap = nap.cut(cq.Workplane('XY').workplane(offset=Z_TREN - NAP - 0.1).center(MAN_CX, MAN_CY).circle(KINH_D / 2).extrude(NAP + 0.2))
 vanh = (cq.Workplane('XY').workplane(offset=Z_MAN).center(MAN_CX, MAN_CY)
         .circle(MAN_D / 2 + 1.2).circle(MAN_D / 2).extrude(Z_TREN - NAP - Z_MAN))
-# khe cho chan header / day man (phia pad U5, goc tren-trai)
-vanh = vanh.cut(cq.Workplane('XY').workplane(offset=Z_MAN - 0.1).center(MAN_CX - 14, MAN_CY + 14).rect(14, 14).extrude(10))
+# tai chan man (7 chan RST..VCC) quay ve ben trai: cat vanh cho tai lot qua, them go do tai
+x_tai = MAN_CX - MAN_D / 2 - TAI_MAN_RONG / 2 + 2.0
+vanh = vanh.cut(cq.Workplane('XY').workplane(offset=Z_MAN - 0.1).center(x_tai, MAN_CY)
+                .rect(TAI_MAN_RONG + 4.0, TAI_MAN_DAI + 0.6).extrude(MAN_DAY + 1))
 nap = nap.union(vanh)
 # cot vit xuyen nap: lo 2,3 mm, khoet dau vit 4,2 x 2 mm o mat tren
 for x, y in LO_VIT:
@@ -113,10 +124,30 @@ cq.exporters.export(day, os.path.join(OUT, 'vo_day.stl'), tolerance=0.02, angula
 cq.exporters.export(nap, os.path.join(OUT, 'vo_nap.stl'), tolerance=0.02, angularTolerance=0.1)
 
 pcb = cq.importers.importStep(PCB_STEP).translate((-100, 162, Z_PCB))
+
+# Khoi gia lap cac module KHONG co trong file STEP mach (kich thuoc do that) de kiem va cham
+def khoi(x0, x1, y0, y1, z0, z1):
+    return cq.Workplane('XY').workplane(offset=z0).center((x0 + x1) / 2, (y0 + y1) / 2).rect(x1 - x0, y1 - y0).extrude(z1 - z0)
+z_pin = Z_PCB_TREN + 1.0
+mo_phong = {
+    'XIAO': khoi(15.9, 34.2, yk(22.6), yk(0.0), Z_PCB_TREN, Z_PCB_TREN + CAO_XIAO),
+    'pin_45x30': khoi(5.0, 50.0, yk(54.5), yk(24.5), z_pin, z_pin + 5.5),
+    'AD8232': khoi(9.0, 45.0, yk(54.5), yk(24.5), z_pin + 5.5, Z_PCB_TREN + CAO_PIN_AD8232),
+    'man_GC9A01': (cq.Workplane('XY').workplane(offset=Z_MAN).center(MAN_CX, MAN_CY).circle(MAN_D / 2).extrude(MAN_DAY)
+                   .union(khoi(x_tai - TAI_MAN_RONG / 2 + 1.0, MAN_CX - MAN_D / 2 + 2, MAN_CY - TAI_MAN_DAI / 2, MAN_CY + TAI_MAN_DAI / 2, Z_MAN, Z_MAN + 1.6))),
+}
+for ten, k in mo_phong.items():
+    for ten_vo, vo in (('vo_day', day), ('vo_nap', nap)):
+        v = vo.val().intersect(k.val()).Volume()
+        if v > 0.01:
+            print(f'CANH BAO va cham {ten} x {ten_vo}: {v:.2f} mm3')
+print('kiem tra module gia lap: xong')
 lap = cq.Assembly()
 lap.add(day, name='vo_day', color=cq.Color(0.85, 0.85, 0.88))
 lap.add(pcb, name='mach_1_3', color=cq.Color(0.1, 0.5, 0.2))
 lap.add(nap, name='vo_nap', color=cq.Color(0.3, 0.3, 0.35, 0.6))
+for ten, k in mo_phong.items():
+    lap.add(k, name=ten, color=cq.Color(0.9, 0.6, 0.2))
 lap.save(os.path.join(OUT, 'lap_rap_vo_mach.step'))
 
 # Kiem tra va cham vo - mach (the tich phan giao nhau)
@@ -132,7 +163,11 @@ print(f'kich thuoc ngoai (khong tinh tai): {OW:.1f} x {OH:.1f} mm; cao {Z_TREN:.
 print(f'Z: mach {Z_PCB:.1f}-{Z_PCB_TREN:.1f}, ghep {Z_CHIA:.1f}, man {Z_MAN:.1f}-{Z_MAN + MAN_DAY:.1f}, tren {Z_TREN:.1f}')
 
 # Anh xem truoc (SVG)
-for ten, obj, hd in (('xem_lap_rap', day.union(nap).union(pcb), (-1.2, -1.6, 1.1)),
+tat_ca = day.union(pcb)
+for k in mo_phong.values():
+    tat_ca = tat_ca.union(k)
+for ten, obj, hd in (('xem_lap_rap', tat_ca, (1.0, -1.3, 1.8)),
+                     ('xem_canh_chong_lop', tat_ca.union(nap), (0.0, -1.0, 0.0)),
                      ('xem_day_mat_da', day, (0.3, -0.5, -1.0)),
                      ('xem_nap', nap, (-1.0, -1.4, 1.3))):
     cq.exporters.export(obj, os.path.join(OUT, ten + '.svg'),
