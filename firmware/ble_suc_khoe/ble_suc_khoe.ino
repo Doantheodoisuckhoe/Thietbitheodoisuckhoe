@@ -914,7 +914,9 @@ void loop() {
 
   if (coPpg) {
     docFifoPpg();
-    if (nhipTim && bayGio - lanCoNhipCuoi > 5000) { nhipTim = 0; soNhip = 0; }  // 5 giay khong thay nhip
+    // 5 giay khong thay nhip -> xoa. Phai dung millis() moi: docFifoPpg() vua dat lanCoNhipCuoi = millis()
+    // (sau bayGio), neu tru bayGio thi so khong dau bi tran thanh rat lon va xoa ngay nhip vua tinh (HR luon 0).
+    if (nhipTim && millis() - lanCoNhipCuoi > 5000) { nhipTim = 0; soNhip = 0; }
   }
 
   static uint32_t lanImu = 0;
