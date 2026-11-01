@@ -77,7 +77,7 @@ AD8232, màn.
 
 ## Mỏng hơn nữa (tốn thêm tiền)
 
-- Pin mỏng 4 mm (ví dụ 404050) thay pin 5,5 mm: −1,5 mm.
+- Pin mỏng hơn, mặt pin vẫn ≤ 45 × 30 mm (ví dụ 403040, 403045, 303040): mỗi 1 mm pin mỏng hơn là vỏ mỏng hơn 1 mm, tới khi pin còn ~2,5 mm (dưới mức đó XIAO quyết định chiều cao, vỏ ~14,8 mm).
 - Thông số ở đầu script: `DAY`, `CHAN`, `MUT`, `CAO_XIAO`, `CAO_AD8232`, `MAN_DAY`, `NAP`; sửa rồi chạy lại.
 
 Chạy lại script (cần Python có CadQuery: `pip install cadquery`), trong thư mục `hardware/enclosure`:
