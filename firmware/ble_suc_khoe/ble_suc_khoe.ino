@@ -518,6 +518,33 @@ void xuLyMauPpg(uint32_t doRaw, uint32_t irRaw) {
   if (soNhip >= 2) nhipTim = trungVi(cacNhip, soNhip);
 }
 
+// Doc thang FIFO cua MAX30102 (cam bien giu duoc 32 mau = 320 ms), thay cho ppg.check().
+// Bo dem cua thu vien SparkFun chi giu 4 mau (40 ms): vong loop() lau hon 40 ms (ve man hinh,
+// gui BLE, doc nhiet do) la mat mau, song mach bi dut khuc -> SpO2 van ra so nhung nhip tim luon 0.
+const uint8_t DIA_CHI_PPG   = 0x57;
+const uint8_t THANH_GHI_FIFO = 0x07;   // FIFO_DATA, moi mau 6 byte: 3 byte do + 3 byte hong ngoai
+uint16_t soMauPpgGiay = 0;             // so mau doc duoc trong 1 giay, dung la khoang 100
+
+void docFifoPpg() {
+  uint8_t soMau = (uint8_t)(ppg.getWritePointer() - ppg.getReadPointer()) & 0x1F;
+  while (soMau > 0) {
+    uint8_t lan = soMau > 5 ? 5 : soMau;   // 5 mau = 30 byte, vua bo dem 32 byte cua Wire
+    Wire.beginTransmission(DIA_CHI_PPG);
+    Wire.write(THANH_GHI_FIFO);
+    if (Wire.endTransmission() != 0) return;
+    uint8_t soByte = lan * 6;
+    if (Wire.requestFrom(DIA_CHI_PPG, soByte) != soByte) return;
+    for (uint8_t i = 0; i < lan; i++) {
+      uint32_t doRaw = 0, irRaw = 0;
+      for (uint8_t k = 0; k < 3; k++) doRaw = (doRaw << 8) | (uint8_t)Wire.read();
+      for (uint8_t k = 0; k < 3; k++) irRaw = (irRaw << 8) | (uint8_t)Wire.read();
+      xuLyMauPpg(doRaw & 0x3FFFF, irRaw & 0x3FFFF);
+      soMauPpgGiay++;
+    }
+    soMau -= lan;
+  }
+}
+
 // ============================================================
 // ECG (AD8232) - TIMER4 ngat moi 4 ms, giong firmware/doc_ad8232
 // ============================================================
@@ -730,6 +757,8 @@ void guiSoDo() {
   Serial.print(" SpO2="); Serial.print(spo2);
   Serial.print(" T="); Serial.print(nhietDo / 100.0f, 2);
   Serial.print(" Pin="); Serial.print(pinMv); Serial.print("mV");
+  Serial.print(" PPG="); Serial.print(soMauPpgGiay); Serial.print("/s");   // dung la khoang 100
+  soMauPpgGiay = 0;
   Serial.print(coTay ? "" : " (chua deo)");
   Serial.println(Bluefruit.connected() ? " [BLE]" : "");
 }
@@ -866,11 +895,7 @@ void loop() {
   uint32_t bayGio = millis();
 
   if (coPpg) {
-    ppg.check();
-    while (ppg.available()) {
-      xuLyMauPpg(ppg.getFIFORed(), ppg.getFIFOIR());
-      ppg.nextSample();
-    }
+    docFifoPpg();
     if (nhipTim && bayGio - lanCoNhipCuoi > 5000) { nhipTim = 0; soNhip = 0; }  // 5 giay khong thay nhip
   }
 
