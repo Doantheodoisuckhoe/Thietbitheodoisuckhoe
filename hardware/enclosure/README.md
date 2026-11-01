@@ -53,8 +53,10 @@ Mở được trong Onshape: Import file `.step` (vẽ tiếp, sửa kích thư�
 - **Điện cực LA, RL**: pad E1/E2 ở mặt dưới mạch cách da ~5 mm, không chạm da trực tiếp. Mặt ngoài đáy có 2 hốc
   9,4 × 16,4 × 0,6 mm để dán **tấm thép không gỉ / băng đồng**, mỗi hốc có lỗ Ø 2 mm luồn dây nối lên pad E1/E2.
 - **Điện cực RA**: lỗ Ø 2,2 mm cạnh phải (ngang J6) cho vít thép M2; dây trong vỏ nối vào pad J6.
-- **Nút SOS**: lỗ Ø 3,2 mm cạnh trái (ngang J5), dành cho nút bấm cạnh 3 × 6 × 2,5 mm. Nút 6 × 6 cao 10 mm
-  chỉ dùng cho breadboard (quá to cho vỏ).
+- **Nút SOS**: nút nhấn góc vuông 6 × 6 chân cắm (cao 10 mm từ đỉnh núm tới đáy kim loại, rộng 7, dài 11 tính cả chân).
+  Núm tròn xuyên lỗ Ø 3,8 mm ở cạnh trái (ngang J5, cao 19,5 mm tính từ mặt da); thân nút nằm trong khung vuông
+  6,4 × 6,4 sâu 4 mm ở mặt trong nắp (dán keo), có khe cho chân ra; nối 2 dây vào pad J5. Nằm trên pin, dưới màn,
+  không chạm mạch hay module nào (đã kiểm tra).
 - **Chân sạc pogo nam châm**: khe 10 × 5 mm cạnh trái (ngang J2). **Kích thước tạm**, đo đầu pogo thật rồi sửa.
 - **Màn**: vành giữ Ø 35 mm có chỗ trống cho tai chân 7 chân quay về bên trái; dán màn vào mặt trong nắp.
 - **Tai dây 22 mm** ở 2 đầu, lỗ chốt lò xo Ø 1,3 mm.

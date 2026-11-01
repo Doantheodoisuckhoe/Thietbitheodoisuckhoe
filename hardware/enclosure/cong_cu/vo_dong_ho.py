@@ -113,7 +113,16 @@ def lo_canh(x_mat, y, z, w, h, huong):
             .center(y, z).rect(w, h).extrude(TUONG + HO + 2))
 x_trai, x_phai = CX - OW / 2, CX + OW / 2
 nap = nap.cut(lo_canh(x_trai + TUONG + HO, yk(44.0), Z_CHIA + 3.5, 10, 5, -1))   # pogo (do dau pogo roi chinh)
-nap = nap.cut(cq.Workplane('YZ').workplane(offset=x_trai - 1).center(yk(21.95), Z_CHIA + 3.0).circle(1.6).extrude(TUONG + 2))   # SOS
+# Nut SOS: nut nhan goc vuong 6 x 6 chan cam (do that: cao 10 mm tu dinh num toi day kim loai, rong 7, dai 11 tinh ca chan).
+# Num tron xuyen qua thanh trai (lo 3,8 mm), than nut nam trong vo, giu bang khung vuong 6,4 x 6,4 sau 4 mm (dan keo).
+# Dat cao hon pin (z 13,1) va cao hon header J5 trong file STEP (z ~15,1); duoi man (z 21,6).
+SOS_Y, SOS_Z = yk(21.95), 19.5     # tren pin (13,1) va tren mo hinh header J5 (~15,1)
+x_trong_trai = CX - BW / 2 - HO
+nap = nap.cut(cq.Workplane('YZ').workplane(offset=x_trai - 1).center(SOS_Y, SOS_Z).circle(1.9).extrude(TUONG + HO + 2))
+khung_sos = (cq.Workplane('YZ').workplane(offset=x_trong_trai - 0.01).center(SOS_Y, SOS_Z)
+             .rect(8.4, 8.4).rect(6.4, 6.4).extrude(4.0))
+khung_sos = khung_sos.cut(cq.Workplane('YZ').workplane(offset=x_trong_trai - 0.1).center(SOS_Y + 3.7, SOS_Z).rect(1.2, 4.0).extrude(4.2))  # khe ra chan
+nap = nap.union(khung_sos)
 nap = nap.cut(cq.Workplane('YZ').workplane(offset=x_phai - TUONG - 1).center(yk(22.05), Z_CHIA + 5.0).circle(1.1).extrude(TUONG + 2))  # RA M2
 
 # ---------------- Xuat file ----------------
@@ -142,6 +151,14 @@ for ten, k in mo_phong.items():
         if v > 0.01:
             print(f'CANH BAO va cham {ten} x {ten_vo}: {v:.2f} mm3')
 print('kiem tra module gia lap: xong')
+# than nut SOS (6 x 6, sau ~7 mm vao trong) phai nam lot trong khung, khong cham pin / AD8232 / man
+than_sos = khoi(x_trong_trai, x_trong_trai + 7.0, SOS_Y - 3.0, SOS_Y + 3.0, SOS_Z - 3.0, SOS_Z + 3.0)
+for ten, k in mo_phong.items():
+    v = than_sos.val().intersect(k.val()).Volume()
+    if v > 0.01:
+        print(f'CANH BAO nut SOS cham {ten}: {v:.2f} mm3')
+v = than_sos.val().intersect(pcb.val()).Volume()
+print(f'nut SOS x mach: {v:.2f} mm3')
 lap = cq.Assembly()
 lap.add(day, name='vo_day', color=cq.Color(0.85, 0.85, 0.88))
 lap.add(pcb, name='mach_1_3', color=cq.Color(0.1, 0.5, 0.2))
