@@ -10,6 +10,7 @@
 
 #include <Wire.h>
 #include "MAX30105.h"   // SparkFun MAX3010x (dung chung cho MAX30102 va MAX30101)
+// I2C 100 kHz giong ble_suc_khoe: module chua co dien tro keo len ngoai, 400 kHz se khong tra loi.
 
 const uint8_t  DO_SANG_LED   = 0x1F;  // khoang 6,4 mA; tang len 0x3F neu tin hieu yeu
 const uint8_t  TRUNG_BINH    = 4;     // cam bien lay trung binh 4 mau -> 400 / 4 = 100 mau/giay
@@ -26,7 +27,7 @@ void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 3000) {}
 
-  if (!ppg.begin(Wire, I2C_SPEED_FAST)) {
+  if (!ppg.begin(Wire, I2C_SPEED_STANDARD)) {
     Serial.println("# Khong thay MAX30102: kiem tra day noi va dien tro keo len I2C");
     while (true) delay(1000);
   }
