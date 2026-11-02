@@ -33,7 +33,7 @@ AD8232, màn.
 ## Kích thước và xếp chồng (v3)
 
 - Ngoài: **54,9 × 66,9 mm**, cao **17,8 mm** (chưa tính tai dây). Thành 2 mm, khe hở quanh mạch 0,4 mm.
-- Màn vẫn đặt lệch xuống, nằm trên vùng pin (tâm màn cách mép dưới mạch 20,6 mm, giữa theo chiều ngang).
+- **Màn ở chính giữa mặt đồng hồ**: XIAO hàn thẳng chỉ cao ~7 mm (đỉnh 12,8 mm, thấp hơn đáy màn 2 mm) nên màn nằm chồng lên cả XIAO và pin. (v2 phải đặt màn lệch xuống vì XIAO cao 16,5 mm.)
 
 | Lớp (tính từ mặt da) | Cao (mm) |
 |---|---|
@@ -60,8 +60,8 @@ AD8232, màn.
 - **Điện cực LA, RL**: mặt ngoài đáy có 2 hốc 9,4 × 16,4 × 0,6 mm để dán **tấm thép không gỉ / băng đồng**, mỗi hốc
   có lỗ Ø 2 mm luồn dây nối lên pad E1/E2.
 - **Điện cực RA**: lỗ Ø 2,2 mm cạnh phải (ngang J6) cho vít thép M2; dây trong vỏ nối vào pad J6.
-- **Nút SOS** (6 × 6 góc vuông, cao 10 mm): núm xuyên lỗ Ø 3,8 mm ở **cạnh trái, cao hơn J5 5,5 mm** (ở v3 lòng nắp
-  thấp nên nút nằm sát trần nắp và được dời lên để không chạm pin và header J5). Thân nút trong khung 6,4 × 6,4 sâu
+- **Nút SOS** (6 × 6 góc vuông, cao 10 mm): núm xuyên lỗ Ø 3,8 mm ở **cạnh trái, cao hơn J5 6,7 mm** (ở v3 lòng nắp
+  thấp nên nút nằm sát trần nắp và được dời lên để không chạm pin, header J5 và tai chân màn). Thân nút trong khung 6,4 × 6,4 sâu
   4 mm (dán keo); 2 dây ngắn hàn vào J5.
 - **Chân sạc pogo nam châm**: khe 10 × 5 mm cạnh trái (ngang J2). **Kích thước tạm**, đo đầu pogo thật rồi sửa.
 - **Tai dây 22 mm** ở 2 đầu, lỗ chốt lò xo Ø 1,3 mm.

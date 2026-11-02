@@ -40,7 +40,8 @@ NAP = 1.5
 Z_MAN = max(Z_PCB_TREN + CAO_PIN_AD8232 + GO_MAN,          # man nam tren go, go tren AD8232
             Z_PCB_TREN + CAO_XIAO + 0.5 + NAP - MAN_DAY)   # long nap phai cao hon dinh XIAO
 Z_TREN = Z_MAN + MAN_DAY
-MAN_CX, MAN_CY = CX, 20.6              # tam man: giua theo ngang, lech xuong (vung pin y 7,6-37,6)
+# v3: XIAO han thang chi cao ~7 mm (dinh 12,8 < mat duoi man 14,8) nen man dat GIUA mat dong ho, nam chong len XIAO.
+MAN_CX, MAN_CY = CX, CY
 
 def yk(y_kicad):                        # doi toa do y KiCad (huong xuong) sang y len
     return BH - y_kicad
@@ -128,7 +129,7 @@ nap = nap.cut(lo_canh(x_trai + TUONG + HO, yk(44.0), Z_CHIA + 3.5, 10, 5, -1))  
 # Dat cao hon pin (z 13,1) va cao hon header J5 trong file STEP (z ~15,1); duoi man (z 21,6).
 # v3: long nap thap (tran nap z = Z_TREN - NAP) -> nut nam sat tran; doi len y KiCad 16,4 (tren J5 5,5 mm) de khung
 # khong cham pin (mep pin y 37,6) va khong cham chan header J5 (cao toi z 14,3). Day nut han vao J5.
-SOS_Y, SOS_Z = yk(16.4), Z_TREN - NAP - 4.2
+SOS_Y, SOS_Z = yk(15.2), Z_TREN - NAP - 4.2   # y KiCad 15,2: khung khong cham tai chan man (man o giua)
 x_trong_trai = CX - BW / 2 - HO
 nap = nap.cut(cq.Workplane('YZ').workplane(offset=x_trai - 1).center(SOS_Y, SOS_Z).circle(1.9).extrude(TUONG + HO + 2))
 khung_sos = (cq.Workplane('YZ').workplane(offset=x_trong_trai - 0.01).center(SOS_Y, SOS_Z)
