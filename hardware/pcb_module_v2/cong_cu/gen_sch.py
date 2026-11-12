@@ -288,7 +288,7 @@ place('Connector_Generic:Conn_01x02', 'J2', 'Pogo sạc (nam châm)', 30.48, 148
 place('Diode:SMAJ5.0A', 'D4', 'SMAJ5.0A', 55.88, 160.02, fp='Diode_SMD:D_SMA',
       desc='TVS một chiều 5 V, 400 W, SMA (bảo vệ chân sạc)', pinnets={'1': 'VCHG', '2': 'GND'}, refpos=(52.07, 156.21), valpos=(45.72, 165.1))
 place('Diode:SS14', 'D5', 'SS14', 93.98, 148.59, fp='Diode_SMD:D_SMA',
-      desc='Diode Schottky 40 V 1 A, SMA (chặn dòng ngược về chân pogo)', pinnets={'1': '+5V', '2': 'VCHG'}, refpos=(90.17, 144.78), valpos=(90.17, 153.67))
+      desc='Diode Schottky 40 V 1 A, SMA (D5: chặn dòng ngược về pogo; D1: dập xung ngược motor)', pinnets={'1': '+5V', '2': 'VCHG'}, refpos=(90.17, 144.78), valpos=(90.17, 153.67))
 pwrflag((97.79, 170.18), '+5V')
 pwrflag((97.79, 185.42), 'GND')
 text('Chân sạc pogo -> TVS SMAJ5.0A về GND -> SS14 nối tiếp -> chân 5V của XIAO.\n'
@@ -318,9 +318,9 @@ place('DoAnModule:Module_AD8232', 'U4', 'AD8232 (module)', 294.64, 64.77,
       pinnets={'5': '+3V3', '4': 'GND', '1': 'ECG_RA', '2': 'ECG_LA', '3': 'ECG_RL',
                '6': 'ECG_OUT', '7': 'LO_N', '8': 'LO_P', '9': 'NC'})
 place('Diode:1N4148WS', 'D2', '1N4148WS', 342.9, 50.8, fp='Diode_SMD:D_SOD-323',
-      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO+)', pinnets={'2': 'LO_P', '1': 'ECG_LOD'}, refpos=(339.09, 46.99), valpos=(339.09, 55.88))
+      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO+ / LO-)', pinnets={'2': 'LO_P', '1': 'ECG_LOD'}, refpos=(339.09, 46.99), valpos=(339.09, 55.88))
 place('Diode:1N4148WS', 'D3', '1N4148WS', 342.9, 66.04, fp='Diode_SMD:D_SOD-323',
-      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO-)', pinnets={'2': 'LO_N', '1': 'ECG_LOD'}, refpos=(339.09, 62.23), valpos=(339.09, 71.12))
+      desc='Diode tín hiệu 75 V 150 mA, SOD-323 (cổng OR LO+ / LO-)', pinnets={'2': 'LO_N', '1': 'ECG_LOD'}, refpos=(339.09, 62.23), valpos=(339.09, 71.12))
 R('R3', '100k', 381.0, 58.42, 'ECG_LOD', 'GND')
 place('Connector_Generic:Conn_01x01', 'E1', 'Điện cực LA (cổ tay)', 335.28, 92.71, fp='DoAnModule:DienCuc_ECG_9x16mm', in_bom=False,
       desc='Điện cực ECG LA: pad đồng lộ 9x16 mm ở mặt da', pinnets={'1': 'ECG_LA'}, refpos=(337.82, 90.17), valpos=(337.82, 95.25))
@@ -346,7 +346,7 @@ place('Motor:Motor_DC', 'M1', 'Motor rung 1027', 213.36, 201.93, fp='DoAnModule:
       desc='Motor rung đồng xu 1027 (10 mm, 3 V), 2 dây hàn thẳng vào pad (TẠM bước 4,0 mm): 1 = +3V3, 2 = MOTOR_N',
       pinnets={'1': '+3V3', '2': 'MOTOR_N'}, refpos=(218.44, 199.39), valpos=(218.44, 204.47))
 place('Diode:SS14', 'D1', 'SS14', 172.72, 203.2, fp='Diode_SMD:D_SMA',
-      desc='Diode Schottky 40 V 1 A, SMA (dập xung ngược motor)', pinnets={'1': '+3V3', '2': 'MOTOR_N'}, refpos=(168.91, 199.39), valpos=(168.91, 208.28))
+      desc='Diode Schottky 40 V 1 A, SMA (D5: chặn dòng ngược về pogo; D1: dập xung ngược motor)', pinnets={'1': '+3V3', '2': 'MOTOR_N'}, refpos=(168.91, 199.39), valpos=(168.91, 208.28))
 C('C3', '10uF', 193.04, 203.2)
 place('Transistor_FET:AO3400A', 'Q1', 'AO3400A', 175.26, 228.6, fp='Package_TO_SOT_SMD:SOT-23',
       desc='MOSFET kênh N 30 V 5,7 A, SOT-23 (đóng cắt motor)', pinnets={'1': 'MOTOR_G', '2': 'GND', '3': 'MOTOR_N'}, refpos=(180.34, 226.06), valpos=(180.34, 231.14))
@@ -379,7 +379,7 @@ def build():
 	(title_block
 		(title "Thiết bị đeo tay giám sát sức khỏe - Mạch ghép module v2.0 (không dây nối)")
 		(date "2026-11-12")
-		(rev "2.0")
+		(rev "2.1")
 		(comment 1 "XIAO nRF52840 Sense + MAX30102 + AD8232 + MAX30205 (dạng module), màn GC9A01")
 		(comment 2 "Mạch 2 lớp, mọi module hàn/cắm thẳng, chỉ còn 2 dây pin và 2 dây motor")
 	)

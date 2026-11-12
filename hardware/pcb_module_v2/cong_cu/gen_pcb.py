@@ -10,7 +10,7 @@ NAME = 'dong_ho_module_v2'
 FPLIB = r'C:\Program Files\KiCad\10.0\share\kicad\footprints'
 NETFILE = sys.argv[1] if len(sys.argv) > 1 else r'C:\Users\Admin\AppData\Local\Temp\net.net'
 OX, OY = 100.0, 100.0          # gốc toạ độ bảng trong KiCad
-BW, BH = 42.2, 45.8            # kích thước bảng (mm)
+BW, BH = 43.7, 45.8            # kích thước bảng (mm)
 CORNER = 2.0
 MM = pcbnew.FromMM
 def mm(v):
@@ -61,26 +61,26 @@ POWER = {'GND', '+3V3', '+5V', '/VCHG', '/MOTOR_N'}
 # ref: (x, y, góc, mặt dưới?)   toạ độ trong khung bảng BW x BH, gốc góc trên-trái, nhìn từ mặt trên.
 # Ba tầng: L0 (pin, XIAO, nút, linh kiện dán), L1 module AD8232 (cao 8,5 mm), L2 màn GC9A01 (trên cùng).
 PLACE = {
-    'U1': (40.62, 18.32, 180, False),     # XIAO: chân 1 (D0) dưới-phải, đầu anten sát mép trên
+    'U1': (42.12, 18.92, 180, False),     # XIAO: chân 1 (D0) dưới-phải, đầu anten cách mép trên 0,8 mm
     'U4': (1.9, 1.5, 0, False),           # AD8232: gốc = lỗ vít trên-trái của module
     'U5': (21.1, 19.25, 0, False),        # màn GC9A01: gốc = tâm màn
     'U2': (14.1, 10.6, 0, True),          # MAX30102 2x4 mặt da, gốc = tâm cảm biến
     'U3': (15.0, 40.0, 90, True),         # CJMCU-30205 mặt da, xoay dọc
-    'E1': (33.0, 13.0, 0, True),          # điện cực LA, giữa 2 hàng chân XIAO
-    'E2': (21.7, 27.8, 0, True),          # điện cực RL
+    'E1': (34.5, 13.4, 0, True),          # điện cực LA, giữa 2 hàng chân XIAO, ngoài vùng cấm anten
+    'E2': (21.7, 28.6, 0, True),          # điện cực RL
     'E3': (4.75, 40.1, 0, False),         # điện cực RA mặt trên, góc trái dưới
-    'SW1': (40.9, 37.0, 270, False),      # nút SOS, núm bấm ra mép phải
-    'J2': (31.0, 37.5, 0, True),          # pogo sạc mặt dưới
-    'M1': (40.9, 23.4, 270, True),        # 2 pad dây motor (motor dán mặt dưới)
-    'C1': (28.0, 14.5, 90, False),        # dưới thân XIAO, sát chân 3V3
-    'C2': (30.2, 14.5, 90, False),
-    'D5': (29.6, 23.6, 0, False),
-    'D4': (29.6, 27.2, 0, False),
-    'D1': (37.2, 25.8, 90, False),
-    'C3': (34.4, 25.8, 90, False),
-    'Q1': (37.4, 31.2, 0, False),
-    'R1': (40.9, 32.0, 90, False),
-    'R2': (34.4, 30.8, 90, False),
+    'SW1': (42.4, 37.0, 270, False),      # nút SOS, núm bấm ra mép phải
+    'J2': (32.5, 37.5, 0, True),          # pogo sạc mặt dưới
+    'M1': (42.4, 23.4, 270, True),        # 2 pad dây motor (motor dán mặt dưới)
+    'C1': (29.5, 15.1, 90, False),        # dưới thân XIAO, sát chân 3V3
+    'C2': (31.7, 15.1, 90, False),
+    'D5': (27.6, 27.0, 270, False),       # ngoài bề rộng đầu cắm USB-C
+    'D4': (33.6, 27.0, 0, False),         # cách đầu USB của XIAO >= 3 mm
+    'D1': (39.2, 28.6, 90, False),
+    'C3': (33.6, 30.4, 0, False),
+    'Q1': (39.3, 34.4, 0, False),
+    'R1': (42.5, 32.4, 90, False),
+    'R2': (36.0, 33.4, 90, False),
     'D2': (19.0, 36.4, 0, False),
     'D3': (19.0, 38.6, 0, False),
     'R3': (22.4, 37.5, 90, False),
@@ -151,8 +151,10 @@ edge_arc(r, BH - r, r, BH, 90)
 edge_arc(r, r, 0, r, 90)
 
 # ---------------------------------------------------------------- vùng cấm
-ANT = (26.6, 0.0, 39.4, 4.0)        # dưới anten XIAO: không dây, không via, không đổ đồng (cả 2 lớp)
-BAT = (4.1, 4.5, 24.1, 34.5)        # chỗ đặt pin 502030 (20 x 30 mm) ở mặt trên: không đặt linh kiện
+ANT = (28.1, 0.0, 40.9, 4.6)        # dưới anten XIAO: không dây, không via, không đổ đồng (cả 2 lớp)
+MOTOR = (33.6, 29.5, 5.0)           # motor 1027 dán mặt dưới (tâm, bán kính)
+MOTOR_VUNG = (MOTOR[0] - MOTOR[2] - 0.3, MOTOR[1] - MOTOR[2] - 0.3, MOTOR[0] + MOTOR[2] + 0.3, MOTOR[1] + MOTOR[2] + 0.3)
+BAT = (4.1, 4.5, 24.6, 34.5)        # chỗ đặt pin 502030 (20,5 x 30 mm thật) ở mặt trên: không đặt linh kiện
 
 def rule_area(rect, layers, tracks, vias, fill, footprints, name):
     z = pcbnew.ZONE(board)
@@ -172,6 +174,7 @@ def rule_area(rect, layers, tracks, vias, fill, footprints, name):
 
 rule_area(ANT, [pcbnew.F_Cu, pcbnew.B_Cu], True, True, True, False, 'Anten XIAO')
 rule_area(BAT, [pcbnew.F_Cu], False, False, False, True, 'Pin LiPo 502030')
+rule_area(MOTOR_VUNG, [pcbnew.B_Cu], True, True, False, False, 'Motor 1027 (không dây/via mặt dưới)')
 
 # ---------------------------------------------------------------- bộ định tuyến lưới
 G = 0.2
@@ -291,7 +294,8 @@ def cells_in(sh, lay, blk, shrink=0.05):
 def static_maps(netname, hw):
     infl = CLR + hw + MARGIN
     blk = [edge_mask(EDGE + hw + MARGIN) | rect_mask(ANT, hw + MARGIN) for _ in range(2)]
-    via = edge_mask(EDGE + VIA_R + MARGIN) | rect_mask(ANT, VIA_R + MARGIN)
+    blk[1] |= rect_mask(MOTOR_VUNG, hw + MARGIN)          # mặt dưới dưới motor: không dây
+    via = edge_mask(EDGE + VIA_R + MARGIN) | rect_mask(ANT, VIA_R + MARGIN) | rect_mask(MOTOR_VUNG, VIA_R + MARGIN)
     near = [np.zeros((NY, NX), bool) for _ in range(2)]
     for kind, prm, nm, lay in pad_shapes:
         if nm == '#HOLE':
@@ -651,9 +655,8 @@ def fab_circle(cx, cy, r, layer):
 def silk_line(x1, y1, x2, y2, layer=pcbnew.F_SilkS):
     s = pcbnew.PCB_SHAPE(board, pcbnew.SHAPE_T_SEGMENT)
     s.SetStart(V(x1, y1)); s.SetEnd(V(x2, y2))
-    s.SetLayer(layer); s.SetWidth(MM(0.15)); board.Add(s)
+    s.SetLayer(layer); s.SetWidth(MM(0.2)); board.Add(s)
 
-MOTOR = (31.6, 28.2, 5.0)           # motor 1027 dán mặt dưới (tâm, bán kính)
 comment_rect(BAT, pcbnew.Cmts_User)
 comment_rect(BAT, pcbnew.F_Fab)
 # viền pin trên lụa (nét đứt bằng các đoạn ngắn để không đè lên pad)
@@ -662,20 +665,20 @@ silk_line(bx1 + 0.3, by1, bx2 - 0.3, by1); silk_line(bx1 + 0.3, by2, 13.8, by2);
 fab_circle(MOTOR[0], MOTOR[1], MOTOR[2], pcbnew.B_Fab)
 fab_circle(MOTOR[0], MOTOR[1], MOTOR[2], pcbnew.Cmts_User)
 silk('PIN 502030', 14.1, 12.0, 1.2)
-silk('20 x 30 x 5 mm', 14.1, 14.2, 1.0)
+silk('20.5 x 30 x 5.5 mm', 14.1, 14.2, 1.0)
 silk('PCM', 9.8, 30.6, 1.0, just=-1)
 silk_line(9.0, 28.0, 9.0, 32.8); silk_line(9.0, 32.8, 8.2, 32.0); silk_line(9.0, 32.8, 9.8, 32.0)
-silk('cắt chân + Kapton', 13.0, 19.6, 0.8)
-silk('ANTEN', 33.0, 5.6, 0.8)
+silk('cat chan + Kapton', 13.0, 19.6, 0.8)
+silk('ANTEN', 34.5, 6.4, 0.8)
 silk('RA', 10.6, 37.0, 1.0)
-silk('SOS', 38.65, 35.6, 0.8)
-silk('v2.0 11/2026', 27.0, 42.3, 0.8, rot=0)
-silk('MẶT DA', 21.0, 41.0, 1.0, pcbnew.B_SilkS)
-silk('LA', 33.0, 22.6, 1.0, pcbnew.B_SilkS)
-silk('RL', 21.7, 37.2, 1.0, pcbnew.B_SilkS)
-silk('SẠC +', 28.5, 39.4, 0.8, pcbnew.B_SilkS)
-silk('MOTOR', 31.6, 28.2, 1.0, pcbnew.B_SilkS)
-silk('+', 39.0, 24.0, 0.8, pcbnew.B_SilkS)
+silk('SOS', 40.15, 40.25, 1.0)
+silk('v2.1 11/2026', 27.0, 42.3, 0.8, rot=0)
+silk('MAT DA', 21.0, 41.0, 1.0, pcbnew.B_SilkS)
+silk('LA', 34.5, 23.0, 1.0, pcbnew.B_SilkS)
+silk('RL', 21.7, 38.0, 1.0, pcbnew.B_SilkS)
+silk('SAC +', 30.0, 39.6, 1.0, pcbnew.B_SilkS)
+silk('MOTOR', MOTOR[0], MOTOR[1], 1.0, pcbnew.B_SilkS)
+silk('+', 40.6, 23.4, 1.0, pcbnew.B_SilkS)
 
 if '--nozone' not in sys.argv and '--nofill' not in sys.argv:
     filler = pcbnew.ZONE_FILLER(board)

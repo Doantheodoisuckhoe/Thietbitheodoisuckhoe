@@ -12,9 +12,9 @@ def u():
 def q(s):
     return '"' + s.replace('"', '\\"') + '"'
 
-# Tiêu chuẩn xưởng (bản 1.2): pad = lỗ + 0,6 mm; lụa: chữ >= 0,8 mm, nét chữ 0,2 mm, nét vẽ >= 0,15 mm
+# Tiêu chuẩn xưởng (bản 1.2): pad = lỗ + 0,6 mm; lụa: chữ >= 0,8 mm, nét chữ 0,2 mm, nét vẽ >= 0,2 mm (bản 2.1)
 def lua_w(layer, w):
-    return max(w, 0.15) if 'SilkS' in layer else w
+    return max(w, 0.2) if 'SilkS' in layer else w
 
 def line(x1, y1, x2, y2, layer, w):
     w = lua_w(layer, w)

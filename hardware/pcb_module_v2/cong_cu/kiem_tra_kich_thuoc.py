@@ -65,7 +65,7 @@ ok(abs(d(P['1'][0], P['14'][0]) - XIAO_HANG) < TOL, 'XIAO: hai hàng chân khôn
 ok(abs(d(P['7'][0], P['8'][0]) - XIAO_HANG) < TOL, 'XIAO: hai hàng chân không song song')
 # chân 7/8 ở đầu anten; thân XIAO vượt chân 2,88 mm về phía anten
 ant_y = min(P['7'][0][1], P['8'][0][1]) - (18.12 - 15.24)
-ok(P['7'][0][1] < P['1'][0][1] and ant_y <= 0.5, f'XIAO: đầu anten phải sát mép trên (cách {ant_y:.2f} mm)')
+ok(P['7'][0][1] < P['1'][0][1] and ant_y <= 1.0, f'XIAO: đầu anten phải sát mép trên (cách {ant_y:.2f} mm)')
 xiao = (P['14'][0][0] - 1.28, ant_y, P['1'][0][0] + 1.28, ant_y + XIAO_THAN[1])
 
 # 4) Vùng pin (tầng 0, mặt trên) lấy từ vùng cấm của bảng
@@ -80,7 +80,7 @@ ok(abs((bat[2] - bat[0]) - PIN[0]) < 0.05 and abs((bat[3] - bat[1]) - PIN[1]) < 
 def rect_overlap(a, b_, gap=0.0):
     return not (a[2] + gap <= b_[0] or b_[2] + gap <= a[0] or a[3] + gap <= b_[1] or b_[3] + gap <= a[1])
 
-ok(not rect_overlap(bat, xiao), 'thân XIAO đè lên pin')
+ok(not rect_overlap(bat, xiao, 1.0), 'thân XIAO cách pin < 1 mm')
 P = pads('U4')
 ok(bat[1] - P['1'][0][1] >= 3.0 - 1e-6, 'pin phải cách hàng pad RA/LA/RL >= 3 mm')
 ok(bat[0] - P['4'][0][0] >= 2.2 - 1e-6, 'pin phải cách cột pad GND..SDN >= 2,2 mm')
@@ -125,7 +125,7 @@ for ref, f in fp.items():
         ok(d((x, y), MOTOR_C) > MOTOR_C[2] + 0.8, f'chân {ref}.{p.GetNumber()} nằm dưới motor')
 for k, r in duoi.items():
     cx = min(max(MOTOR_C[0], r[0]), r[2]); cy = min(max(MOTOR_C[1], r[1]), r[3])
-    ok(d((cx, cy), MOTOR_C) >= MOTOR_C[2], f'motor đè lên {k}')
+    ok(d((cx, cy), MOTOR_C) >= MOTOR_C[2] + 1.0, f'motor cách {k} < 1 mm')
 ok(MOTOR_C[0] - MOTOR_C[2] >= 0 and MOTOR_C[0] + MOTOR_C[2] <= BW and MOTOR_C[1] + MOTOR_C[2] <= BH, 'motor ra ngoài bảng')
 for p in fp['M1'].Pads():
     ok(d(xy(p.GetPosition()), MOTOR_C[:2]) < MOTOR_C[2] + 6, 'pad dây motor quá xa motor')
@@ -144,6 +144,37 @@ tab = (c[0] - GC9A01_TAB_W / 2, c[1] + 14.0, c[0] + GC9A01_TAB_W / 2, c[1] - R +
 for ref in ('SW1', 'E3'):
     r = crt(ref)
     ok(not circle_hits(r) and not rect_overlap(r, tab), f'màn che {ref}')
+
+# 6b) Mặt dưới dưới motor: không dây, không via
+for t in b.GetTracks():
+    if t.Type() == pcbnew.PCB_VIA_T:
+        ok(d(xy(t.GetPosition()), MOTOR_C) > MOTOR_C[2] + 0.45, f'via {t.GetNetname()} nằm dưới motor')
+    elif t.GetLayer() == pcbnew.B_Cu:
+        s0, s1 = xy(t.GetStart()), xy(t.GetEnd())
+        for k in range(11):
+            q = (s0[0] + (s1[0] - s0[0]) * k / 10, s0[1] + (s1[1] - s0[1]) * k / 10)
+            ok(d(q, MOTOR_C) > MOTOR_C[2], f'dây mặt dưới {t.GetNetname()} chạy dưới motor')
+
+# 6c) Đầu cắm USB-C (nhô ~1,5 mm khỏi thân XIAO, rộng ~9 mm): >= 3 mm dưới đầu USB không có linh kiện dán
+xc = (xiao[0] + xiao[2]) / 2
+usb = (xc - 4.5, xiao[3], xc + 4.5, xiao[3] + 3.0)
+for ref, f in fp.items():
+    if not f.IsFlipped() and ref[0] in 'RCDQ':
+        ok(not rect_overlap(crt(ref), usb), f'{ref} nằm trong vùng đầu cắm USB-C')
+
+# 6d) Vùng cấm anten sâu >= 4,6 mm từ mép, E1 và mọi dây/via ở ngoài
+ant = None
+for z in b.Zones():
+    if z.GetIsRuleArea() and 'Anten' in z.GetZoneName():
+        bb = z.GetBoundingBox()
+        ant = (mm(bb.GetX()) - OX, mm(bb.GetY()) - OY, mm(bb.GetRight()) - OX, mm(bb.GetBottom()) - OY)
+ok(ant is not None and ant[3] >= 4.6 - 1e-3 and ant[1] <= 0.01, 'vùng cấm anten phải từ mép trên sâu >= 4,6 mm')
+ok(not rect_overlap(crt('E1'), ant), 'E1 nằm trong vùng cấm anten')
+for t in b.GetTracks():
+    bb = t.GetBoundingBox()
+    r = (mm(bb.GetX()) - OX, mm(bb.GetY()) - OY, mm(bb.GetRight()) - OX, mm(bb.GetBottom()) - OY)
+    if t.Type() == pcbnew.PCB_VIA_T or abs(r[0] - r[2]) < 1e-3 or abs(r[1] - r[3]) < 1e-3:
+        ok(not rect_overlap(r, ant), f'dây/via {t.GetNetname()} trong vùng cấm anten')
 
 # 7) Mép bảng: nút SOS, RA ở mép; pad motor gần mép
 r = crt('SW1'); ok(BW - r[2] < 1.0, 'nút SOS không sát mép phải')

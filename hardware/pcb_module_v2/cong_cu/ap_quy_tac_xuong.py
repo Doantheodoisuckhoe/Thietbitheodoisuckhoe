@@ -16,7 +16,7 @@ VIA_KHOAN = 0.3        # via: lỗ 0,3 mm, pad 0,9 mm
 PHU_DONG = 0.65        # phủ đồng GND cách dây/pad khác lưới >= 25 mil (0,635 mm)
 CHU_CAO = 0.8          # chữ lụa cao tối thiểu 0,8 mm để nét 0,2 mm không bị KiCad thu nhỏ
 CHU_NET = 0.2          # độ dày nét chữ lụa
-DUONG_LUA = 0.15       # nét vẽ lụa tối thiểu
+DUONG_LUA = 0.2        # nét vẽ lụa tối thiểu (bản 2.1)
 PHIEN_BAN = ('v2.0', 'v2.0')
 
 def mui(d):

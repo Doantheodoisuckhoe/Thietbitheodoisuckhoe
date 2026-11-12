@@ -36,7 +36,7 @@ XIAO_THAN = (17.8, 21.0)
 SOS_DOC, SOS_NGANG = 6.5, 4.5
 
 # ---- Pin 502030
-PIN = (20.0, 30.0, 5.0)
+PIN = (20.5, 30.0, 5.5)            # 502030 đo thật ~5,5 x 20,5 x 30 mm (tính cả PCM)
 
 # ---- Motor rung 1027 (đồng xu 10 mm, dày 2,7 mm), 2 pad dây cách 4,0 mm (TẠM)
 MOTOR_D = 10.0

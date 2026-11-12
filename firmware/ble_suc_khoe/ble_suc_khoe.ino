@@ -7,8 +7,8 @@
 //   MAX30102 + MAX30205: SDA -> D4, SCL -> D5, VCC -> 3V3   (khong co module nao thi phan do bo trong)
 //   Nut SOS: D9 -> GND.  Dong co rung: D2 qua MOSFET AO3400 (so do breadboard 28-10 co mach nay).
 //   AD8232 (ECG): OUTPUT -> A0 (D0), LO+ va LO- gop vao D1 qua 2 diode (mach 1.3). Tren breadboard noi LO+ -> D1.
-//   Man GC9A01 (theo mach 1.3): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3.
-//   RES: tren mach co R4 10k keo len 3V3 + C9 100 nF; tren breadboard noi RES -> 3V3.
+//   Man GC9A01 (mach 1.3 va 2.x): VCC 3V3, GND, SCL -> D8, SDA -> D10, DC -> D6, CS -> D7, BLK -> D3.
+//   RES: mach 2.0 noi RST thang 3V3 (khong con R4, C9 cua mach 1.3); tren breadboard noi RES -> 3V3.
 //   Chua cam man thi firmware van chay binh thuong (man chi nhan lenh, khong tra loi).
 //   Cach ve tung man va anh mo phong: man_hinh.h, xem_truoc/README.md
 //

@@ -64,7 +64,7 @@ for z in b.Zones():
         r = (mm(bb.GetX()) - OX, mm(bb.GetY()) - OY, mm(bb.GetRight()) - OX, mm(bb.GetBottom()) - OY)
         if 'Anten' in z.GetZoneName():
             dr.rectangle([P(r[0], r[1]), P(r[2], r[3])], fill=(255, 200, 0, 70), outline=(200, 150, 0), width=2)
-        else:
+        elif 'Pin' in z.GetZoneName():
             bat = r
 
 # mặt da (nét đứt xanh lá)
@@ -123,13 +123,13 @@ dr.text(P(c[0] - 6.5, c[1] - R + 1.2), 'L2 màn GC9A01 (trên cùng)', fill=(120
 # chú thích
 lx = M + BW * K + 30
 lines = [
-    ('Đồng hồ sức khỏe - mạch v2.0', (0, 0, 0), FB),
+    ('Đồng hồ sức khỏe - mạch v2.1', (0, 0, 0), FB),
     (f'Bảng {BW:.1f} x {BH:.1f} mm = {BW * BH:.0f} mm²', (0, 0, 0), F),
     ('(bản 1.3: 50 x 62 mm = 3100 mm²)', (90, 90, 90), FS),
     ('', None, F),
     ('L2  màn GC9A01 Ø38,1 (tím, nét đứt)', (120, 0, 170), F),
     ('L1  module AD8232 28 x 35 (đỏ)', (200, 20, 20), F),
-    ('L0  pin 20 x 30 x 5 (xám)', (60, 60, 60), F),
+    ('L0  pin 20,5 x 30 x 5,5 (xám)', (60, 60, 60), F),
     ('L0  XIAO 17,8 x 21 (xanh dương)', (30, 60, 200), F),
     ('L0  nút SOS, pad RA (vàng)', (110, 80, 0), F),
     ('Mặt da: MAX30102, CJMCU, E1, E2', SKIN, F),
