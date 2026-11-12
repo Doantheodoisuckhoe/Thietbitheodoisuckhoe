@@ -29,6 +29,9 @@ class DongHo extends ChangeNotifier {
   void Function()? khiMatKetNoi;
   void Function(GoiEcg)? khiCoGoiEcg;
 
+  /// Thoi gian sang man (giay) cai trong app, gui xuong moi lan ket noi.
+  int Function() giaySangMan = () => thoiGianSangManMacDinh;
+
   TrangThai trangThai = TrangThai.dangTim;
   SoDo? soDo;
   String? id;
@@ -199,6 +202,7 @@ class DongHo extends ChangeNotifier {
 
       // Dong bo gio cho man hinh dong ho (firmware cu bo qua lenh nay).
       await guiLenh(lenhDatGio(DateTime.now()));
+      await guiLenh(lenhThoiGianSangMan(giaySangMan()));
 
       // Canh bao xay ra luc chua ket noi: doc gia tri dang cho tren dong ho.
       final c = CanhBao.tuByte(await dtCanhBao.read());

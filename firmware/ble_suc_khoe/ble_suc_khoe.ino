@@ -13,10 +13,21 @@
 //   Cach ve tung man va anh mo phong: man_hinh.h, xem_truoc/README.md
 //
 // Cach dung nut SOS:
-//   - Bam nhanh             -> bat man hinh 10 giay (hien gio, nhip tim, SpO2, nhiet do).
+//   - Bam nhanh             -> bat man hinh (mac dinh 10 giay, chinh trong app: lenh 06).
 //   - Giu nut 1 giay        -> canh bao SOS.
+//   - Dong ho dang TAT HAN (pin yeu hoac tat tu app): giu nut 2 giay de bat lai.
 //   - Khi dong ho phat hien te nga, no rung 15 giay de hoi "co sao khong?".
 //     Bam nut trong 15 giay do -> huy (khong bao). Khong bam -> gui canh bao te nga.
+//
+// Tiet kiem pin (12/11/2026):
+//   - Man hinh tat khi khong dung, bam nhanh nut thi sang trong thoi gian cai tren app.
+//   - Giua cac lan doc cam bien (moi 10 ms) CPU ngu bang delay() (FreeRTOS cho CPU ngu khi ranh).
+//     Cam bien van do lien tuc de canh te nga, nhip tim: dong ho KHONG tat han khi khong dung.
+//   - Pin < 3,5 V: rung 3 lan, bao "pin yeu" len app. Pin < 3,4 V (2 lan doc lien tiep, khong cam USB):
+//     tat han (System OFF, ~ vai uA cho rieng nRF52840) de khong xa can pin. Giu nut 2 giay de bat lai.
+//   - App co the tat han dong ho (lenh 07 AA).
+//   LUU Y: man GC9A01 7 chan khong co chan BLK nen den nen sang suot, ca khi tat han (10-20 mA).
+//   Muon tiet kiem that thi dung man 8 chan va noi BLK -> D3 (mach 2.1 co san pad).
 //
 // Thu khong can app: mo app nRF Connect -> ket noi "DoAn-SucKhoe" -> bat notify o 2 dac tinh
 // cua service 4b3a0001-... (xem docs/giao-thuc-ble.md). Hoac chay app/thu_ble_tren_may_tinh.py.
@@ -42,7 +53,8 @@ const bool     CO_MAN_HINH  = true;     // false = bo han phan man hinh
 const uint8_t  CHAN_TFT_CS  = D7;
 const uint8_t  CHAN_TFT_DC  = D6;
 const uint8_t  CHAN_TFT_BLK = D3;       // den nen: HIGH = sang
-const uint32_t SANG_MAN_HINH_MS = 10000;  // bam nhanh nut -> sang 10 giay roi tat de tiet kiem pin
+const uint32_t SANG_MAN_HINH_MAC_DINH_MS = 10000;  // bam nhanh nut -> sang 10 giay roi tat de tiet kiem pin
+const uint8_t  SANG_MAN_HINH_MIN_GIAY = 3, SANG_MAN_HINH_MAX_GIAY = 120;   // app gui lenh 06 trong khoang nay
 const uint32_t HIEN_DA_BAO_MS   = 5000;   // man "DA BAO nguoi than" sau khi app xac nhan
 
 const uint32_t NGUONG_CO_TAY = 50000;   // IR duoi muc nay = chua deo / chua dat ngon tay
@@ -63,6 +75,13 @@ const float GOC_DOI_TU_THE   = 30.0f;  // do
 const uint32_t THOI_GIAN_HUY_TE_NGA_MS = 15000;
 
 const uint32_t GIU_NUT_SOS_MS = 1000;
+const uint32_t GIU_NUT_BAT_LAI_MS = 2000;    // dang tat han: giu nut 2 giay de bat
+
+// Pin (LiPo). Doc moi 30 giay. Phai thap 2 lan lien tiep moi tinh (dong co rung lam sut ap tam thoi).
+const uint16_t PIN_YEU_MV  = 3500;   // rung 3 lan + bao app
+const uint16_t PIN_TAT_MV  = 3400;   // tat han de bao ve pin (LDO cua XIAO can >= 3,4 V)
+const uint16_t PIN_KHONG_CO_MV = 2500;   // doc duoi muc nay = khong co pin (chi cam USB): bo qua
+const uint8_t  MA_TAT_DONG_HO = 0xAA;    // lenh tat han: 07 AA (byte thu 2 de tranh tat nham)
 const uint32_t GUI_LAI_CANH_BAO_MS = 5000;   // gui lai cho den khi app xac nhan
 
 // ECG: app gui lenh 03 -> dong ho lay mau AD8232 250 mau/giay trong 30 giay va gui dan qua BLE.
@@ -76,7 +95,7 @@ enum MaCanhBao : uint8_t {
   CB_SOS = 1, CB_TE_NGA = 2, CB_NHIP_CAO = 3, CB_NHIP_THAP = 4, CB_SPO2_THAP = 5, CB_SOT = 6
 };
 enum MaLenh : uint8_t { LENH_XAC_NHAN = 1, LENH_TIM_DONG_HO = 2, LENH_BAT_DAU_ECG = 3, LENH_DUNG_ECG = 4,
-                        LENH_DAT_GIO = 5 };
+                        LENH_DAT_GIO = 5, LENH_THOI_GIAN_SANG_MAN = 6, LENH_TAT_DONG_HO = 7 };
 
 // ---------------- BLE ----------------
 // UUID dang 4b3a000X-8f6e-4c2a-9d1b-3e5f7a9c0b1d, viet nguoc byte (little endian) theo yeu cau Bluefruit.
@@ -101,7 +120,7 @@ BLEBas            pinBle;                              // Battery Service chuan 
 // Goi so do: 10 byte, gui moi giay.
 struct __attribute__((packed)) GoiSoDo {
   uint8_t  phienBan;     // = 1
-  uint8_t  co;           // bit0 co tay, bit1 nhiet do hop le, bit2 SpO2 hop le, bit3 IMU OK
+  uint8_t  co;           // bit0 co tay, bit1 nhiet do hop le, bit2 SpO2 hop le, bit3 IMU OK, bit4 pin yeu
   uint8_t  nhipTim;      // lan/phut, 0 = chua co
   uint8_t  spo2;         // %, 0 = chua co
   int16_t  nhietDo;      // 0,01 do C
@@ -131,6 +150,9 @@ uint8_t  nhipTim = 0, spo2 = 0;
 int16_t  nhietDo = 0;
 bool     coTay = false;
 uint16_t pinMv = 0;
+bool     pinYeu = false;
+uint8_t  demPinThap = 0, demPinRatThap = 0;
+volatile bool yeuCauTat = false;       // app gui lenh 07 AA, loop() moi tat
 
 GoiCanhBao canhBaoCho = {0, 0, 0};   // ma = 0: khong co canh bao dang cho
 uint8_t  soThuTuCuoi = 0;
@@ -140,12 +162,14 @@ bool     dangDemHuyTeNga = false;
 uint32_t lucPhatHienTeNga = 0;
 
 uint32_t rungDenLuc = 0;  // millis() khi tat dong co
+uint32_t rungNhipDenLuc = 0;   // rung ngat quang (200 ms bat, 200 ms tat) den luc nay: bao pin yeu
 
 // Man hinh
 Adafruit_GC9A01A tft(CHAN_TFT_CS, CHAN_TFT_DC, -1);   // RES khong co chan GPIO: thu vien tu reset bang lenh
 BoVeManHinh boVe;
 bool     manHinhSang = false;
 uint32_t tatManHinhLuc = 0;
+volatile uint32_t sangManHinhMs = SANG_MAN_HINH_MAC_DINH_MS;   // app chinh bang lenh 06
 volatile uint32_t lucAppXacNhan = 0;   // ghi trong callback BLE, chi doc o loop()
 
 // Gio: app gui gio dia phuong moi khi ket noi (lenh 05). Dong ho khong co pin RTC rieng nen mat nguon
@@ -178,11 +202,21 @@ void rung(uint32_t ms) {
   rungDenLuc = millis() + ms;
 }
 
+// Rung n lan ngan (khong chan vong lap).
+void rungNhieuLan(uint8_t n) {
+  rungNhipDenLuc = millis() + 400UL * n;
+}
+
 void capNhatDongCo() {
   if (!CO_DONG_CO) return;
   // Dang dem huy te nga: rung 300 ms moi giay de nguoi deo biet.
   if (dangDemHuyTeNga) {
     digitalWrite(CHAN_DONG_CO, ((millis() - lucPhatHienTeNga) % 1000) < 300);
+    return;
+  }
+  int32_t conLai = (int32_t)(rungNhipDenLuc - millis());
+  if (conLai > 0) {
+    digitalWrite(CHAN_DONG_CO, (conLai % 400) >= 200);
     return;
   }
   if ((int32_t)(millis() - rungDenLuc) >= 0) digitalWrite(CHAN_DONG_CO, LOW);
@@ -233,6 +267,11 @@ void khiNhanLenh(uint16_t ketNoi, BLECharacteristic* dt, uint8_t* duLieu, uint16
     gioTuApp = (uint32_t)duLieu[1] | ((uint32_t)duLieu[2] << 8) | ((uint32_t)duLieu[3] << 16) |
                ((uint32_t)duLieu[4] << 24);
     coGioTuApp = true;
+  } else if (duLieu[0] == LENH_THOI_GIAN_SANG_MAN && doDai >= 2) {
+    uint8_t giay = constrain(duLieu[1], SANG_MAN_HINH_MIN_GIAY, SANG_MAN_HINH_MAX_GIAY);
+    sangManHinhMs = (uint32_t)giay * 1000;
+  } else if (duLieu[0] == LENH_TAT_DONG_HO && doDai >= 2 && duLieu[1] == MA_TAT_DONG_HO) {
+    yeuCauTat = true;
   }
 }
 
@@ -709,7 +748,7 @@ void caiDatBle() {
 
   dtLenh.setProperties(CHR_PROPS_WRITE | CHR_PROPS_WRITE_WO_RESP);
   dtLenh.setPermission(SECMODE_NO_ACCESS, SECMODE_OPEN);
-  dtLenh.setMaxLen(8);   // dai nhat: lenh dat gio 5 byte
+  dtLenh.setMaxLen(8);   // dai nhat: lenh dat gio 5 byte (cac lenh 06, 07 la 2 byte)
   dtLenh.setWriteCallback(khiNhanLenh);
   dtLenh.begin();
 
@@ -737,7 +776,7 @@ void caiDatBle() {
 void guiSoDo() {
   GoiSoDo g;
   g.phienBan = 1;
-  g.co = (coTay ? 1 : 0) | (nhietDoHopLe ? 2 : 0) | (spo2 ? 4 : 0) | (coImu ? 8 : 0);
+  g.co = (coTay ? 1 : 0) | (nhietDoHopLe ? 2 : 0) | (spo2 ? 4 : 0) | (coImu ? 8 : 0) | (pinYeu ? 16 : 0);
   g.nhipTim = nhipTim;
   g.spo2 = spo2;
   g.nhietDo = nhietDo;
@@ -781,7 +820,7 @@ void caiDatManHinh() {
 
 void batManHinh() {
   if (!CO_MAN_HINH) return;
-  tatManHinhLuc = millis() + SANG_MAN_HINH_MS;
+  tatManHinhLuc = millis() + sangManHinhMs;
   if (manHinhSang) return;
   tft.sendCommand(GC9A01A_SLPOUT);
   delay(5);
@@ -846,7 +885,7 @@ void capNhatManHinh() {
   s.ketNoi = Bluefruit.connected();
   s.phutTrongNgay = phutTrongNgay();
 
-  // Te nga, canh bao, "da bao": man luon sang. Man chinh: tat sau SANG_MAN_HINH_MS.
+  // Te nga, canh bao, "da bao": man luon sang. Man chinh: tat sau sangManHinhMs (cai tren app).
   if (s.loai != MH_CHINH) batManHinh();
   if (!manHinhSang) return;
   if (s.loai == MH_CHINH && (int32_t)(bayGio - tatManHinhLuc) >= 0) { tatManHinh(); return; }
@@ -873,9 +912,89 @@ bool giaiPhongI2C() {
   return true;
 }
 
+// ============================================================
+// Tat han (System OFF), bat lai bang nut SOS, bao ve pin
+// ============================================================
+// Dang cam USB (sac hoac noi may tinh): khong tat vi pin yeu.
+bool dangCamUsb() {
+  uint8_t sdBat = 0;
+  sd_softdevice_is_enabled(&sdBat);
+  uint32_t r = 0;
+  if (sdBat) sd_power_usbregstatus_get(&r);   // SoftDevice dang chay thi phai hoi qua SoftDevice
+  else r = NRF_POWER->USBREGSTATUS;
+  return r & POWER_USBREGSTATUS_VBUSDETECT_Msk;
+}
+
+// Tat han: nRF52840 vao System OFF (CPU, BLE, RAM tat), chi con chan nut SOS canh de bat lai.
+// Bat lai = reset, chay lai setup(); kiemTraBatLai() bat phai giu nut 2 giay.
+// Mach khong co khoa nguon nen AD8232 (~0,2 mA) va den nen man 7 chan van an pin: day la
+// "tat gan het", khong phai ngat han pin. Mach bao ve (PCM) cua pin la lop bao ve cuoi.
+void tatHan(const char* lyDo) {
+  Serial.print("# TAT HAN: "); Serial.print(lyDo);
+  Serial.println(". Giu nut SOS 2 giay de bat lai.");
+  Serial.flush();
+  if (ecgDangDo) dungEcg();
+  if (CO_DONG_CO) {                      // rung 2 lan dai = "dong ho tat"
+    for (uint8_t i = 0; i < 2; i++) {
+      digitalWrite(CHAN_DONG_CO, HIGH); delay(400);
+      digitalWrite(CHAN_DONG_CO, LOW);  delay(200);
+    }
+  }
+  if (CO_MAN_HINH && manHinhSang) tatManHinh();
+  if (coPpg) ppg.shutDown();             // MAX30102 ngu (~1 uA)
+  if (coNhietDo) {                       // MAX30205: thanh ghi cau hinh 0x01, bit0 = SHUTDOWN
+    Wire.beginTransmission(DIA_CHI_MAX30205);
+    Wire.write(0x01); Wire.write(0x01);
+    Wire.endTransmission();
+  }
+  digitalWrite(PIN_LSM6DS3TR_C_POWER, LOW);   // cat nguon IMU
+  if (Bluefruit.connected()) { Bluefruit.disconnect(Bluefruit.connHandle()); delay(200); }
+  while (digitalRead(CHAN_SOS) == LOW) delay(10);   // dang bam nut thi cho nha, neu khong se bat lai ngay
+  delay(50);
+  systemOff(CHAN_SOS, LOW);              // thu vien Adafruit/Seeed nRF52: thuc day khi D9 xuong LOW
+}
+
+// Goi dau setup(): neu vua thuc day tu tat han thi phai giu nut du 2 giay, khong thi tat lai
+// (tranh bat nham khi nut bi cham trong tui). Nap code, cam USB lan dau, bam RESET: chay luon.
+void kiemTraBatLai() {
+  if (!(readResetReason() & POWER_RESETREAS_OFF_Msk)) return;
+  uint32_t batDau = millis();
+  while (digitalRead(CHAN_SOS) == LOW) {
+    if (millis() - batDau >= GIU_NUT_BAT_LAI_MS) {
+      if (CO_DONG_CO) { digitalWrite(CHAN_DONG_CO, HIGH); delay(300); digitalWrite(CHAN_DONG_CO, LOW); }
+      return;                            // giu du 2 giay: bat dong ho
+    }
+    delay(10);
+  }
+  delay(50);
+  systemOff(CHAN_SOS, LOW);              // nha som: ngu lai
+}
+
+// Goi moi lan doc pin (30 giay/lan). Thap 2 lan lien tiep moi tinh.
+void kiemTraPin() {
+  bool coPin = pinMv >= PIN_KHONG_CO_MV;   // khong co pin (chi cam USB) thi doc ra gan 0
+  bool usb = dangCamUsb();
+  bool thap = coPin && !usb && pinMv < PIN_YEU_MV;
+  demPinThap = thap ? min(demPinThap + 1, 2) : 0;
+  if (demPinThap >= 2 && !pinYeu) {
+    pinYeu = true;
+    rungNhieuLan(3);
+    Serial.println("# PIN YEU (< 3,5 V): sac pin som");
+  }
+  if (usb || pinMv >= PIN_YEU_MV + 100) pinYeu = false;   // cach 0,1 V de khong bat tat lien tuc
+
+  bool ratThap = coPin && !usb && pinMv < PIN_TAT_MV;
+  demPinRatThap = ratThap ? min(demPinRatThap + 1, 2) : 0;
+  // Dang dem huy te nga, dang do ECG, hoac canh bao dang cho ma dien thoai dang ket noi (sap duoc
+  // xac nhan) thi cho xong roi moi tat.
+  bool dangBan = dangDemHuyTeNga || ecgDangDo || (canhBaoCho.ma != 0 && Bluefruit.connected());
+  if (demPinRatThap >= 2 && !dangBan) tatHan("pin duoi 3,4 V");
+}
+
 void setup() {
   pinMode(CHAN_SOS, INPUT_PULLUP);
   if (CO_DONG_CO) { pinMode(CHAN_DONG_CO, OUTPUT); digitalWrite(CHAN_DONG_CO, LOW); }
+  kiemTraBatLai();
   pinMode(VBAT_ENABLE, OUTPUT);
   digitalWrite(VBAT_ENABLE, LOW);
 
@@ -903,8 +1022,19 @@ void setup() {
   Serial.println(coImu ? "# IMU: OK" : "# IMU: LOI (bo qua te nga)");
 
   pinMv = docPinMv();
+  // Vua bat ma pin da qua yeu (va khong cam sac): rung 3 lan roi tat lai, khong xa can pin them.
+  if (pinMv >= PIN_KHONG_CO_MV && pinMv < PIN_TAT_MV && !dangCamUsb()) {
+    if (CO_DONG_CO) {
+      for (uint8_t i = 0; i < 3; i++) {
+        digitalWrite(CHAN_DONG_CO, HIGH); delay(200);
+        digitalWrite(CHAN_DONG_CO, LOW);  delay(200);
+      }
+    }
+    tatHan("pin qua yeu luc bat, hay sac pin");
+  }
+  pinYeu = pinMv >= PIN_KHONG_CO_MV && pinMv < PIN_YEU_MV && !dangCamUsb();
   caiDatManHinh();
-  batManHinh();                          // vua bat nguon: sang 10 giay
+  batManHinh();                          // vua bat nguon: sang (mac dinh 10 giay)
   caiDatBle();
   Serial.println("# Dang quang ba BLE ten DoAn-SucKhoe");
 }
@@ -940,7 +1070,7 @@ void loop() {
     if (!nhietDoHopLe) nhietDo = 0;
     static uint8_t demPin = 0;
     // 30 giay doc pin 1 lan; khong doc luc dang do ECG vi ngat ECG cung dung ADC
-    if (++demPin >= 30 && !ecgDangDo) { demPin = 0; pinMv = docPinMv(); }
+    if (++demPin >= 30 && !ecgDangDo) { demPin = 0; pinMv = docPinMv(); kiemTraPin(); }
 
     if (coTay) {
       ndNhipCao.capNhat(nhipTim > NHIP_TIM_CAO, nhipTim);
@@ -952,5 +1082,16 @@ void loop() {
       ndSpo2.capNhat(false, 0);    ndSot.capNhat(false, 0);
     }
     guiSoDo();
+  }
+
+  if (yeuCauTat) { yeuCauTat = false; tatHan("app yeu cau tat dong ho"); }
+
+  // CPU ngu den lan doc IMU ke tiep (moi 10 ms). delay() cua loi nRF52 (FreeRTOS) cho CPU ngu
+  // (WFE) thay vi quay vong khong. FIFO MAX30102 giu 320 ms nen ngu 10 ms khong mat mau.
+  // Dang do ECG thi khong ngu de gui BLE kip 250 mau/giay.
+  if (!ecgDangDo) {
+    uint32_t daQua = millis() - lanImu;
+    uint32_t cho = !coImu ? 10 : (daQua < 9 ? 9 - daQua : 0);
+    if (cho) delay(cho);
   }
 }

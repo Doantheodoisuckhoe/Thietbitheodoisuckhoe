@@ -39,7 +39,7 @@ Mọi số nhiều byte đều **little endian** (byte thấp trước).
 | Byte | Kiểu | Tên | Ý nghĩa |
 |---|---|---|---|
 | 0 | uint8 | phiên bản | luôn `1`; đổi định dạng thì tăng số này |
-| 1 | uint8 | cờ | bit0 = đang đeo (cảm biến chạm da), bit1 = nhiệt độ hợp lệ, bit2 = SpO2 hợp lệ, bit3 = IMU hoạt động |
+| 1 | uint8 | cờ | bit0 = đang đeo (cảm biến chạm da), bit1 = nhiệt độ hợp lệ, bit2 = SpO2 hợp lệ, bit3 = IMU hoạt động, bit4 = pin yếu (< 3,5 V, từ 12/11/2026) |
 | 2 | uint8 | nhịp tim | lần/phút, `0` = chưa có |
 | 3 | uint8 | SpO2 | %, `0` = chưa có |
 | 4–5 | int16 | nhiệt độ | đơn vị 0,01 °C (`3650` = 36,50 °C) |
@@ -83,7 +83,26 @@ SOS/té ngã được ghi đè lên cảnh báo chỉ số đang chờ, ngược
 | `04` | Dừng đo ECG giữa chừng |
 | `05 t0 t1 t2 t3` | Đặt giờ: số giây từ 01/01/2000 00:00 **theo giờ địa phương** (uint32 little-endian). App gửi mỗi lần kết nối. Đồng hồ không có pin RTC riêng: mất nguồn thì hiện `--:--` cho tới lần kết nối sau |
 
+| `06 ss` | Thời gian màn hình sáng khi bấm nhanh nút: `ss` giây (3–120, ngoài khoảng thì đồng hồ ép về 3 hoặc 120). Mặc định 10. App gửi mỗi lần kết nối và khi đổi trong app (từ 12/11/2026) |
+| `07 AA` | Tắt hẳn đồng hồ (System OFF). Byte `AA` để tránh tắt nhầm. Bật lại: giữ nút 2 giây hoặc cắm sạc (từ 12/11/2026) |
+
 Ví dụ đặt giờ 30/10/2026 12:34:56: 846 678 896 giây = 0x32774B70 → ghi `05 70 4B 77 32`.
+
+### Tiết kiệm pin và tắt hẳn (từ 12/11/2026)
+
+Đồng hồ **không tắt khi không dùng**, vì lúc người đeo không đụng vào đồng hồ vẫn cần canh té ngã và nhịp tim.
+Thay vào đó:
+
+- Màn hình tắt khi không dùng; bấm nhanh nút thì sáng trong thời gian cài bằng lệnh `06`.
+  Té ngã, cảnh báo đang chờ, "đã báo người thân" thì màn tự sáng.
+- CPU ngủ giữa các lần đọc cảm biến (mỗi 10 ms), trừ lúc đang đo ECG.
+- Pin < 3,5 V (2 lần đọc liên tiếp, cách nhau 30 giây): rung 3 lần, bật bit4 "pin yếu" trong gói Số đo.
+- Pin < 3,4 V (2 lần liên tiếp), không cắm USB: rung 2 lần dài rồi **tắt hẳn** để không xả cạn pin.
+  Không tắt khi đang đếm hủy té ngã, đang đo ECG, hoặc có cảnh báo chờ mà điện thoại đang kết nối.
+- Đang tắt hẳn: giữ nút 2 giây thì bật (rung ngắn 1 lần). Bấm nhanh thì ngủ lại. Cắm sạc cũng làm đồng hồ bật.
+
+Giới hạn: mạch không có khóa nguồn, nên khi "tắt hẳn" AD8232 (~0,2 mA) vẫn ăn pin; màn GC9A01 **7 chân**
+không có chân BLK nên đèn nền sáng suốt (10–20 mA) kể cả khi tắt. Dùng màn 8 chân, nối BLK → D3.
 
 ### ECG (gói sóng điện tim)
 
