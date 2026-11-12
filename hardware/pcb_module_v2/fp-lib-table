@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "DoAnModule")(type "KiCad")(uri "${KIPRJMOD}/lib/DoAnModule.pretty")(options "")(descr "Footprint riêng: đế XIAO, module cảm biến mặt dưới, pad hàn dây, điện cực ECG"))
+)
