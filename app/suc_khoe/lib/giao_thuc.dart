@@ -18,6 +18,7 @@ class SoDo {
   final int pinMv;
   final int pinPhanTram;
   final int canhBaoCho; // 0 = khong co
+  final bool pinYeu; // dong ho bao pin < 3,5 V (firmware tu 12/11/2026)
   final DateTime luc;
 
   SoDo({
@@ -28,6 +29,7 @@ class SoDo {
     required this.pinMv,
     required this.pinPhanTram,
     required this.canhBaoCho,
+    this.pinYeu = false,
     DateTime? luc,
   }) : luc = luc ?? DateTime.now();
 
@@ -44,6 +46,7 @@ class SoDo {
       pinMv: d.getUint16(6, Endian.little),
       pinPhanTram: b[8],
       canhBaoCho: b[9],
+      pinYeu: co & 16 != 0,
     );
   }
 }
@@ -118,6 +121,15 @@ List<int> lenhDatGio(DateTime luc) {
       .inSeconds;
   return [5, giay & 0xFF, (giay >> 8) & 0xFF, (giay >> 16) & 0xFF, (giay >> 24) & 0xFF];
 }
+
+/// Thoi gian man hinh dong ho sang khi bam nhanh nut: 06 + so giay (3-120).
+/// App gui moi lan ket noi va moi khi doi trong app. Firmware cu bo qua lenh nay.
+List<int> lenhThoiGianSangMan(int giay) => [6, giay.clamp(3, 120)];
+const cacThoiGianSangMan = [5, 10, 15, 30, 60];
+const thoiGianSangManMacDinh = 10;
+
+/// Tat han dong ho (System OFF). Byte AA de tranh tat nham. Bat lai: giu nut SOS 2 giay hoac cam sac.
+const lenhTatDongHo = [7, 0xAA];
 
 /// ECG: dong ho lay mau 250 lan/giay trong 30 giay.
 const tanSoEcg = 250;

@@ -51,6 +51,7 @@ void main() async {
     doEcg.matKetNoi();
   };
   dongHo.khiCoGoiEcg = doEcg.nhanGoi;
+  dongHo.giaySangMan = () => luuTru.giaySangMan;
   runApp(const UngDung());
 }
 
@@ -206,7 +207,7 @@ class TrangSoDo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: dongHo,
+      listenable: Listenable.merge([dongHo, luuTru]),
       builder: (context, _) {
         final s = dongHo.soDo;
         final ketNoi = dongHo.trangThai == TrangThai.daKetNoi;
@@ -238,8 +239,9 @@ class TrangSoDo extends StatelessWidget {
               _O(Icons.favorite, Colors.red, 'Nhịp tim', hien(s?.nhipTim, 'l/p')),
               _O(Icons.air, Colors.blue, 'SpO2', hien(s?.spo2, '%')),
               _O(Icons.thermostat, Colors.orange, 'Nhiệt độ da', hien(s?.nhietDo?.toStringAsFixed(1), '°C')),
-              _O(Icons.battery_std, Colors.green, 'Pin đồng hồ',
-                  (s == null || cu) ? '--' : '${s.pinPhanTram} %'),
+              _O(s != null && s.pinYeu ? Icons.battery_alert : Icons.battery_std,
+                  s != null && s.pinYeu ? Colors.red : Colors.green, 'Pin đồng hồ',
+                  (s == null || cu) ? '--' : '${s.pinPhanTram} %${s.pinYeu ? ' (yếu, sạc ngay)' : ''}'),
             ],
           ),
           const SizedBox(height: 16),
@@ -247,6 +249,27 @@ class TrangSoDo extends StatelessWidget {
             onPressed: ketNoi ? () => dongHo.guiLenh(lenhTimDongHo) : null,
             icon: const Icon(Icons.vibration),
             label: const Text('Tìm đồng hồ (rung 2 giây)'),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.light_mode_outlined),
+              title: const Text('Màn hình sáng khi bấm nút'),
+              subtitle: const Text('Bấm nhanh nút trên đồng hồ để xem số đo. Sáng càng lâu càng tốn pin.'),
+              trailing: DropdownButton<int>(
+                value: cacThoiGianSangMan.contains(luuTru.giaySangMan)
+                    ? luuTru.giaySangMan
+                    : thoiGianSangManMacDinh,
+                items: [
+                  for (final g in cacThoiGianSangMan) DropdownMenuItem(value: g, child: Text('$g giây')),
+                ],
+                onChanged: (g) async {
+                  if (g == null) return;
+                  await luuTru.datGiaySangMan(g);
+                  await dongHo.guiLenh(lenhThoiGianSangMan(g));
+                },
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           FilledButton.tonalIcon(
@@ -263,6 +286,12 @@ class TrangSoDo extends StatelessWidget {
             label: const Text('Gửi thử SMS cho người thân'),
           ),
           const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: ketNoi ? () => _tatDongHo(context) : null,
+            icon: const Icon(Icons.power_settings_new),
+            label: const Text('Tắt hẳn đồng hồ'),
+          ),
+          const SizedBox(height: 8),
           TextButton(
             onPressed: dongHo.quenDongHo,
             child: const Text('Đổi đồng hồ khác (tìm lại)'),
@@ -276,6 +305,22 @@ class TrangSoDo extends StatelessWidget {
         ]);
       },
     );
+  }
+
+  Future<void> _tatDongHo(BuildContext context) async {
+    final dongY = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Tắt hẳn đồng hồ?'),
+        content: const Text('Khi tắt, đồng hồ KHÔNG đo, KHÔNG phát hiện té ngã và KHÔNG gửi SOS. '
+            'Muốn bật lại: giữ nút trên đồng hồ 2 giây hoặc cắm sạc.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Không')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Tắt')),
+        ],
+      ),
+    );
+    if (dongY == true) await dongHo.guiLenh(lenhTatDongHo);
   }
 
   Future<void> _guiThu(BuildContext context) async {

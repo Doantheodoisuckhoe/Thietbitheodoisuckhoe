@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dam_may.dart';
+import 'giao_thuc.dart';
 import 'xu_ly_canh_bao.dart';
 
 class MucLichSu {
@@ -58,7 +59,7 @@ class BanGhiEcg {
 
 class LuuTru extends ChangeNotifier {
   static const _kDanhBa = 'danh_ba', _kTen = 'ten_nguoi_deo', _kLichSu = 'lich_su', _kDamMay = 'dam_may';
-  static const _kEcg = 'ecg';
+  static const _kEcg = 'ecg', _kSangMan = 'giay_sang_man';
   static const soMucToiDa = 100;
   static const soEcgToiDa = 10; // moi lan ~20 KB
 
@@ -68,12 +69,14 @@ class LuuTru extends ChangeNotifier {
   List<MucLichSu> lichSu = [];
   CauHinhDamMay? damMay;
   List<BanGhiEcg> dsEcg = [];
+  int giaySangMan = thoiGianSangManMacDinh;
 
   Future<void> tai() async {
     _p = await SharedPreferences.getInstance();
     danhBa = _docDs(_kDanhBa).map(NguoiThan.fromJson).toList();
     tenNguoiDeo = _p.getString(_kTen) ?? '';
     lichSu = _docDs(_kLichSu).map(MucLichSu.fromJson).toList();
+    giaySangMan = _p.getInt(_kSangMan) ?? thoiGianSangManMacDinh;
     try {
       dsEcg = _docDs(_kEcg).map(BanGhiEcg.fromJson).toList();
     } catch (_) {
@@ -111,6 +114,12 @@ class LuuTru extends ChangeNotifier {
   Future<void> datTen(String ten) async {
     tenNguoiDeo = ten;
     await _p.setString(_kTen, ten);
+    notifyListeners();
+  }
+
+  Future<void> datGiaySangMan(int giay) async {
+    giaySangMan = giay;
+    await _p.setInt(_kSangMan, giay);
     notifyListeners();
   }
 

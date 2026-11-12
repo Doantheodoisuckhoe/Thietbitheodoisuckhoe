@@ -69,6 +69,18 @@ void main() {
     expect(lenhDatGio(DateTime(2026, 10, 30, 12, 34, 56)), [5, 0x70, 0x4B, 0x77, 0x32]);
   });
 
+  test('lenh thoi gian sang man va tat dong ho', () {
+    expect(lenhThoiGianSangMan(15), [6, 15]);
+    expect(lenhThoiGianSangMan(1), [6, 3]); // duoi 3 giay: dong ho cung ep len 3
+    expect(lenhThoiGianSangMan(500), [6, 120]);
+    expect(lenhTatDongHo, [7, 0xAA]);
+  });
+
+  test('co pin yeu (bit4)', () {
+    expect(SoDo.tuByte(hex('01 18 00 00 00 00 AC 0D 0B 00'))!.pinYeu, isTrue);
+    expect(SoDo.tuByte(hex('01 08 00 00 00 00 AC 0D 0B 00'))!.pinYeu, isFalse);
+  });
+
   group('Noi dung SMS', () {
     final luc = DateTime(2026, 10, 21, 14, 32);
     test('te nga co vi tri, bo dau ten', () {
